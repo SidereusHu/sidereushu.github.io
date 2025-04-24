@@ -5,23 +5,20 @@
     <link>https://sidereushu.github.io/posts/</link>
     <description>Recent content in Posts on Sidereus Hu</description>
     <generator>Hugo -- 0.146.7</generator>
-    <language>en-us</language>
-    <lastBuildDate>Thu, 24 Apr 2025 00:00:00 +0000</lastBuildDate>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 24 Apr 2025 16:57:25 +0800</lastBuildDate>
     <atom:link href="https://sidereushu.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Hello World</title>
       <link>https://sidereushu.github.io/posts/hello-world/</link>
-      <pubDate>Thu, 24 Apr 2025 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 24 Apr 2025 16:57:25 +0800</pubDate>
       <guid>https://sidereushu.github.io/posts/hello-world/</guid>
       <description>&lt;p&gt;这是我的第一篇博客！&lt;/p&gt;
 &lt;p&gt;支持公式：&lt;/p&gt;
 &lt;p&gt;$$
 a^2 + b^2 = c^2
-$$+++
-date = &amp;lsquo;2025-04-24T16:57:25+08:00&amp;rsquo;
-draft = true
-title = &amp;lsquo;Hello World&amp;rsquo;
-+++&lt;/p&gt;</description>
+$$&lt;/p&gt;
+&lt;p&gt;你可以在文章中插入更多数学表达式，例如行内公式 $E = mc^2$ 也支持。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
