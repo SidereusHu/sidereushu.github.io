@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Sidereus Hu</title>
+    <link>https://sidereushu.github.io/</link>
+    <description>Recent content on Sidereus Hu</description>
+    <generator>Hugo -- 0.146.7</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 24 Apr 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://sidereushu.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hello World</title>
+      <link>https://sidereushu.github.io/posts/hello-world/</link>
+      <pubDate>Thu, 24 Apr 2025 00:00:00 +0000</pubDate>
+      <guid>https://sidereushu.github.io/posts/hello-world/</guid>
+      <description>&lt;p&gt;这是我的第一篇博客！&lt;/p&gt;
+&lt;p&gt;支持公式：&lt;/p&gt;
+&lt;p&gt;$$
+a^2 + b^2 = c^2
+$$+++
+date = &amp;lsquo;2025-04-24T16:57:25+08:00&amp;rsquo;
+draft = true
+title = &amp;lsquo;Hello World&amp;rsquo;
++++&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
