@@ -15,10 +15,9 @@
       <guid>https://sidereushu.github.io/posts/hello-world/</guid>
       <description>&lt;p&gt;这是我的第一篇博客！&lt;/p&gt;
 &lt;p&gt;支持公式：&lt;/p&gt;
-&lt;p&gt;$$
+$$
 a^2 + b^2 = c^2
-$$&lt;/p&gt;
-&lt;p&gt;你可以在文章中插入更多数学表达式，例如行内公式 $E = mc^2$ 也支持。&lt;/p&gt;</description>
+$$&lt;p&gt;你可以在文章中插入更多数学表达式，例如行内公式 $E = mc^2$ 也支持。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
