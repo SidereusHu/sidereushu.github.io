@@ -1,0 +1,61 @@
+baseURL = "https://sidereushu.github.io/"
+title = "Sidereus Hu"
+languageCode = "zh-cn"
+defaultContentLanguage = "zh"
+theme = "PaperMod"
+
+[pagination]
+  pagerSize = 10
+
+[params]
+  author = "Sidereus Hu"
+  ShowReadingTime = false
+  ShowShareButtons = false
+  ShowCodeCopyButtons = true
+  math = true
+  comments = false
+  defaultTheme = "auto" 
+  DateFormat = "2006-01-02"
+
+[[params.socialIcons]]
+  name = "github"
+  url = "https://github.com/SidereusHu"
+
+[[params.socialIcons]]
+  name = "email"
+  url = "mailto:crypto.sidereus@gmail.com"
+
+
+[markup]
+  [markup.tableOfContents]
+    endLevel = 2
+    startLevel = 2
+    ordered = true
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+    [markup.goldmark.extensions]
+      [markup.goldmark.extensions.passthrough]
+        enable = true
+        [markup.goldmark.extensions.passthrough.delimiters]
+          block = [['\[', '\]'], ['$$', '$$']]
+          inline = [['\(', '\)'], ['$', '$']]
+  [markup.highlight]
+    style = "monokai"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[menu]
+
+[[menu.main]]
+  identifier = "posts"
+  name = "Posts"
+  url = "/posts/"
+  weight = 10
+
+[[menu.main]]
+  identifier = "about"
+  name = "About"
+  url = "/about/"
+  weight = 20
