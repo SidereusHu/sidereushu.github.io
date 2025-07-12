@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Sidereus Hu</title>
+    <link>https://sidereushu.github.io/</link>
+    <description>Recent content on Sidereus Hu</description>
+    <generator>Hugo -- 0.148.0</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 09 Jun 2025 16:57:25 +0800</lastBuildDate>
+    <atom:link href="https://sidereushu.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Notes | What is Quantum Computing? Implications for RSA &amp; ECC</title>
+      <link>https://sidereushu.github.io/posts/crypto-phd%E6%9C%AD%E8%AE%B0%E4%BB%80%E4%B9%88%E6%98%AF%E9%87%8F%E5%AD%90%E8%AE%A1%E7%AE%97%E5%AE%83%E5%AF%B9rsa%E5%92%8Cecc%E6%84%8F%E5%91%B3%E7%9D%80%E4%BB%80%E4%B9%88/</link>
+      <pubDate>Mon, 09 Jun 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/crypto-phd%E6%9C%AD%E8%AE%B0%E4%BB%80%E4%B9%88%E6%98%AF%E9%87%8F%E5%AD%90%E8%AE%A1%E7%AE%97%E5%AE%83%E5%AF%B9rsa%E5%92%8Cecc%E6%84%8F%E5%91%B3%E7%9D%80%E4%BB%80%E4%B9%88/</guid>
+      <description>&lt;p&gt;什么是量子计算？&lt;/p&gt;
+&lt;p&gt;量子计算是利用微观粒子（如光子、电子、原子）的量子态进行信息处理，它基于几个关键原理：叠加、纠缠、相干与不可克隆原理。&lt;/p&gt;
+&lt;p&gt;早在1982年，费曼老师（Richard Feynman）就提出：大自然不是经典的，如果我们想要真正模拟自然界，那必须使用量子系统本身来构建计算工具。原话见下图：$x + y^2- E = mc^2$ 环签名。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>From 3 Cryptography</title>
+      <link>https://sidereushu.github.io/posts/3/</link>
+      <pubDate>Wed, 04 Jun 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/3/</guid>
+      <description>&lt;p&gt;Throughout the evolution of human civilization, the pursuit of computational power has never ceased. From $\underline{mechanical ~computation}$ to $\underline{electronic ~computation}$, we now stand at the dawn of a new era — $\mathbf{on ~the ~verge ~of ~quantum ~computing. }$&lt;/p&gt;
+&lt;p&gt;The core breakthrough of quantum computing does not lie in macro-level advancements such as “faster” transistors or “stronger” chips, but rather in &lt;strong&gt;a paradigm shift from macro to micro&lt;/strong&gt;: it no longer relies on the classical binary of 0 and 1 but leverages the peculiar properties of quantum superposition and entanglement at the particle level to build $\underline{an ~entirely ~new ~computational ~logic}$. This logic cannot be simulated by traditional electronic computers, much like nuclear weapons cannot be replicated with chemical explosives—their energies are simply not on the same scale.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>From 2 Cryptography</title>
+      <link>https://sidereushu.github.io/posts/2/</link>
+      <pubDate>Mon, 02 Jun 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/2/</guid>
+      <description>&lt;p&gt;Throughout the evolution of human civilization, the pursuit of computational power has never ceased. From $\underline{mechanical ~computation}$ to $\underline{electronic ~computation}$, we now stand at the dawn of a new era — $\mathbf{on ~the ~verge ~of ~quantum ~computing. }$&lt;/p&gt;
+&lt;p&gt;The core breakthrough of quantum computing does not lie in macro-level advancements such as “faster” transistors or “stronger” chips, but rather in &lt;strong&gt;a paradigm shift from macro to micro&lt;/strong&gt;: it no longer relies on the classical binary of 0 and 1 but leverages the peculiar properties of quantum superposition and entanglement at the particle level to build $\underline{an ~entirely ~new ~computational ~logic}$. This logic cannot be simulated by traditional electronic computers, much like nuclear weapons cannot be replicated with chemical explosives—their energies are simply not on the same scale.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>From Cryptography</title>
+      <link>https://sidereushu.github.io/posts/1/</link>
+      <pubDate>Mon, 02 Jun 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/1/</guid>
+      <description>&lt;p&gt;Throughout the evolution of human civilization, the pursuit of computational power has never ceased. From $\underline{mechanical ~computation}$ to $\underline{electronic ~computation}$, we now stand at the dawn of a new era — $\mathbf{on ~the ~verge ~of ~quantum ~computing. }$&lt;/p&gt;
+&lt;p&gt;The core breakthrough of quantum computing does not lie in macro-level advancements such as “faster” transistors or “stronger” chips, but rather in &lt;strong&gt;a paradigm shift from macro to micro&lt;/strong&gt;: it no longer relies on the classical binary of 0 and 1 but leverages the peculiar properties of quantum superposition and entanglement at the particle level to build $\underline{an ~entirely ~new ~computational ~logic}$. This logic cannot be simulated by traditional electronic computers, much like nuclear weapons cannot be replicated with chemical explosives—their energies are simply not on the same scale.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>From Macro to Micro - A Computational Revolution Reshaping Cryptography</title>
+      <link>https://sidereushu.github.io/posts/from-macro-to-micro---a-computational-revolution-reshaping-cryptography/</link>
+      <pubDate>Sun, 01 Jun 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/from-macro-to-micro---a-computational-revolution-reshaping-cryptography/</guid>
+      <description>&lt;p&gt;Throughout the evolution of human civilization, the pursuit of computational power has never ceased. From $\underline{mechanical ~computation}$ to $\underline{electronic ~computation}$, we now stand at the dawn of a new era — $\mathbf{on ~the ~verge ~of ~quantum ~computing. }$&lt;/p&gt;
+&lt;p&gt;The core breakthrough of quantum computing does not lie in macro-level advancements such as “faster” transistors or “stronger” chips, but rather in &lt;strong&gt;a paradigm shift from macro to micro&lt;/strong&gt;: it no longer relies on the classical binary of 0 and 1 but leverages the peculiar properties of quantum superposition and entanglement at the particle level to build $\underline{an ~entirely ~new ~computational ~logic}$. This logic cannot be simulated by traditional electronic computers, much like nuclear weapons cannot be replicated with chemical explosives—their energies are simply not on the same scale.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>About Sidereus</title>
+      <link>https://sidereushu.github.io/about/</link>
+      <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>https://sidereushu.github.io/about/</guid>
+      <description>&lt;style&gt;
+.card {
+  max-width: 960px;
+  margin: 2rem auto;
+  padding: 2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 2.5rem;
+  background: #f9f9f9;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  font-family: -apple-system, BlinkMacSystemFont, &#34;Helvetica Neue&#34;, &#34;PingFang SC&#34;, &#34;Microsoft YaHei&#34;, sans-serif;
+}
+.card img {
+  width: 320px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  display: block;
+}
+.card-content {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 邮箱与图片底部对齐关键 */
+  min-height: 100%; /* 保证内容高度撑满父容器 */
+}
+.card-content-inner {
+  display: flex;
+  flex-direction: column;
+}
+.card-content h1 {
+  font-size: 2rem;
+  margin-top: 0;
+  margin-bottom: 0.4rem;
+  word-break: keep-all;
+  text-align: left;
+  white-space: pre;         /* 空格生效，确保左对齐 */
+  font-weight: bold;
+  padding-left: 0;
+}
+.card-content p {
+  margin: 0.35rem 0;
+  font-size: 1.05rem;
+  color: #333;
+  line-height: 1.75;
+}
+.card-content p.intro {
+  margin-bottom: 0.12rem;
+}
+.card-content .founder {
+  margin-bottom: 1.8rem;   /* 增加与Honors间距，邮箱能到底部 */
+}
+.card-content a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+.honor-list {
+  list-style: disc;
+  padding-left: 1.25em;
+  margin: 0.2em 0 1em 0;
+}
+.honor-list li {
+  margin: 0.12em 0;
+  padding-left: 0;
+  text-indent: 0;
+  line-height: 1.3;
+}
+.email-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.13em;
+  margin-top: 0.18em;
+}
+.email-list a {
+  font-size: 1.03rem;
+  text-decoration: none;    /* 去掉下划线 */
+}
+&lt;/style&gt;
+&lt;div class=&#34;card&#34;&gt;
+  &lt;img src=&#34;https://sidereushu.github.io/images/me.jpg&#34; alt=&#34;我的头像&#34;&gt;
+  &lt;div class=&#34;card-content&#34;&gt;
+    &lt;div class=&#34;card-content-inner&#34;&gt;
+      &lt;h1&gt;Dr. Sidereus M. Hu        &lt;/h1&gt;
+      &lt;p class=&#34;intro&#34;&gt;A crypto PhD building the future of trust. Research interests include: Post-Quantum Cryptography, Privacy-Preserving Computation, and Provable Security.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
