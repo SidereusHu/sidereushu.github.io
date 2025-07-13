@@ -23,11 +23,40 @@
 &lt;p&gt;This insight laid the conceptual foundation for building computational tools using quantum systems themselves, rather than relying on classical approximations of quantum behavior.&lt;/p&gt;</description>
     </item>
     <item>
-      <title>Post-Quantum Readiness in Blockchain: Threats, Roadmaps, and Migration Strategy I</title>
-      <link>https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-i/</link>
+      <title>Post-Quantum Readiness in Blockchain - Threats, Roadmaps, and Migration Strategy Ⅱ</title>
+      <link>https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-/</link>
       <pubDate>Mon, 02 Jun 2025 16:57:25 +0800</pubDate>
-      <guid>https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-i/</guid>
-      <description>&lt;h3 id=&#34;bitcoins-security-and-the-threat-from-quantum-computing&#34;&gt;Bitcoin&amp;rsquo;s Security and the Threat from Quantum Computing&lt;/h3&gt;
+      <guid>https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-/</guid>
+      <description>&lt;br&gt;
+&lt;h2 id=&#34;post-quantum-cryptography-pqc&#34;&gt;Post-Quantum Cryptography (PQC)&lt;/h2&gt;
+&lt;p&gt;Post-Quantum Cryptography has become a critical solution to counter the threat posed by scalable, controllable quantum computers to current cryptographic systems.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Urgency of PQC&lt;/strong&gt;: Originates from &lt;strong&gt;Peter Shor’s 1995 algorithm&lt;/strong&gt;, which can factor integers and compute discrete logarithms in polynomial time, effectively breaking mainstream schemes like RSA, DH, and ECC.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;PQC is &lt;strong&gt;not a single algorithm&lt;/strong&gt;, but a set of &lt;strong&gt;parallel technical approaches&lt;/strong&gt;, including:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Lattice-based cryptography&lt;/strong&gt;: The most promising category with well-established theoretical foundations;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Post-Quantum Readiness in Blockchain - Threats, Roadmaps, and Migration Strategy Ⅲ</title>
+      <link>https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-/</link>
+      <pubDate>Mon, 02 Jun 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-/</guid>
+      <description>&lt;br&gt;
+&lt;h2 id=&#34;government-post-quantum-plans-and-timelines&#34;&gt;Government Post-Quantum Plans and Timelines&lt;/h2&gt;
+&lt;p&gt;Governments worldwide are actively responding to the potential massive disruption posed by quantum computers to existing cryptographic systems by formulating strategies for &lt;strong&gt;migration to post-quantum cryptography (PQC)&lt;/strong&gt;.&lt;br&gt;
+As of mid-2025, more than 15 countries and regions have issued official guidance on PQC transition. Most follow the NIST (U.S. National Institute of Standards and Technology) standardization process, while some develop indigenous algorithms independently. The general timeline for transition completion spans &lt;strong&gt;2027 to 2035&lt;/strong&gt;, with &lt;strong&gt;2030&lt;/strong&gt; considered a critical milestone.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Post-Quantum Readiness in Blockchain: Threats, Roadmaps, and Migration Strategy Ⅰ</title>
+      <link>https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-/</link>
+      <pubDate>Mon, 02 Jun 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-/</guid>
+      <description>&lt;br&gt;
+&lt;h3 id=&#34;bitcoins-security-and-the-threat-from-quantum-computing&#34;&gt;Bitcoin&amp;rsquo;s Security and the Threat from Quantum Computing&lt;/h3&gt;
 &lt;p&gt;Bitcoin&amp;rsquo;s security relies on a &lt;strong&gt;cryptographic assumption that has long been considered unbreakable under current technological conditions&lt;/strong&gt;. However, the emergence of quantum computers &lt;strong&gt;could undermine this assumption within the next decade&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;At the core of Bitcoin’s cryptographic foundation are:&lt;/p&gt;
 &lt;ul&gt;
