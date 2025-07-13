@@ -15,7 +15,7 @@
       <guid>https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-/</guid>
       <description>&lt;br&gt;
 &lt;h2 id=&#34;timeline-for-post-quantum-migration&#34;&gt;Timeline for Post-Quantum Migration&lt;/h2&gt;
-&lt;p&gt;According to analysis by Chaincode Labs, Bitcoin’s transition to post-quantum cryptography (PQC) can follow two main strategies: a &lt;strong&gt;short-term contingency plan&lt;/strong&gt; and a &lt;strong&gt;long-term comprehensive path&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;According to analysis by Chaincode Labs, Bitcoin’s transition to post-quantum cryptography (PQC) can follow two main strategies: a &lt;strong&gt;short-term contingency plan&lt;/strong&gt; (cf. Figure 1) and a &lt;strong&gt;long-term comprehensive path&lt;/strong&gt; (cf. Figure 2).&lt;/p&gt;
 &lt;p&gt;The &lt;strong&gt;short-term strategy&lt;/strong&gt; focuses on deploying a basic quantum-resistant option within &lt;strong&gt;1 to 2 years&lt;/strong&gt;, offering a fallback mechanism in case cryptographically relevant quantum computers (CRQCs) emerge sooner than expected. This involves proposing a minimal PQC signature scheme through a BIP, implementing it in Bitcoin Core, and enabling voluntary migration of vulnerable UTXOs. While not optimized for all use cases, it provides immediate protection for at-risk users and critical institutions. Success depends on close coordination across the technical community and early involvement from major Bitcoin holders.&lt;/p&gt;</description>
     </item>
     <item>
