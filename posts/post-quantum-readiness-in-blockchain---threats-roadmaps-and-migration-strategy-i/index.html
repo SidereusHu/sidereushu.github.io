@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Post-Quantum Readiness in Blockchain: _Threats_, _Roadmaps_, and _Migration_ Strategy I | Sidereus Hu</title>
+<meta name="keywords" content="">
+<meta name="description" content="Bitcoin&rsquo;s Security and the Threat from Quantum Computing
+Bitcoin&rsquo;s security relies on a cryptographic assumption that has long been considered unbreakable under current technological conditions. However, the emergence of quantum computers could undermine this assumption within the next decade.
+At the core of Bitcoin’s cryptographic foundation are:
+
+
+the Elliptic Curve Digital Signature Algorithm (ECDSA);
+
+
+and, since 2021, the introduction of Schnorr signatures.
+
+
+Both schemes are based on the Elliptic Curve Discrete Logarithm Problem (ECDLP), which is asymmetric in nature: deriving the public key from a private key is easy, but reversing the process is believed to require trillions of years even on today’s most powerful supercomputers.
+However, in the face of cryptographically relevant quantum computers (CRQCs), this asymmetry may collapse — deriving the private key from the public key could take only hours or days.">
+<meta name="author" content="Sidereus Hu">
+<link rel="canonical" href="https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-i/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.93f625d739f1d6a5c6f20c146bc6a8d26b233492b34b2220c54b12fd46a04ded.css" integrity="sha256-k/Yl1znx1qXG8gwUa8ao0msjNJKzSyIgxUsS/UagTe0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://sidereushu.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://sidereushu.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://sidereushu.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://sidereushu.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://sidereushu.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-i/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+ 
+
+
+<meta property="og:url" content="https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-i/">
+  <meta property="og:site_name" content="Sidereus Hu">
+  <meta property="og:title" content="Post-Quantum Readiness in Blockchain: _Threats_, _Roadmaps_, and _Migration_ Strategy I">
+  <meta property="og:description" content="Bitcoin’s Security and the Threat from Quantum Computing Bitcoin’s security relies on a cryptographic assumption that has long been considered unbreakable under current technological conditions. However, the emergence of quantum computers could undermine this assumption within the next decade.
+At the core of Bitcoin’s cryptographic foundation are:
+the Elliptic Curve Digital Signature Algorithm (ECDSA);
+and, since 2021, the introduction of Schnorr signatures.
+Both schemes are based on the Elliptic Curve Discrete Logarithm Problem (ECDLP), which is asymmetric in nature: deriving the public key from a private key is easy, but reversing the process is believed to require trillions of years even on today’s most powerful supercomputers.
+However, in the face of cryptographically relevant quantum computers (CRQCs), this asymmetry may collapse — deriving the private key from the public key could take only hours or days.">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-06-02T16:57:25+08:00">
+    <meta property="article:modified_time" content="2025-06-02T16:57:25+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Post-Quantum Readiness in Blockchain: _Threats_, _Roadmaps_, and _Migration_ Strategy I">
+<meta name="twitter:description" content="Bitcoin&rsquo;s Security and the Threat from Quantum Computing
+Bitcoin&rsquo;s security relies on a cryptographic assumption that has long been considered unbreakable under current technological conditions. However, the emergence of quantum computers could undermine this assumption within the next decade.
+At the core of Bitcoin’s cryptographic foundation are:
+
+
+the Elliptic Curve Digital Signature Algorithm (ECDSA);
+
+
+and, since 2021, the introduction of Schnorr signatures.
+
+
+Both schemes are based on the Elliptic Curve Discrete Logarithm Problem (ECDLP), which is asymmetric in nature: deriving the public key from a private key is easy, but reversing the process is believed to require trillions of years even on today’s most powerful supercomputers.
+However, in the face of cryptographically relevant quantum computers (CRQCs), this asymmetry may collapse — deriving the private key from the public key could take only hours or days.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://sidereushu.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Post-Quantum Readiness in Blockchain: _Threats_, _Roadmaps_, and _Migration_ Strategy I",
+      "item": "https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-i/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Post-Quantum Readiness in Blockchain: _Threats_, _Roadmaps_, and _Migration_ Strategy I",
+  "name": "Post-Quantum Readiness in Blockchain: _Threats_, _Roadmaps_, and _Migration_ Strategy I",
+  "description": "Bitcoin\u0026rsquo;s Security and the Threat from Quantum Computing Bitcoin\u0026rsquo;s security relies on a cryptographic assumption that has long been considered unbreakable under current technological conditions. However, the emergence of quantum computers could undermine this assumption within the next decade.\nAt the core of Bitcoin’s cryptographic foundation are:\nthe Elliptic Curve Digital Signature Algorithm (ECDSA);\nand, since 2021, the introduction of Schnorr signatures.\nBoth schemes are based on the Elliptic Curve Discrete Logarithm Problem (ECDLP), which is asymmetric in nature: deriving the public key from a private key is easy, but reversing the process is believed to require trillions of years even on today’s most powerful supercomputers.\nHowever, in the face of cryptographically relevant quantum computers (CRQCs), this asymmetry may collapse — deriving the private key from the public key could take only hours or days.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "Bitcoin’s Security and the Threat from Quantum Computing Bitcoin’s security relies on a cryptographic assumption that has long been considered unbreakable under current technological conditions. However, the emergence of quantum computers could undermine this assumption within the next decade.\nAt the core of Bitcoin’s cryptographic foundation are:\nthe Elliptic Curve Digital Signature Algorithm (ECDSA);\nand, since 2021, the introduction of Schnorr signatures.\nBoth schemes are based on the Elliptic Curve Discrete Logarithm Problem (ECDLP), which is asymmetric in nature: deriving the public key from a private key is easy, but reversing the process is believed to require trillions of years even on today’s most powerful supercomputers.\nHowever, in the face of cryptographically relevant quantum computers (CRQCs), this asymmetry may collapse — deriving the private key from the public key could take only hours or days.\nInstitutions such as the U.S. National Institute of Standards and Technology (NIST), the U.S. government, and other international agencies have recommended phasing out elliptic curve cryptography by 2030 and fully deprecating it by 2035.\nPotential Impact of Quantum Computers on Bitcoin Once practical quantum computers become available, their impact on Bitcoin could be profound. According to an analysis by 1:\nApproximately 20% to 50% of all circulating Bitcoin (4 to 10 million BTC) could be at risk of theft;\nThis risk primarily stems from the ability to derive private keys from exposed public keys.\nThe most vulnerable assets include:\nUTXOs that use insecure script types;\nFunds associated with “address reuse”, where the public key has already been revealed;\nExchange and institutional addresses that frequently reuse addresses;\nEarly-era addresses from the Satoshi period, such as those using raw public key scripts;\n“Lost coins”, which remain unmoved and are locked under outdated or unsafe scripts.\nAmong these, high-value exchange and institutional accounts are expected to be top targets for quantum-enabled attackers.\n### Quantum Threats to Bitcoin Mining and Ecosystem Security On the other hand, while quantum computing may also impact Bitcoin mining, its threat is considered limited in the foreseeable future:\nCurrent mining performance is primarily driven by clock frequency;\nQuantum miners would have to compete with highly optimized ASIC machines;\nEven with a quadratic speedup from algorithms like Grover’s, it would still be difficult to outperform classical miners;\nThe hardware performance gap remains significant.\nIf quantum miners were to dominate in the future, potential risks could include:\nDouble-spending attacks by small or solo miners;\nIncreased centralization due to disproportionate mining power.\nAlthough these scenarios remain distant, exploring post-quantum mining models still holds theoretical value and can help prepare for long-term contingencies.\nBeyond Signatures and Mining: Ecosystem-Level Risks In addition to the direct threats to digital signatures and mining, a broader set of ecosystem-level vulnerabilities must also be considered in the post-quantum era:\nFor example: SSL/TLS communication protocols, hardware wallets, and firmware update mechanisms may all be compromised by quantum-capable adversaries. Two Types of Quantum Attack Vectors (Long-Range Attack vs. Short-Range Attack)\nLong-Range Attack: Targets addresses whose public keys are already exposed on-chain, such as P2PK, P2MS, and P2TR. These addresses are permanently vulnerable, as their public keys are visible at all times.\nShort-Range Attack: Targets addresses that only reveal their public keys when spending, such as P2PKH. In this case, the attacker must act within a very short window — between the time a transaction is broadcast (and the public key is exposed) and when it gets confirmed on the blockchain.\nIn short, if the public key of a UTXO is known, quantum adversaries may derive the private key and steal the funds. The difference lies in how and when the public key is exposed:\nSome addresses are “natively exposed”, meaning their public keys are visible from the beginning, and thus remain under long-term attack risk.\nOthers (e.g., P2PKH) only reveal the public key when the coin is spent, offering a very narrow attack window, also known as a “preemptive” or “racing” attack.\nQuantum Vulnerabilities by Script Type The feasibility of quantum attacks depends not only on the existence of CRQCs (Cryptographically Relevant Quantum Computers), but also on whether the corresponding public key is accessible. Therefore, different script types present different levels of vulnerability. Below is a classification by script type:\n🔴 Immediate Vulnerability P2PK (Pay to Public Key): The earliest script type, which directly exposes the ECDSA public key in the locking script. Though it accounts for only ~0.025% of UTXOs, it secures ~8.68% of all BTC (~1.72 million BTC) — largely associated with early Satoshi-era wallets.\nP2MS (Pay to MultiSig): A script type that exposes multiple public keys. Now rarely used and secures a relatively small amount of BTC.\nP2TR (Pay to Taproot): Despite being a modern script, its key-path spending still reveals a tweaked public key, making it vulnerable to quantum attacks. P2TR makes up ~32.5% of UTXOs but secures only ~0.74% of BTC.\n🟡 On-Spend Vulnerable Script Types P2PK, P2MS, and P2TR are classified as “immediately vulnerable” because they expose public keys directly in the output script (scriptPubKey).\nHowever, some script types do not reveal the public key until the coin is spent. These are vulnerable only during the short window between transaction broadcast and confirmation.\n🟠 Address Reuse Vulnerability Script types such as P2PKH, P2SH, P2WPKH, and P2WSH only expose public keys at the time of spending, meaning the key is normally revealed once.\nBut if the same address (i.e., the same public key) is reused, the associated public key remains permanently exposed on-chain, turning a short-range attack surface into a long-range attack vector.\n🟣 Other Avenues for Public Key Exposure 1. Fork Chain Exposure If a user spends an unspent UTXO on a Bitcoin fork chain (e.g., Bitcoin Cash, Bitcoin Gold), the public key becomes exposed on the fork — even though the UTXO remains unspent on the Bitcoin mainnet.\nThus, the corresponding UTXO on the mainnet becomes a long-term quantum target.\n2. Leaked Extended Public Keys (xpubs) xpubs are used in Hierarchical Deterministic (HD) wallets, enabling address generation without revealing private keys.\nIf an xpub is leaked, all non-hardened child public keys derived from it can have their private keys recovered by quantum computers.\n3. Public Key Exposure in Multi-Sig \u0026 Lightning Network In multi-signature wallets and Lightning Network channels, participants must share their public keys to construct transactions or payment channels.\nAlthough these public keys are not broadly public, they are shared within limited parties, and thus may be exploited by insiders or malicious actors.\nEcosystem Vulnerabilities Once elliptic curve cryptography (ECC) is broken by quantum computers, the impact will go far beyond Bitcoin — potentially compromising the entire Internet cryptographic infrastructure.\nCore protocols like SSL/TLS could become insecure, leading to ecosystem-level attacks such as man-in-the-middle (MITM) attacks, where adversaries intercept and redirect user requests:\nMITM attacks: By compromising SSL/TLS, attackers can forge connections to exchanges and hijack funds.\nHardware wallet updates: Firmware updates may be tampered with, silently embedding backdoors.\nMining pool impersonation: Attackers may masquerade as miners to infiltrate mining pools.\nDNS attacks: Redirecting users to malicious nodes through DNS manipulation.\nAPI attacks: Tampering with third-party APIs widely used by wallets and exchanges.\nThese threats are stealthier than direct cryptographic breakage, potentially remaining undetected for extended periods due to their ecosystem-level obfuscation.\nBitcoin Hash Functions and Grover’s Algorithm Bitcoin relies on two hash functions: SHA-256 and RIPEMD-160, used for:\nMining (double SHA-256 on block headers)\nGenerating transaction IDs\nSigning messages\nDeriving addresses from public keys (Hash160)\nQuantum Resistance of Hash Functions The fundamental property of hash functions is irreversibility.\nEven the world’s most powerful supercomputers (e.g., El Capitan, as of Nov 2024) would require far more time to break them than to crack ECC.\nGrover’s algorithm offers a quadratic speedup for brute-forcing hash functions:\nClassical attack complexity: O(N)O(N)\nQuantum attack complexity: O(N)O(N​)\nFor example, finding a SHA-256 collision classically requires 22562256 operations.\nWith Grover’s algorithm, this is reduced to 21282128, which is still computationally infeasible without extremely powerful quantum computer.\n## Impact on Bitcoin Mining The essence of Bitcoin mining is to find a nonce value that makes the block header’s hash lower than the network difficulty target.\nThis process involves repeated SHA-256 computations, currently performed almost exclusively by ASIC hardware.\n1. Limitations of Quantum Mining Grover’s algorithm provides sequential, not parallel, speedup, which leads to key limitations:\nIt cannot scale in parallel like classical mining does; adding more quantum hardware does not linearly increasehash power.\nCompeting with ASICs would require a large number of high-speed quantum machines, making deployment extremely costly.\n2. Network Difficulty Adjustment Bitcoin dynamically adjusts its mining difficulty every 2016 blocks to maintain a block interval of ~10 minutes.\nIf quantum mining is introduced, the protocol will increase the difficulty accordingly, which would further offset any advantage from Grover’s algorithm.\nForks and the 51% Attack 1. Quantum-Induced Forking Risk Research shows that quantum mining could increase the frequency of blockchain forks:\nWhen one miner finds a valid block, other quantum miners must decide whether to continue or restart their computation.\nSimultaneous quantum measurements by multiple miners increase the chance that multiple valid blocks are found at the same time, causing forks.\n2. Security Concerns In a high-fork environment:\nHonest miners’ hash power gets split across multiple chains;\nAdversaries can concentrate their resources on attacking one chain, potentially gaining dominance without owning 51% of total hash power.\nThis reduces finality and consensus stability, and significantly increases the attack surface.\nComprehensive Quantum Vulnerability Assessment of Bitcoin Component Quantum Threat Resistance Level ECC Signatures Critical risk (Shor’s algorithm) Very Low Hash Functions Moderate risk (Grover’s algorithm) Relatively High Mining Mechanism Efficiency impacted but adjustable Medium Ecosystem Attacks High risk (SSL, DNS, APIs) Depends on external mitigation Fork Security Potentially severe (more frequent forks) Low ## References Chaincode Labs. Bitcoin and Quantum Computing: Current Status and Future Directions. ↩︎\n",
+  "wordCount" : "1622",
+  "inLanguage": "zh",
+  "datePublished": "2025-06-02T16:57:25+08:00",
+  "dateModified": "2025-06-02T16:57:25+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "Sidereus Hu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-i/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sidereus Hu",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sidereushu.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://sidereushu.github.io/" accesskey="h" title="Sidereus Hu (Alt + H)">Sidereus Hu</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://sidereushu.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://sidereushu.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Post-Quantum Readiness in Blockchain: _Threats_, _Roadmaps_, and _Migration_ Strategy I
+    </h1>
+    <div class="post-meta"><span title='2025-06-02 16:57:25 +0800 CST'>2025-06-02</span>&nbsp;·&nbsp;Sidereus Hu
+
+</div>
+  </header> 
+  <div class="post-content"><h3 id="bitcoins-security-and-the-threat-from-quantum-computing">Bitcoin&rsquo;s Security and the Threat from Quantum Computing<a hidden class="anchor" aria-hidden="true" href="#bitcoins-security-and-the-threat-from-quantum-computing">#</a></h3>
+<p>Bitcoin&rsquo;s security relies on a <strong>cryptographic assumption that has long been considered unbreakable under current technological conditions</strong>. However, the emergence of quantum computers <strong>could undermine this assumption within the next decade</strong>.</p>
+<p>At the core of Bitcoin’s cryptographic foundation are:</p>
+<ul>
+<li>
+<p>the <strong>Elliptic Curve Digital Signature Algorithm (ECDSA)</strong>;</p>
+</li>
+<li>
+<p>and, since 2021, the introduction of <strong>Schnorr signatures</strong>.</p>
+</li>
+</ul>
+<p>Both schemes are based on the <strong>Elliptic Curve Discrete Logarithm Problem (ECDLP)</strong>, which is <strong>asymmetric</strong> in nature: deriving the public key from a private key is easy, but reversing the process is believed to require trillions of years even on today’s most powerful supercomputers.<br>
+However, in the face of <strong>cryptographically relevant quantum computers (CRQCs)</strong>, this asymmetry may collapse — <strong>deriving the private key from the public key could take only hours or days</strong>.</p>
+<p>Institutions such as the <strong>U.S. National Institute of Standards and Technology (NIST)</strong>, the <strong>U.S. government</strong>, and other international agencies have recommended <strong>phasing out elliptic curve cryptography by 2030</strong> and <strong>fully deprecating it by 2035</strong>.</p>
+<br>
+<h3 id="potential-impact-of-quantum-computers-on-bitcoin">Potential Impact of Quantum Computers on Bitcoin<a hidden class="anchor" aria-hidden="true" href="#potential-impact-of-quantum-computers-on-bitcoin">#</a></h3>
+<p>Once practical quantum computers become available, their impact on Bitcoin could be profound. According to an analysis by <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>:</p>
+<ul>
+<li>
+<p>Approximately <strong>20% to 50% of all circulating Bitcoin (4 to 10 million BTC)</strong> could be at risk of theft;</p>
+</li>
+<li>
+<p>This risk primarily stems from the ability to <strong>derive private keys from exposed public keys</strong>.</p>
+</li>
+</ul>
+<p>The most vulnerable assets include:</p>
+<ul>
+<li>
+<p>UTXOs that use <strong>insecure script types</strong>;</p>
+</li>
+<li>
+<p>Funds associated with <strong>“address reuse”</strong>, where the public key has already been revealed;</p>
+</li>
+<li>
+<p><strong>Exchange and institutional addresses</strong> that frequently reuse addresses;</p>
+</li>
+<li>
+<p><strong>Early-era addresses from the Satoshi period</strong>, such as those using raw public key scripts;</p>
+</li>
+<li>
+<p><strong>“Lost coins”</strong>, which remain unmoved and are locked under outdated or unsafe scripts.</p>
+</li>
+</ul>
+<p>Among these, <strong>high-value exchange and institutional accounts</strong> are expected to be <strong>top targets for quantum-enabled attackers</strong>.</p>
+<br>
+### Quantum Threats to Bitcoin Mining and Ecosystem Security
+<p>On the other hand, while quantum computing may also impact <strong>Bitcoin mining</strong>, its threat is <strong>considered limited in the foreseeable future</strong>:</p>
+<ul>
+<li>
+<p>Current mining performance is primarily driven by <strong>clock frequency</strong>;</p>
+</li>
+<li>
+<p>Quantum miners would have to <strong>compete with highly optimized ASIC machines</strong>;</p>
+</li>
+<li>
+<p>Even with a <strong>quadratic speedup</strong> from algorithms like <strong>Grover’s</strong>, it would still be difficult to outperform classical miners;</p>
+</li>
+<li>
+<p>The <strong>hardware performance gap remains significant</strong>.</p>
+</li>
+</ul>
+<p>If quantum miners were to dominate in the future, potential risks could include:</p>
+<ul>
+<li>
+<p><strong>Double-spending attacks</strong> by small or solo miners;</p>
+</li>
+<li>
+<p><strong>Increased centralization</strong> due to disproportionate mining power.</p>
+</li>
+</ul>
+<p>Although these scenarios remain distant, exploring <strong>post-quantum mining models</strong> still holds theoretical value and can help prepare for long-term contingencies.</p>
+<hr>
+<h3 id="beyond-signatures-and-mining-ecosystem-level-risks">Beyond Signatures and Mining: Ecosystem-Level Risks<a hidden class="anchor" aria-hidden="true" href="#beyond-signatures-and-mining-ecosystem-level-risks">#</a></h3>
+<p>In addition to the direct threats to <strong>digital signatures</strong> and <strong>mining</strong>, a broader set of <strong>ecosystem-level vulnerabilities</strong> must also be considered in the post-quantum era:</p>
+<ul>
+<li>For example: <strong>SSL/TLS communication protocols</strong>, <strong>hardware wallets</strong>, and <strong>firmware update mechanisms</strong> may all be compromised by quantum-capable adversaries.
+<br></li>
+</ul>
+<h3 id="two-types-of-quantum-attack-vectors">Two Types of Quantum Attack Vectors<a hidden class="anchor" aria-hidden="true" href="#two-types-of-quantum-attack-vectors">#</a></h3>
+<p>(<strong>Long-Range Attack vs. Short-Range Attack</strong>)</p>
+<ul>
+<li>
+<p><strong>Long-Range Attack</strong>: Targets addresses whose <strong>public keys are already exposed on-chain</strong>, such as P2PK, P2MS, and P2TR. These addresses are <strong>permanently vulnerable</strong>, as their public keys are visible at all times.</p>
+</li>
+<li>
+<p><strong>Short-Range Attack</strong>: Targets addresses that <strong>only reveal their public keys when spending</strong>, such as P2PKH. In this case, the attacker must act within a <strong>very short window</strong> — between the time a transaction is broadcast (and the public key is exposed) and when it gets confirmed on the blockchain.</p>
+</li>
+</ul>
+<blockquote>
+<p>In short, <strong>if the public key of a UTXO is known</strong>, quantum adversaries may derive the private key and steal the funds. The difference lies in <strong>how and when the public key is exposed</strong>:</p></blockquote>
+<ul>
+<li>
+<p>Some addresses are <strong>“natively exposed”</strong>, meaning their public keys are visible from the beginning, and thus remain under <strong>long-term attack risk</strong>.</p>
+</li>
+<li>
+<p>Others (e.g., P2PKH) <strong>only reveal the public key when the coin is spent</strong>, offering a <strong>very narrow attack window</strong>, also known as a <strong>&ldquo;preemptive&rdquo; or &ldquo;racing&rdquo; attack</strong>.</p>
+</li>
+</ul>
+<br>
+<h3 id="quantum-vulnerabilities-by-script-type">Quantum Vulnerabilities by Script Type<a hidden class="anchor" aria-hidden="true" href="#quantum-vulnerabilities-by-script-type">#</a></h3>
+<blockquote>
+<p>The feasibility of quantum attacks depends not only on the existence of CRQCs (Cryptographically Relevant Quantum Computers), but also on whether the corresponding <strong>public key is accessible</strong>. Therefore, different script types present different levels of vulnerability. Below is a classification by script type:</p></blockquote>
+<hr>
+<h3 id="-immediate-vulnerability">🔴 Immediate Vulnerability<a hidden class="anchor" aria-hidden="true" href="#-immediate-vulnerability">#</a></h3>
+<ul>
+<li>
+<p><strong>P2PK (Pay to Public Key)</strong>: The earliest script type, which directly exposes the ECDSA public key in the locking script. Though it accounts for only ~0.025% of UTXOs, it secures <strong>~8.68% of all BTC (~1.72 million BTC)</strong> — largely associated with early Satoshi-era wallets.</p>
+</li>
+<li>
+<p><strong>P2MS (Pay to MultiSig)</strong>: A script type that exposes multiple public keys. Now rarely used and secures a relatively small amount of BTC.</p>
+</li>
+<li>
+<p><strong>P2TR (Pay to Taproot)</strong>: Despite being a modern script, its <strong>key-path spending still reveals a tweaked public key</strong>, making it vulnerable to quantum attacks. P2TR makes up ~32.5% of UTXOs but secures only ~0.74% of BTC.</p>
+</li>
+</ul>
+<hr>
+<h3 id="-on-spend-vulnerable-script-types">🟡 On-Spend Vulnerable Script Types<a hidden class="anchor" aria-hidden="true" href="#-on-spend-vulnerable-script-types">#</a></h3>
+<blockquote>
+<p>P2PK, P2MS, and P2TR are classified as <strong>“immediately vulnerable”</strong> because they expose public keys directly in the output script (<code>scriptPubKey</code>).<br>
+However, some script types <strong>do not reveal the public key until the coin is spent</strong>. These are vulnerable only during the short window <strong>between transaction broadcast and confirmation</strong>.</p></blockquote>
+<hr>
+<h3 id="-address-reuse-vulnerability">🟠 Address Reuse Vulnerability<a hidden class="anchor" aria-hidden="true" href="#-address-reuse-vulnerability">#</a></h3>
+<blockquote>
+<p>Script types such as <strong>P2PKH</strong>, <strong>P2SH</strong>, <strong>P2WPKH</strong>, and <strong>P2WSH</strong> only expose public keys <strong>at the time of spending</strong>, meaning the key is normally revealed once.<br>
+But if the same address (i.e., the same public key) is <strong>reused</strong>, the associated public key remains <strong>permanently exposed</strong> on-chain, turning a <strong>short-range attack</strong> surface into a <strong>long-range attack</strong> vector.</p></blockquote>
+<hr>
+<h3 id="-other-avenues-for-public-key-exposure">🟣 Other Avenues for Public Key Exposure<a hidden class="anchor" aria-hidden="true" href="#-other-avenues-for-public-key-exposure">#</a></h3>
+<h4 id="1-fork-chain-exposure">1. Fork Chain Exposure<a hidden class="anchor" aria-hidden="true" href="#1-fork-chain-exposure">#</a></h4>
+<blockquote>
+<p>If a user spends an unspent UTXO on a <strong>Bitcoin fork chain</strong> (e.g., Bitcoin Cash, Bitcoin Gold), the public key becomes exposed on the fork — even though the UTXO remains unspent on the Bitcoin mainnet.<br>
+Thus, the corresponding UTXO on the mainnet becomes a <strong>long-term quantum target</strong>.</p></blockquote>
+<h4 id="2-leaked-extended-public-keys-xpubs">2. Leaked Extended Public Keys (xpubs)<a hidden class="anchor" aria-hidden="true" href="#2-leaked-extended-public-keys-xpubs">#</a></h4>
+<blockquote>
+<p><code>xpubs</code> are used in <strong>Hierarchical Deterministic (HD) wallets</strong>, enabling address generation without revealing private keys.<br>
+If an <code>xpub</code> is leaked, all <strong>non-hardened child public keys</strong> derived from it can have their <strong>private keys recovered</strong> by quantum computers.</p></blockquote>
+<h4 id="3-public-key-exposure-in-multi-sig--lightning-network">3. Public Key Exposure in Multi-Sig &amp; Lightning Network<a hidden class="anchor" aria-hidden="true" href="#3-public-key-exposure-in-multi-sig--lightning-network">#</a></h4>
+<blockquote>
+<p>In <strong>multi-signature wallets</strong> and <strong>Lightning Network</strong> channels, participants must share their public keys to construct transactions or payment channels.<br>
+Although these public keys are not broadly public, they are <strong>shared within limited parties</strong>, and thus may be <strong>exploited by insiders or malicious actors</strong>.</p></blockquote>
+<br>
+<h2 id="ecosystem-vulnerabilities">Ecosystem Vulnerabilities<a hidden class="anchor" aria-hidden="true" href="#ecosystem-vulnerabilities">#</a></h2>
+<p>Once <strong>elliptic curve cryptography (ECC)</strong> is broken by quantum computers, the impact will go far beyond Bitcoin — potentially compromising the <strong>entire Internet cryptographic infrastructure</strong>.<br>
+Core protocols like <strong>SSL/TLS</strong> could become insecure, leading to <strong>ecosystem-level attacks</strong> such as <strong>man-in-the-middle (MITM) attacks</strong>, where adversaries intercept and redirect user requests:</p>
+<ul>
+<li>
+<p><strong>MITM attacks</strong>: By compromising SSL/TLS, attackers can forge connections to exchanges and <strong>hijack funds</strong>.</p>
+</li>
+<li>
+<p><strong>Hardware wallet updates</strong>: Firmware updates may be <strong>tampered with</strong>, silently embedding backdoors.</p>
+</li>
+<li>
+<p><strong>Mining pool impersonation</strong>: Attackers may <strong>masquerade as miners</strong> to infiltrate mining pools.</p>
+</li>
+<li>
+<p><strong>DNS attacks</strong>: Redirecting users to <strong>malicious nodes</strong> through DNS manipulation.</p>
+</li>
+<li>
+<p><strong>API attacks</strong>: Tampering with third-party APIs widely used by <strong>wallets and exchanges</strong>.</p>
+</li>
+</ul>
+<p>These threats are <strong>stealthier than direct cryptographic breakage</strong>, potentially remaining undetected for extended periods due to their <strong>ecosystem-level obfuscation</strong>.</p>
+<hr>
+<h2 id="bitcoin-hash-functions-and-grovers-algorithm">Bitcoin Hash Functions and Grover’s Algorithm<a hidden class="anchor" aria-hidden="true" href="#bitcoin-hash-functions-and-grovers-algorithm">#</a></h2>
+<p>Bitcoin relies on two hash functions: <strong>SHA-256</strong> and <strong>RIPEMD-160</strong>, used for:</p>
+<ul>
+<li>
+<p>Mining (double SHA-256 on block headers)</p>
+</li>
+<li>
+<p>Generating transaction IDs</p>
+</li>
+<li>
+<p>Signing messages</p>
+</li>
+<li>
+<p>Deriving addresses from public keys (<code>Hash160</code>)</p>
+</li>
+</ul>
+<h3 id="quantum-resistance-of-hash-functions">Quantum Resistance of Hash Functions<a hidden class="anchor" aria-hidden="true" href="#quantum-resistance-of-hash-functions">#</a></h3>
+<p>The fundamental property of hash functions is <strong>irreversibility</strong>.<br>
+Even the world’s most powerful supercomputers (e.g., <em>El Capitan</em>, as of Nov 2024) would require far more time to break them than to crack ECC.</p>
+<p><strong>Grover’s algorithm</strong> offers a <strong>quadratic speedup</strong> for brute-forcing hash functions:</p>
+<ul>
+<li>
+<p>Classical attack complexity: O(N)O(N)</p>
+</li>
+<li>
+<p>Quantum attack complexity: O(N)O(N​)</p>
+</li>
+</ul>
+<p>For example, <strong>finding a SHA-256 collision</strong> classically requires 22562256 operations.<br>
+With Grover’s algorithm, this is reduced to 21282128, which is still computationally infeasible without <strong>extremely powerful quantum computer</strong>.</p>
+<br>
+## Impact on Bitcoin Mining
+<p>The essence of Bitcoin mining is to <strong>find a nonce value</strong> that makes the block header&rsquo;s hash lower than the network difficulty target.<br>
+This process involves repeated <strong>SHA-256 computations</strong>, currently performed almost exclusively by <strong>ASIC hardware</strong>.</p>
+<hr>
+<h3 id="1limitations-of-quantum-mining">1. <strong>Limitations of Quantum Mining</strong><a hidden class="anchor" aria-hidden="true" href="#1limitations-of-quantum-mining">#</a></h3>
+<p><strong>Grover’s algorithm provides sequential, not parallel, speedup</strong>, which leads to key limitations:</p>
+<ul>
+<li>
+<p>It <strong>cannot scale in parallel</strong> like classical mining does; adding more quantum hardware does <strong>not linearly increase</strong>hash power.</p>
+</li>
+<li>
+<p>Competing with ASICs would require <strong>a large number of high-speed quantum machines</strong>, making deployment <strong>extremely costly</strong>.</p>
+</li>
+</ul>
+<hr>
+<h3 id="2-network-difficulty-adjustment">2. Network Difficulty Adjustment<a hidden class="anchor" aria-hidden="true" href="#2-network-difficulty-adjustment">#</a></h3>
+<p>Bitcoin dynamically adjusts its mining difficulty <strong>every 2016 blocks</strong> to maintain a block interval of ~10 minutes.<br>
+If quantum mining is introduced, the protocol will <strong>increase the difficulty accordingly</strong>, which would further <strong>offset any advantage</strong> from Grover’s algorithm.</p>
+<hr>
+<h2 id="forks-and-the-51-attack">Forks and the 51% Attack<a hidden class="anchor" aria-hidden="true" href="#forks-and-the-51-attack">#</a></h2>
+<h3 id="1quantum-induced-forking-risk">1. <strong>Quantum-Induced Forking Risk</strong><a hidden class="anchor" aria-hidden="true" href="#1quantum-induced-forking-risk">#</a></h3>
+<p>Research shows that quantum mining could <strong>increase the frequency of blockchain forks</strong>:</p>
+<ul>
+<li>
+<p>When one miner finds a valid block, other quantum miners must decide whether to <strong>continue or restart their computation</strong>.</p>
+</li>
+<li>
+<p><strong>Simultaneous quantum measurements</strong> by multiple miners increase the chance that <strong>multiple valid blocks are found at the same time</strong>, causing <strong>forks</strong>.</p>
+</li>
+</ul>
+<hr>
+<h3 id="2security-concerns">2. <strong>Security Concerns</strong><a hidden class="anchor" aria-hidden="true" href="#2security-concerns">#</a></h3>
+<p>In a high-fork environment:</p>
+<ul>
+<li>
+<p>Honest miners&rsquo; hash power gets <strong>split across multiple chains</strong>;</p>
+</li>
+<li>
+<p>Adversaries can <strong>concentrate their resources</strong> on attacking one chain, potentially gaining dominance <strong>without owning 51% of total hash power</strong>.</p>
+</li>
+</ul>
+<p>This reduces <strong>finality</strong> and <strong>consensus stability</strong>, and significantly <strong>increases the attack surface</strong>.</p>
+<hr>
+<h2 id="comprehensive-quantum-vulnerability-assessment-of-bitcoin">Comprehensive Quantum Vulnerability Assessment of Bitcoin<a hidden class="anchor" aria-hidden="true" href="#comprehensive-quantum-vulnerability-assessment-of-bitcoin">#</a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Component</th>
+          <th>Quantum Threat</th>
+          <th>Resistance Level</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>ECC Signatures</strong></td>
+          <td>Critical risk <em>(Shor&rsquo;s algorithm)</em></td>
+          <td>Very Low</td>
+      </tr>
+      <tr>
+          <td><strong>Hash Functions</strong></td>
+          <td>Moderate risk <em>(Grover&rsquo;s algorithm)</em></td>
+          <td>Relatively High</td>
+      </tr>
+      <tr>
+          <td><strong>Mining Mechanism</strong></td>
+          <td>Efficiency impacted but adjustable</td>
+          <td>Medium</td>
+      </tr>
+      <tr>
+          <td><strong>Ecosystem Attacks</strong></td>
+          <td>High risk <em>(SSL, DNS, APIs)</em></td>
+          <td>Depends on external mitigation</td>
+      </tr>
+      <tr>
+          <td><strong>Fork Security</strong></td>
+          <td>Potentially severe <em>(more frequent forks)</em></td>
+          <td>Low</td>
+      </tr>
+  </tbody>
+</table>
+<br>
+## References
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>Chaincode Labs. <em>Bitcoin and Quantum Computing: Current Status and Future Directions</em>.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://sidereushu.github.io/">Sidereus Hu</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
