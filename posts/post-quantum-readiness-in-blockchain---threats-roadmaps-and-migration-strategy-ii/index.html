@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Post-Quantum Readiness in Blockchain - Threats, Roadmaps, and Migration Strategy II | Sidereus Hu</title>
+<meta name="keywords" content="">
+<meta name="description" content="
+Post-Quantum Cryptography (PQC)
+Post-Quantum Cryptography has become a critical solution to counter the threat posed by scalable, controllable quantum computers to current cryptographic systems.
+
+
+Urgency of PQC: Originates from Peter Shor’s 1995 algorithm, which can factor integers and compute discrete logarithms in polynomial time, effectively breaking mainstream schemes like RSA, DH, and ECC.
+
+
+PQC is not a single algorithm, but a set of parallel technical approaches, including:
+
+
+Lattice-based cryptography: The most promising category with well-established theoretical foundations;">
+<meta name="author" content="Sidereus Hu">
+<link rel="canonical" href="https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-ii/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.93f625d739f1d6a5c6f20c146bc6a8d26b233492b34b2220c54b12fd46a04ded.css" integrity="sha256-k/Yl1znx1qXG8gwUa8ao0msjNJKzSyIgxUsS/UagTe0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://sidereushu.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://sidereushu.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://sidereushu.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://sidereushu.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://sidereushu.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-ii/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+ 
+
+
+<meta property="og:url" content="https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-ii/">
+  <meta property="og:site_name" content="Sidereus Hu">
+  <meta property="og:title" content="Post-Quantum Readiness in Blockchain - Threats, Roadmaps, and Migration Strategy II">
+  <meta property="og:description" content="
+Post-Quantum Cryptography (PQC) Post-Quantum Cryptography has become a critical solution to counter the threat posed by scalable, controllable quantum computers to current cryptographic systems.
+Urgency of PQC: Originates from Peter Shor’s 1995 algorithm, which can factor integers and compute discrete logarithms in polynomial time, effectively breaking mainstream schemes like RSA, DH, and ECC.
+PQC is not a single algorithm, but a set of parallel technical approaches, including:
+Lattice-based cryptography: The most promising category with well-established theoretical foundations;">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-07-12T16:57:25+08:00">
+    <meta property="article:modified_time" content="2025-07-12T16:57:25+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Post-Quantum Readiness in Blockchain - Threats, Roadmaps, and Migration Strategy II">
+<meta name="twitter:description" content="
+Post-Quantum Cryptography (PQC)
+Post-Quantum Cryptography has become a critical solution to counter the threat posed by scalable, controllable quantum computers to current cryptographic systems.
+
+
+Urgency of PQC: Originates from Peter Shor’s 1995 algorithm, which can factor integers and compute discrete logarithms in polynomial time, effectively breaking mainstream schemes like RSA, DH, and ECC.
+
+
+PQC is not a single algorithm, but a set of parallel technical approaches, including:
+
+
+Lattice-based cryptography: The most promising category with well-established theoretical foundations;">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://sidereushu.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Post-Quantum Readiness in Blockchain - Threats, Roadmaps, and Migration Strategy II",
+      "item": "https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-ii/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Post-Quantum Readiness in Blockchain - Threats, Roadmaps, and Migration Strategy II",
+  "name": "Post-Quantum Readiness in Blockchain - Threats, Roadmaps, and Migration Strategy II",
+  "description": "\nPost-Quantum Cryptography (PQC) Post-Quantum Cryptography has become a critical solution to counter the threat posed by scalable, controllable quantum computers to current cryptographic systems.\nUrgency of PQC: Originates from Peter Shor’s 1995 algorithm, which can factor integers and compute discrete logarithms in polynomial time, effectively breaking mainstream schemes like RSA, DH, and ECC.\nPQC is not a single algorithm, but a set of parallel technical approaches, including:\nLattice-based cryptography: The most promising category with well-established theoretical foundations;\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "\nPost-Quantum Cryptography (PQC) Post-Quantum Cryptography has become a critical solution to counter the threat posed by scalable, controllable quantum computers to current cryptographic systems.\nUrgency of PQC: Originates from Peter Shor’s 1995 algorithm, which can factor integers and compute discrete logarithms in polynomial time, effectively breaking mainstream schemes like RSA, DH, and ECC.\nPQC is not a single algorithm, but a set of parallel technical approaches, including:\nLattice-based cryptography: The most promising category with well-established theoretical foundations;\nHash-based signatures: Such as SPHINCS+, offering strong security but large signature sizes;\nCode-based cryptography: Examples include BIKE and McEliece, characterized by very large keys;\nIsogeny-based cryptography: Such as SIKE, featuring compact structures but recently subject to severe cryptanalytic attacks;\nMultivariate polynomial cryptography: Like Rainbow, which is vulnerable to algebraic attacks.\nThese schemes differ greatly in practical terms, especially regarding:\nKey and signature sizes;\nSigning and verification efficiency;\nMaturity of design and security evaluation;\nSensitivity to block size and verification efficiency in applications like Bitcoin. PQC Algorithm Analysis in the Bitcoin Context To evaluate the suitability of PQC algorithms for Bitcoin, we compare their public key/signature sizes and computational efficiency against the current ECDSA and Schnorr signature schemes[^ChainCodeReport].\nBased on data aggregated from BIP-360 1and the PQ Signatures Zoo, the summary is as follows:\nHash-based signatures (e.g., SPHINCS+): Very small public keys but the largest signatures;\nLattice-based signatures (e.g., FALCON and CRYSTALS-Dilithium): Achieve a good balance between public key and signature sizes;\nIsogeny-based signatures (e.g., SQIsign): Smallest signatures and relatively small public keys, but slow and not yet widely vetted.\nThe overall trend indicates PQC technologies are still evolving, with room for improvement in signature size, public key size, and signing/verification efficiency.\nTherefore, locking in a specific scheme too early is suboptimal; a more rational strategy is to monitor developments continuously and maintain compatibility in design.\nMetric ECC (Schnorr) SPHINCS+ CRYSTALS-Dilithium FALCON SQIsign Signature Size ~64 bytes ~8–17 KB ~2–3 KB ~0.5–1 KB ~100–300 bytes Public Key Size ~32 bytes ~32 bytes ~1.3 KB ~800 bytes ~200 bytes Signing Time Fast Slow Medium Fast Slow Security Maturity High High High Medium Low Suitable for Bitcoin? ✅ ❌ ⚠️ ✅ ❌ NIST Post-Quantum Standardization Process To address the long-term threat posed by quantum computing to existing cryptographic standards, NIST launched the Post-Quantum Cryptography (PQC) standardization process in December 2016. This initiative builds on foundational research from PQCrypto conferences (since 2006) and multiple projects in the EU, Japan (e.g., SAFEcrypto, CREST).\nThe process is globally open, collecting algorithm submissions, conducting public testing and academic review, with the goal to publish algorithms resistant to both classical and quantum attacks. As of March 2025, NIST has officially released the following standards:\nFIPS 203: Encryption algorithm standards (non-signature);\nFIPS 204: Module Lattice Signature Standard (ML-DSA) based on CRYSTALS-Dilithium;\nFIPS 205: Stateless Hash-Based Signature Standard (SLH-DSA) based on SPHINCS+;\nFIPS 206: NTRU-based Fast Fourier Lattice Signature (FN-DSA) based on FALCON, draft expected in 2025.\nAdditionally, another candidate, the LPN-based HQC key encapsulation algorithm, is expected to complete review by 2026 before draft release NIS25.\nNIST’s Main Signature Schemes (Current Status) FIPS # Name Underlying Algorithm Features Suitable for Bitcoin? FIPS 204 ML-DSA Dilithium Secure, balanced, easy to deploy ✅ FIPS 205 SLH-DSA SPHINCS+ Extremely secure but bulky ❌ FIPS 206 FN-DSA FALCON Compact, efficient but numerically unstable ✅ (requires floating-point stability improvements) Dilithium is currently the most balanced scheme and is widely adopted by Google and Cloudflare;\nFALCON is attractive for Bitcoin due to its compactness and speed, but its floating-point implementation complexity introduces side-channel risks;\nSPHINCS+ is mainly used for ultra-high security scenarios (e.g., backup signatures, critical firmware signing), and is unsuitable for high-frequency signing.\nReferences H. Beast. BIP-360: QuBit - Pay to Quantum Resistant Hash. Bitcoin Improvement Proposal (BIP) Pull Request 1670. September 2024. ↩︎\n",
+  "wordCount" : "626",
+  "inLanguage": "zh",
+  "datePublished": "2025-07-12T16:57:25+08:00",
+  "dateModified": "2025-07-12T16:57:25+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "Sidereus Hu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sidereushu.github.io/posts/post-quantum-readiness-in-blockchain---threats-roadmaps-and-migration-strategy-ii/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sidereus Hu",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sidereushu.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://sidereushu.github.io/" accesskey="h" title="Sidereus Hu (Alt + H)">Sidereus Hu</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://sidereushu.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://sidereushu.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Post-Quantum Readiness in Blockchain - Threats, Roadmaps, and Migration Strategy II
+    </h1>
+    <div class="post-meta"><span title='2025-07-12 16:57:25 +0800 CST'>2025-07-12</span>&nbsp;·&nbsp;Sidereus Hu
+
+</div>
+  </header> 
+  <div class="post-content"><br>
+<h2 id="post-quantum-cryptography-pqc">Post-Quantum Cryptography (PQC)<a hidden class="anchor" aria-hidden="true" href="#post-quantum-cryptography-pqc">#</a></h2>
+<p>Post-Quantum Cryptography has become a critical solution to counter the threat posed by scalable, controllable quantum computers to current cryptographic systems.</p>
+<ul>
+<li>
+<p><strong>Urgency of PQC</strong>: Originates from <strong>Peter Shor’s 1995 algorithm</strong>, which can factor integers and compute discrete logarithms in polynomial time, effectively breaking mainstream schemes like RSA, DH, and ECC.</p>
+</li>
+<li>
+<p>PQC is <strong>not a single algorithm</strong>, but a set of <strong>parallel technical approaches</strong>, including:</p>
+<ul>
+<li>
+<p><strong>Lattice-based cryptography</strong>: The most promising category with well-established theoretical foundations;</p>
+</li>
+<li>
+<p><strong>Hash-based signatures</strong>: Such as SPHINCS+, offering strong security but large signature sizes;</p>
+</li>
+<li>
+<p><strong>Code-based cryptography</strong>: Examples include BIKE and McEliece, characterized by very large keys;</p>
+</li>
+<li>
+<p><strong>Isogeny-based cryptography</strong>: Such as SIKE, featuring compact structures but recently subject to severe cryptanalytic attacks;</p>
+</li>
+<li>
+<p><strong>Multivariate polynomial cryptography</strong>: Like Rainbow, which is vulnerable to algebraic attacks.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>These schemes differ greatly in practical terms, especially regarding:</p>
+<ul>
+<li>
+<p>Key and signature sizes;</p>
+</li>
+<li>
+<p>Signing and verification efficiency;</p>
+</li>
+<li>
+<p>Maturity of design and security evaluation;</p>
+</li>
+<li>
+<p>Sensitivity to block size and verification efficiency in applications like Bitcoin.
+<br></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="pqc-algorithm-analysis-in-the-bitcoin-context">PQC Algorithm Analysis in the Bitcoin Context<a hidden class="anchor" aria-hidden="true" href="#pqc-algorithm-analysis-in-the-bitcoin-context">#</a></h2>
+<p>To evaluate the suitability of PQC algorithms for Bitcoin, we compare their <strong>public key/signature sizes and computational efficiency</strong> against the current ECDSA and Schnorr signature schemes[^ChainCodeReport].<br>
+Based on data aggregated from <a href="https://github.com/bitcoin/bips/pull/1670">BIP-360</a>  <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>and the <a href="https://pqshield.github.io/nist-sigs-zoo">PQ Signatures Zoo</a>, the summary is as follows:</p>
+<ul>
+<li>
+<p><strong>Hash-based signatures (e.g., SPHINCS+)</strong>: Very small public keys but the largest signatures;</p>
+</li>
+<li>
+<p><strong>Lattice-based signatures (e.g., FALCON and CRYSTALS-Dilithium)</strong>: Achieve a good balance between public key and signature sizes;</p>
+</li>
+<li>
+<p><strong>Isogeny-based signatures (e.g., SQIsign)</strong>: Smallest signatures and relatively small public keys, but slow and not yet widely vetted.</p>
+</li>
+</ul>
+<p>The overall trend indicates PQC technologies are still evolving, with room for improvement in signature size, public key size, and signing/verification efficiency.<br>
+Therefore, locking in a specific scheme too early is suboptimal; a more rational strategy is to <strong>monitor developments continuously and maintain compatibility in design</strong>.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Metric</th>
+          <th>ECC (Schnorr)</th>
+          <th>SPHINCS+</th>
+          <th>CRYSTALS-Dilithium</th>
+          <th>FALCON</th>
+          <th>SQIsign</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Signature Size</td>
+          <td>~64 bytes</td>
+          <td>~8–17 KB</td>
+          <td>~2–3 KB</td>
+          <td>~0.5–1 KB</td>
+          <td>~100–300 bytes</td>
+      </tr>
+      <tr>
+          <td>Public Key Size</td>
+          <td>~32 bytes</td>
+          <td>~32 bytes</td>
+          <td>~1.3 KB</td>
+          <td>~800 bytes</td>
+          <td>~200 bytes</td>
+      </tr>
+      <tr>
+          <td>Signing Time</td>
+          <td>Fast</td>
+          <td>Slow</td>
+          <td>Medium</td>
+          <td>Fast</td>
+          <td>Slow</td>
+      </tr>
+      <tr>
+          <td>Security Maturity</td>
+          <td>High</td>
+          <td>High</td>
+          <td>High</td>
+          <td>Medium</td>
+          <td>Low</td>
+      </tr>
+      <tr>
+          <td>Suitable for Bitcoin?</td>
+          <td>✅</td>
+          <td>❌</td>
+          <td>⚠️</td>
+          <td>✅</td>
+          <td>❌</td>
+      </tr>
+  </tbody>
+</table>
+<br>
+<h2 id="nist-post-quantum-standardization-process">NIST Post-Quantum Standardization Process<a hidden class="anchor" aria-hidden="true" href="#nist-post-quantum-standardization-process">#</a></h2>
+<p>To address the long-term threat posed by quantum computing to existing cryptographic standards, NIST launched the <strong>Post-Quantum Cryptography (PQC) standardization process</strong> in December 2016.  This initiative builds on foundational research from PQCrypto conferences (since 2006) and multiple projects in the EU, Japan (e.g., SAFEcrypto, CREST).</p>
+<p>The process is globally open, collecting algorithm submissions, conducting public testing and academic review, with the goal to publish algorithms resistant to both classical and quantum attacks.  As of March 2025, NIST has officially released the following standards:</p>
+<ul>
+<li>
+<p><strong>FIPS 203</strong>: Encryption algorithm standards (non-signature);</p>
+</li>
+<li>
+<p><strong>FIPS 204</strong>: <strong>Module Lattice Signature Standard (ML-DSA)</strong> based on <strong>CRYSTALS-Dilithium</strong>;</p>
+</li>
+<li>
+<p><strong>FIPS 205</strong>: <strong>Stateless Hash-Based Signature Standard (SLH-DSA)</strong> based on <strong>SPHINCS+</strong>;</p>
+</li>
+<li>
+<p><strong>FIPS 206</strong>: <strong>NTRU-based Fast Fourier Lattice Signature (FN-DSA)</strong> based on <strong>FALCON</strong>, draft expected in 2025.</p>
+</li>
+</ul>
+<p>Additionally, another candidate, the LPN-based HQC key encapsulation algorithm, is expected to complete review by 2026 before draft release <a href="https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption">NIS25</a>.</p>
+<hr>
+<h3 id="nists-main-signature-schemes-current-status">NIST’s Main Signature Schemes (Current Status)<a hidden class="anchor" aria-hidden="true" href="#nists-main-signature-schemes-current-status">#</a></h3>
+<table>
+  <thead>
+      <tr>
+          <th>FIPS #</th>
+          <th>Name</th>
+          <th>Underlying Algorithm</th>
+          <th>Features</th>
+          <th>Suitable for Bitcoin?</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>FIPS 204</td>
+          <td>ML-DSA</td>
+          <td>Dilithium</td>
+          <td>Secure, balanced, easy to deploy</td>
+          <td>✅</td>
+      </tr>
+      <tr>
+          <td>FIPS 205</td>
+          <td>SLH-DSA</td>
+          <td>SPHINCS+</td>
+          <td>Extremely secure but bulky</td>
+          <td>❌</td>
+      </tr>
+      <tr>
+          <td>FIPS 206</td>
+          <td>FN-DSA</td>
+          <td>FALCON</td>
+          <td>Compact, efficient but numerically unstable</td>
+          <td>✅ (requires floating-point stability improvements)</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>
+<p>Dilithium is currently the <strong>most balanced scheme</strong> and is widely adopted by Google and Cloudflare;</p>
+</li>
+<li>
+<p>FALCON is attractive for Bitcoin due to its compactness and speed, but <strong>its floating-point implementation complexity introduces side-channel risks</strong>;</p>
+</li>
+<li>
+<p>SPHINCS+ is mainly used for ultra-high security scenarios (e.g., backup signatures, critical firmware signing), and is unsuitable for high-frequency signing.</p>
+</li>
+</ul>
+<br>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>H. Beast. <em>BIP-360: QuBit - Pay to Quantum Resistant Hash. Bitcoin Improvement Proposal (BIP) Pull Request 1670.</em>  September 2024.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://sidereushu.github.io/">Sidereus Hu</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
