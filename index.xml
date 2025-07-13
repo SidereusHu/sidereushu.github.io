@@ -21,7 +21,8 @@
       <link>https://sidereushu.github.io/posts/notes---what-is-quantum-computing-implications-for-rsa--ecc/</link>
       <pubDate>Mon, 02 Jun 2025 16:57:25 +0800</pubDate>
       <guid>https://sidereushu.github.io/posts/notes---what-is-quantum-computing-implications-for-rsa--ecc/</guid>
-      <description>&lt;h3 id=&#34;what-is-quantum-computing&#34;&gt;❓What is Quantum Computing?&lt;/h3&gt;
+      <description>&lt;br&gt;
+### ❓What is Quantum Computing?
 &lt;p&gt;Quantum computing harnesses the quantum states of microscopic particles—such as photons, electrons, or atoms—to process information. It is fundamentally based on several key principles: &lt;strong&gt;superposition&lt;/strong&gt;, &lt;strong&gt;entanglement&lt;/strong&gt;, &lt;strong&gt;coherence&lt;/strong&gt;, and the &lt;strong&gt;no-cloning theorem&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;As early as &lt;strong&gt;1982&lt;/strong&gt;, &lt;strong&gt;Professor Richard Feynman&lt;/strong&gt; famously stated:&lt;/p&gt;
 &lt;blockquote&gt;
