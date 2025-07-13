@@ -6,33 +6,8 @@
     <description>Recent content on Sidereus Hu</description>
     <generator>Hugo -- 0.148.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 09 Jun 2025 16:57:25 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 02 Jun 2025 16:57:25 +0800</lastBuildDate>
     <atom:link href="https://sidereushu.github.io/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Notes | What is Quantum Computing? Implications for RSA &amp; ECC</title>
-      <link>https://sidereushu.github.io/posts/crypto-phd%E6%9C%AD%E8%AE%B0%E4%BB%80%E4%B9%88%E6%98%AF%E9%87%8F%E5%AD%90%E8%AE%A1%E7%AE%97%E5%AE%83%E5%AF%B9rsa%E5%92%8Cecc%E6%84%8F%E5%91%B3%E7%9D%80%E4%BB%80%E4%B9%88/</link>
-      <pubDate>Mon, 09 Jun 2025 16:57:25 +0800</pubDate>
-      <guid>https://sidereushu.github.io/posts/crypto-phd%E6%9C%AD%E8%AE%B0%E4%BB%80%E4%B9%88%E6%98%AF%E9%87%8F%E5%AD%90%E8%AE%A1%E7%AE%97%E5%AE%83%E5%AF%B9rsa%E5%92%8Cecc%E6%84%8F%E5%91%B3%E7%9D%80%E4%BB%80%E4%B9%88/</guid>
-      <description>&lt;p&gt;什么是量子计算？&lt;/p&gt;
-&lt;p&gt;量子计算是利用微观粒子（如光子、电子、原子）的量子态进行信息处理，它基于几个关键原理：叠加、纠缠、相干与不可克隆原理。&lt;/p&gt;
-&lt;p&gt;早在1982年，费曼老师（Richard Feynman）就提出：大自然不是经典的，如果我们想要真正模拟自然界，那必须使用量子系统本身来构建计算工具。原话见下图：$x + y^2- E = mc^2$ 环签名。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>From 3 Cryptography</title>
-      <link>https://sidereushu.github.io/posts/3/</link>
-      <pubDate>Wed, 04 Jun 2025 16:57:25 +0800</pubDate>
-      <guid>https://sidereushu.github.io/posts/3/</guid>
-      <description>&lt;p&gt;Throughout the evolution of human civilization, the pursuit of computational power has never ceased. From $\underline{mechanical ~computation}$ to $\underline{electronic ~computation}$, we now stand at the dawn of a new era — $\mathbf{on ~the ~verge ~of ~quantum ~computing. }$&lt;/p&gt;
-&lt;p&gt;The core breakthrough of quantum computing does not lie in macro-level advancements such as “faster” transistors or “stronger” chips, but rather in &lt;strong&gt;a paradigm shift from macro to micro&lt;/strong&gt;: it no longer relies on the classical binary of 0 and 1 but leverages the peculiar properties of quantum superposition and entanglement at the particle level to build $\underline{an ~entirely ~new ~computational ~logic}$. This logic cannot be simulated by traditional electronic computers, much like nuclear weapons cannot be replicated with chemical explosives—their energies are simply not on the same scale.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>From 2 Cryptography</title>
-      <link>https://sidereushu.github.io/posts/2/</link>
-      <pubDate>Mon, 02 Jun 2025 16:57:25 +0800</pubDate>
-      <guid>https://sidereushu.github.io/posts/2/</guid>
-      <description>&lt;p&gt;Throughout the evolution of human civilization, the pursuit of computational power has never ceased. From $\underline{mechanical ~computation}$ to $\underline{electronic ~computation}$, we now stand at the dawn of a new era — $\mathbf{on ~the ~verge ~of ~quantum ~computing. }$&lt;/p&gt;
-&lt;p&gt;The core breakthrough of quantum computing does not lie in macro-level advancements such as “faster” transistors or “stronger” chips, but rather in &lt;strong&gt;a paradigm shift from macro to micro&lt;/strong&gt;: it no longer relies on the classical binary of 0 and 1 but leverages the peculiar properties of quantum superposition and entanglement at the particle level to build $\underline{an ~entirely ~new ~computational ~logic}$. This logic cannot be simulated by traditional electronic computers, much like nuclear weapons cannot be replicated with chemical explosives—their energies are simply not on the same scale.&lt;/p&gt;</description>
-    </item>
     <item>
       <title>From Cryptography</title>
       <link>https://sidereushu.github.io/posts/1/</link>
@@ -42,9 +17,21 @@
 &lt;p&gt;The core breakthrough of quantum computing does not lie in macro-level advancements such as “faster” transistors or “stronger” chips, but rather in &lt;strong&gt;a paradigm shift from macro to micro&lt;/strong&gt;: it no longer relies on the classical binary of 0 and 1 but leverages the peculiar properties of quantum superposition and entanglement at the particle level to build $\underline{an ~entirely ~new ~computational ~logic}$. This logic cannot be simulated by traditional electronic computers, much like nuclear weapons cannot be replicated with chemical explosives—their energies are simply not on the same scale.&lt;/p&gt;</description>
     </item>
     <item>
+      <title>Notes | What is Quantum Computing? Implications for RSA &amp; ECC</title>
+      <link>https://sidereushu.github.io/posts/crypto-phd%E6%9C%AD%E8%AE%B0%E4%BB%80%E4%B9%88%E6%98%AF%E9%87%8F%E5%AD%90%E8%AE%A1%E7%AE%97%E5%AE%83%E5%AF%B9rsa%E5%92%8Cecc%E6%84%8F%E5%91%B3%E7%9D%80%E4%BB%80%E4%B9%88/</link>
+      <pubDate>Mon, 02 Jun 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/crypto-phd%E6%9C%AD%E8%AE%B0%E4%BB%80%E4%B9%88%E6%98%AF%E9%87%8F%E5%AD%90%E8%AE%A1%E7%AE%97%E5%AE%83%E5%AF%B9rsa%E5%92%8Cecc%E6%84%8F%E5%91%B3%E7%9D%80%E4%BB%80%E4%B9%88/</guid>
+      <description>&lt;h3 id=&#34;what-is-quantum-computing&#34;&gt;❓What is Quantum Computing?&lt;/h3&gt;
+&lt;p&gt;Quantum computing harnesses the quantum states of microscopic particles—such as photons, electrons, or atoms—to process information. It is fundamentally based on several key principles: &lt;strong&gt;superposition&lt;/strong&gt;, &lt;strong&gt;entanglement&lt;/strong&gt;, &lt;strong&gt;coherence&lt;/strong&gt;, and the &lt;strong&gt;no-cloning theorem&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;As early as &lt;strong&gt;1982&lt;/strong&gt;, &lt;strong&gt;Professor Richard Feynman&lt;/strong&gt; famously stated:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;&amp;ldquo;Nature isn’t classical, damn it, and if you want to make a simulation of nature, you’d better make it quantum mechanical.&amp;rdquo;&lt;/em&gt;&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;This insight laid the conceptual foundation for building computational tools using quantum systems themselves, rather than relying on classical approximations of quantum behavior.&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>From Macro to Micro - A Computational Revolution Reshaping Cryptography</title>
       <link>https://sidereushu.github.io/posts/from-macro-to-micro---a-computational-revolution-reshaping-cryptography/</link>
-      <pubDate>Sun, 01 Jun 2025 16:57:25 +0800</pubDate>
+      <pubDate>Thu, 15 May 2025 16:57:25 +0800</pubDate>
       <guid>https://sidereushu.github.io/posts/from-macro-to-micro---a-computational-revolution-reshaping-cryptography/</guid>
       <description>&lt;p&gt;Throughout the evolution of human civilization, the pursuit of computational power has never ceased. From $\underline{mechanical ~computation}$ to $\underline{electronic ~computation}$, we now stand at the dawn of a new era — $\mathbf{on ~the ~verge ~of ~quantum ~computing. }$&lt;/p&gt;
 &lt;p&gt;The core breakthrough of quantum computing does not lie in macro-level advancements such as “faster” transistors or “stronger” chips, but rather in &lt;strong&gt;a paradigm shift from macro to micro&lt;/strong&gt;: it no longer relies on the classical binary of 0 and 1 but leverages the peculiar properties of quantum superposition and entanglement at the particle level to build $\underline{an ~entirely ~new ~computational ~logic}$. This logic cannot be simulated by traditional electronic computers, much like nuclear weapons cannot be replicated with chemical explosives—their energies are simply not on the same scale.&lt;/p&gt;</description>
