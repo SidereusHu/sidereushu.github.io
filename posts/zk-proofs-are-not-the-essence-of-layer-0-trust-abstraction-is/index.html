@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>ZK Proofs Are Not the Essence of Layer 0, Trust Abstraction Is | Sidereus Hu</title>
+<meta name="keywords" content="">
+<meta name="description" content="In the fierce competition of Web3 infrastructure, an increasing number of projects claim to be building &ldquo;the TCP/IP of Web3.&rdquo; Among these, Zero-Knowledge (ZK) proof technology has gained significant attention due to its powerful verification capabilities, with many Layer 0 projects positioning ZK proofs as their core competitive advantage. However, we need to think deeply: Are ZK proofs truly the essence of Layer 0?
+Let us approach this question from a more fundamental perspective.">
+<meta name="author" content="Sidereus Hu">
+<link rel="canonical" href="https://sidereushu.github.io/posts/zk-proofs-are-not-the-essence-of-layer-0-trust-abstraction-is/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.93f625d739f1d6a5c6f20c146bc6a8d26b233492b34b2220c54b12fd46a04ded.css" integrity="sha256-k/Yl1znx1qXG8gwUa8ao0msjNJKzSyIgxUsS/UagTe0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://sidereushu.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://sidereushu.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://sidereushu.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://sidereushu.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://sidereushu.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://sidereushu.github.io/posts/zk-proofs-are-not-the-essence-of-layer-0-trust-abstraction-is/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+ 
+
+
+<meta property="og:url" content="https://sidereushu.github.io/posts/zk-proofs-are-not-the-essence-of-layer-0-trust-abstraction-is/">
+  <meta property="og:site_name" content="Sidereus Hu">
+  <meta property="og:title" content="ZK Proofs Are Not the Essence of Layer 0, Trust Abstraction Is">
+  <meta property="og:description" content="In the fierce competition of Web3 infrastructure, an increasing number of projects claim to be building “the TCP/IP of Web3.” Among these, Zero-Knowledge (ZK) proof technology has gained significant attention due to its powerful verification capabilities, with many Layer 0 projects positioning ZK proofs as their core competitive advantage. However, we need to think deeply: Are ZK proofs truly the essence of Layer 0?
+Let us approach this question from a more fundamental perspective.">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-07-17T16:57:25+08:00">
+    <meta property="article:modified_time" content="2025-07-17T16:57:25+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ZK Proofs Are Not the Essence of Layer 0, Trust Abstraction Is">
+<meta name="twitter:description" content="In the fierce competition of Web3 infrastructure, an increasing number of projects claim to be building &ldquo;the TCP/IP of Web3.&rdquo; Among these, Zero-Knowledge (ZK) proof technology has gained significant attention due to its powerful verification capabilities, with many Layer 0 projects positioning ZK proofs as their core competitive advantage. However, we need to think deeply: Are ZK proofs truly the essence of Layer 0?
+Let us approach this question from a more fundamental perspective.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://sidereushu.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "ZK Proofs Are Not the Essence of Layer 0, Trust Abstraction Is",
+      "item": "https://sidereushu.github.io/posts/zk-proofs-are-not-the-essence-of-layer-0-trust-abstraction-is/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ZK Proofs Are Not the Essence of Layer 0, Trust Abstraction Is",
+  "name": "ZK Proofs Are Not the Essence of Layer 0, Trust Abstraction Is",
+  "description": "In the fierce competition of Web3 infrastructure, an increasing number of projects claim to be building \u0026ldquo;the TCP/IP of Web3.\u0026rdquo; Among these, Zero-Knowledge (ZK) proof technology has gained significant attention due to its powerful verification capabilities, with many Layer 0 projects positioning ZK proofs as their core competitive advantage. However, we need to think deeply: Are ZK proofs truly the essence of Layer 0?\nLet us approach this question from a more fundamental perspective.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "In the fierce competition of Web3 infrastructure, an increasing number of projects claim to be building “the TCP/IP of Web3.” Among these, Zero-Knowledge (ZK) proof technology has gained significant attention due to its powerful verification capabilities, with many Layer 0 projects positioning ZK proofs as their core competitive advantage. However, we need to think deeply: Are ZK proofs truly the essence of Layer 0?\nLet us approach this question from a more fundamental perspective.\nReimagining the Nature of Layer 0 When we talk about Layer 0, what are we actually discussing? It is not an execution engine, nor is it merely a consensus mechanism. The true value of Layer 0 lies in trust abstraction — providing a dependable trust foundation for upper-layer applications while encapsulating complex cross-chain operations, state synchronization, and verification mechanisms within the protocol layer.\nMuch like the Internet’s TCP/IP protocol stack, Layer 0 needs to solve a core problem: how to establish a reliable communication and state transfer mechanism in a network environment filled with uncertainty. The key concepts here are “abstraction” and “trust,” rather than specific technical implementations.\nThe Limitations of ZK Proofs ZK proofs indeed possess powerful verification capabilities, enabling the proof of computational correctness without revealing information. However, when we consider them as the sole technical path for Layer 0, we encounter several practical challenges.\nFirst is the computational cost. ZK proof protocols are computationally intensive, requiring substantial processing power and time, which may be impractical for real-time, high-throughput applications. Every state transition requires generating ZK proofs, creating serious performance bottlenecks in scenarios involving high-frequency trading or numerous state updates. While mitigation strategies include efficient implementation techniques, optimized cryptographic algorithms, and advances in hardware acceleration, the computationally intensive nature of ZK proofs means they cannot serve as a universal solution for all scenarios.\nSecond is the flexibility constraint. Pure ZK systems often require predefined rules and circuits for state transitions, which poses a serious limitation for Layer 0 systems that need rapid iteration and adaptation to different application scenarios.\nMost importantly, ZK proofs solve verification problems, not trust problems. Even if we can perfectly prove the correctness of every state transition, we still need to address more fundamental questions: how to enable different chains and applications to trust each other and collaborate effectively.\nUnderstanding the Limitations of TCP/IP and the Complexity of Web3 When we discuss learning design philosophy from TCP/IP, we need to recognize an important reality: the traditional TCP/IP protocol stack was born in the 1970s, primarily solving connectivity problems — how to enable different computer networks to communicate reliably with each other. TCP/IP’s design assumptions were based on a relatively trustworthy environment where network nodes were fundamentally trustworthy or at least had clear administrative authority.\nHowever, Web3 faces entirely different challenges. Web3 must not only solve connectivity problems but also address trust issues in a completely decentralized environment without authoritative institutions. This is like being in a room full of strangers where you need not only to communicate but also to verify identities, securely exchange goods, collaborate on tasks, and maintain fair payment mechanisms.\nIf TCP/IP solved the problem of “how to build roads,” then Web3 needs to solve the problem of “how to establish a complete socio-economic system without government.” This system requires coordination across multiple dimensions including identity authentication, property rights, contract execution, and dispute resolution.\nThe Multi-dimensional Challenges of Web3 Protocol Stack Let us examine the complexity of Web3 infrastructure from a more comprehensive perspective:\nModule Objective Existing Projects Maturity Level Connectivity Gossip networks, P2P, secure routing libp2p, waku, quic ✅ Relatively mature Decentralized Identity No reliance on CA, no reliance on PKI ENS, DID, Ethereum Name Service ⚠️ Early stage Decentralized Storage Content addressing, censorship resistance, verifiability IPFS, Arweave, Ceramic ⚠️ Semi-mature, high cost Decentralized Computing Verifiable execution, off-chain computation, ZK verification RISC Zero, zkWASM, Aleo ⚠️ Very early stage Decentralized Payments State transitions + settlement + zkPay Lightning, StarkNet, Aztec ✅ Initial framework Proof Protocol Layer (ZK) Composable, recursive, security layer Plonky2, Halo2, Nova ✅ Mature but heavy This table reveals that genuine Web3 infrastructure faces multi-dimensional challenges. The connectivity layer is already relatively mature because it most closely resembles the problems traditional TCP/IP aimed to solve. The decentralized identity layer remains in early stages, reflecting the fundamental challenge of establishing trustworthy identity systems without central authority. The decentralized storage layer is semi-mature but costly, indicating that technical feasibility has been proven but economic models require optimization. The decentralized computing layer is very early stage because verifiable computation involves complex cryptographic proofs. The proof protocol layer is mature but heavy, which perfectly validates our point about ZK proofs — the technology itself is relatively mature, but computational costs remain high.\nThe Hybrid Model of Trust Abstraction Based on our understanding of Web3’s complexity, a genuine Layer 0 should adopt a hybrid trust model, providing different trust guarantee mechanisms according to various application scenarios and security requirements. This design approach can draw inspiration from LayerZero V2’s architecture.\nLayerZero’s architecture is modular at the verification level while remaining static at the transport level. This design achieves a crucial balance between current performance and future-oriented design. Any entity capable of verifying cross-chain data packets can join LayerZero as a Decentralized Verification Network (DVN), thereby avoiding vendor lock-in at the security level.\nThe core principle of this design philosophy is: different messages and state transitions can choose different verification mechanisms. For high-value cross-chain asset transfers, ZK proofs can provide the strongest security guarantees. For low-risk data synchronization or state queries, optimistic verification or multi-signature mechanisms can be used to reduce costs. For applications requiring rapid response, instant confirmation mechanisms can be provided with asynchronous verification running in the background.\nIt is worth noting that practical solutions are being explored to address ZK proof computational costs. For example, Polyhedra’s zkLightClient directly addresses LayerZero V2’s challenge through proof batching. Polyhedra’s zkLightClient significantly reduces on-chain verification costs and latency by compressing multiple transaction verifications into a single ZKP. This batching technique demonstrates how to maintain ZK proof security while solving performance bottlenecks through engineering optimization.\nConcrete Implementation of the Hybrid Model Based on this approach, a genuine Layer 0 system should comprise several layers:\nCore State Layer: For account balances, critical state transitions, and other core data, ZK proofs ensure absolute security. This data has relatively low update frequency but requires the highest security standards.\nExtended Interaction Layer: For inter-application message passing, governance voting, data publishing, and other operations, configurable verification mechanisms are provided. Applications can choose ZK proofs, optimistic verification, or hybrid modes based on their specific needs.\nRouting Coordination Layer: Responsible for coordination between different verification mechanisms, ensuring system-wide consistency and reliability. This layer’s design resembles the routing layer in network protocol stacks, handling load balancing and fault recovery.\nDesign Proposal for Hybrid Model When considering a hybrid model, we can reference real hybrid chain design experiences and adopt the following structure:\nZK Core + Optimistic Side Path Architecture: This architecture’s core concept is maintaining the strongest security guarantees while providing optimization paths for high-frequency interaction scenarios. The default path enters the state engine through signature verification, account nonce checking, and snapshot mechanisms, enabling rapid response to most transaction requests. Simultaneously, the system asynchronously generates ZK proofs, marking them as “strong security state blocks” to ensure absolute safety of critical states.\nMore importantly, this architecture provides a flexible query interface through the query_proof(hash) mechanism, allowing users or other chains to verify the correctness of any state transition on demand. This “proof on demand” design philosophy solves a crucial problem: not all state transitions require real-time ZK proofs, but all state transitions should be verifiable.\nThis design’s advantage lies in finding the optimal balance between performance and security. If Layer 0 is positioned as “the final trust anchor for consensus, state, and transfers,” then more ZK proofs are indeed better because they provide the strongest security guarantees. However, if Layer 0 needs to support high-frequency interactions and low-latency experiences, then hybrid strategies become crucial. By introducing the “proof on demand + optimistic path” combination mechanism, the system can maintain the highest security standards while meeting real-world application performance requirements.\nUnderstanding Trust Abstraction Evolution Through LayerZero In LayerZero V2, oracles and relayers have been replaced by Decentralized Verification Networks (DVNs) and permissionless executors. DVNs are responsible for verifying message accuracy before message delivery and correct execution on target chains.\nThis evolution embodies an important design philosophy: separating verification from execution. LayerZero addresses the resource-intensive nature of developing and updating external security code by separating verification from execution. Any code not critical to security is moved to separate components — executors — which can run permissionlessly and remain isolated from verification logic.\nThis separation not only improves system flexibility but, more importantly, provides applications with choice. LayerZero endpoints provide stable application-facing interfaces, lossless network channel abstractions, exactly-once delivery guarantees, and manage OApp security stacks. Endpoint immutability ensures long-term channel validity through enforced update isolation, configuration ownership, and channel integrity.\nTrade-offs in Practical Applications Let us return to practical application scenarios to understand the value of this design. Suppose we are building a cross-chain DeFi application:\nFor large-value asset transfers, we need the highest level of security guarantees, making ZK proofs the optimal choice. Even with high computational costs, this is acceptable relative to asset value.\nFor price information synchronization, we need speed and timeliness, allowing us to use optimistic verification mechanisms and initiate ZK proof processes only when disputes arise.\nFor governance voting, we need transparency and tamper-resistance, allowing us to use commit-reveal mechanisms combined with delayed ZK verification.\nFor user behavior data, we need privacy protection and batch processing, allowing us to use recursive ZK proofs to amortize computational costs.\nDesign Philosophy of Modular Protocol Ecosystem The success of traditional TCP/IP protocol stacks lies in providing a layered, modular, and scalable architecture where each layer has clearly defined responsibility boundaries, upper layers need not concern themselves with lower-layer implementations, and lower layers provide abstract service interfaces for upper layers.\nHowever, Web3’s complexity far exceeds traditional internet requirements. Web3’s trust abstraction encompasses not only transaction verification but also identity authentication, data storage, computational execution, payment settlement, and multiple other dimensions. Each dimension has its own maturity level and challenges requiring coordinated development. Therefore, Web3’s Layer 0 needs to adopt modular composition thinking, not merely layered abstraction.\nAs we can see from our protocol stack analysis, the true Web3 TCP/IP is not just “one protocol” but rather a modular, composable protocol ecosystem. Different application scenarios require different trust guarantees, storage methods, computational models, and payment mechanisms.\nSimilarly, Web3’s Layer 0 should follow this design philosophy. LayerZero enables developers to create and configure unified applications, tokens, and data primitives — regardless of chain — through arbitrary message transmission, much like TCP/IP standardized internet communication.\nThe key to this standardization lies not in forcing the use of specific verification mechanisms but in providing unified interfaces and abstractions. Developers can focus on business logic while delegating complex cross-chain communication, state synchronization, and security verification to the protocol layer.\nTechnical Implementation of Hybrid Model From a technical implementation perspective, a hybrid model Layer 0 system needs to address several key issues:\nState Management: How to maintain state consistency across different verification mechanisms? This requires designing a unified state mechanism capable of handling different types of state updates and verification results.\nRouting Mechanism: How to automatically select appropriate verification paths based on message types and security requirements? This requires implementing intelligent routing algorithms that can balance security, cost, and performance.\nDispute Resolution: How to arbitrate and resolve conflicts when different verification mechanisms produce contradictory results? This requires designing layered dispute resolution mechanisms that ultimately fall back to the most secure verification methods.\nPerformance Optimization: How to maximize system throughput and response speed while ensuring security? This requires implementing various optimization techniques such as batching, parallel verification, and precomputation.\nConclusion: The Future of Trust Abstraction ZK proofs are an important technology providing Web3 with powerful verification capabilities. However, treating them as the sole technical path for Layer 0 represents limited thinking. A genuine Layer 0 should be a trust abstraction layercapable of providing the most appropriate trust guarantee mechanisms according to different application needs and scenarios.\nThis hybrid model design can not only fully leverage ZK proof advantages but also provide greater flexibility and scalability for the entire Web3 ecosystem. Just as TCP/IP protocol stacks achieved internet prosperity through layered and modular design, Web3’s Layer 0 should also establish a solid foundation for next-generation decentralized applications through trust abstraction and hybrid models.\nIn this process, we need to shift from technical implementation perspectives to protocol design perspectives, from single solutions to ecosystem construction, and from technology-first to user experience-first approaches. Only in this way can we truly build the “TCP/IP” of the Web3 world.\nComprehensively speaking, building genuine Web3 infrastructure requires us to grasp several key points:\nRecognize that Web3 complexity far exceeds traditional internet requirements: Traditional TCP/IP only solved connectivity problems, while Web3 needs to solve multi-dimensional trust problems including identity, storage, computation, and payments in a completely decentralized environment.\nZK proofs are not the essence of Layer 0; trust abstraction is: True value lies in providing the most appropriate trust guarantee mechanisms according to different application needs, rather than forcing the use of a single technical path.\nBuild a modular, composable protocol ecosystem: Web3’s Layer 0 should be a protocol ecosystem capable of flexibly combining different trust mechanisms, storage solutions, computational models, and payment methods.\nLearn from LayerZero V2’s practical experience: Through decentralized verification networks and verification-execution separation, a good balance has been achieved between modular security and protocol stability.\nOnly by deeply understanding these complexities can we truly build infrastructure suitable for the Web3 era, establishing a solid foundation for the prosperity of decentralized applications.\n",
+  "wordCount" : "2297",
+  "inLanguage": "zh",
+  "datePublished": "2025-07-17T16:57:25+08:00",
+  "dateModified": "2025-07-17T16:57:25+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "Sidereus Hu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sidereushu.github.io/posts/zk-proofs-are-not-the-essence-of-layer-0-trust-abstraction-is/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sidereus Hu",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sidereushu.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://sidereushu.github.io/" accesskey="h" title="Sidereus Hu (Alt + H)">Sidereus Hu</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://sidereushu.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://sidereushu.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      ZK Proofs Are Not the Essence of Layer 0, Trust Abstraction Is
+    </h1>
+    <div class="post-meta"><span title='2025-07-17 16:57:25 +0800 CST'>2025-07-17</span>&nbsp;·&nbsp;Sidereus Hu
+
+</div>
+  </header> 
+  <div class="post-content"><p>In the fierce competition of Web3 infrastructure, an increasing number of projects claim to be building &ldquo;the TCP/IP of Web3.&rdquo; Among these, Zero-Knowledge (ZK) proof technology has gained significant attention due to its powerful verification capabilities, with many Layer 0 projects positioning ZK proofs as their core competitive advantage. However, we need to think deeply: Are ZK proofs truly the essence of Layer 0?</p>
+<p>Let us approach this question from a more fundamental perspective.</p>
+<h2 id="reimagining-the-nature-of-layer-0">Reimagining the Nature of Layer 0<a hidden class="anchor" aria-hidden="true" href="#reimagining-the-nature-of-layer-0">#</a></h2>
+<p>When we talk about Layer 0, what are we actually discussing? It is not an execution engine, nor is it merely a consensus mechanism. The true value of Layer 0 lies in <strong>trust abstraction</strong> — providing a dependable trust foundation for upper-layer applications while encapsulating complex cross-chain operations, state synchronization, and verification mechanisms within the protocol layer.</p>
+<p>Much like the Internet&rsquo;s TCP/IP protocol stack, Layer 0 needs to solve a core problem: how to establish a reliable communication and state transfer mechanism in a network environment filled with uncertainty. The key concepts here are &ldquo;abstraction&rdquo; and &ldquo;trust,&rdquo; rather than specific technical implementations.</p>
+<hr>
+<h2 id="the-limitations-of-zk-proofs">The Limitations of ZK Proofs<a hidden class="anchor" aria-hidden="true" href="#the-limitations-of-zk-proofs">#</a></h2>
+<p>ZK proofs indeed possess powerful verification capabilities, enabling the proof of computational correctness without revealing information. However, when we consider them as the sole technical path for Layer 0, we encounter several practical challenges.</p>
+<p>First is the <strong>computational cost</strong>. ZK proof protocols are computationally intensive, requiring substantial processing power and time, which may be impractical for real-time, high-throughput applications. Every state transition requires generating ZK proofs, creating serious performance bottlenecks in scenarios involving high-frequency trading or numerous state updates. While mitigation strategies include efficient implementation techniques, optimized cryptographic algorithms, and advances in hardware acceleration, the computationally intensive nature of ZK proofs means they cannot serve as a universal solution for all scenarios.</p>
+<p>Second is the <strong>flexibility constraint</strong>. Pure ZK systems often require predefined rules and circuits for state transitions, which poses a serious limitation for Layer 0 systems that need rapid iteration and adaptation to different application scenarios.</p>
+<p>Most importantly, <strong>ZK proofs solve verification problems, not trust problems</strong>. Even if we can perfectly prove the correctness of every state transition, we still need to address more fundamental questions: how to enable different chains and applications to trust each other and collaborate effectively.</p>
+<hr>
+<h2 id="understanding-the-limitations-of-tcpip-and-the-complexity-of-web3">Understanding the Limitations of TCP/IP and the Complexity of Web3<a hidden class="anchor" aria-hidden="true" href="#understanding-the-limitations-of-tcpip-and-the-complexity-of-web3">#</a></h2>
+<p>When we discuss learning design philosophy from TCP/IP, we need to recognize an important reality: the traditional TCP/IP protocol stack was born in the 1970s, primarily solving <strong>connectivity problems</strong> — how to enable different computer networks to communicate reliably with each other. TCP/IP&rsquo;s design assumptions were based on a relatively trustworthy environment where network nodes were fundamentally trustworthy or at least had clear administrative authority.</p>
+<p>However, Web3 faces entirely different challenges. Web3 must not only solve connectivity problems but also address trust issues in a <strong>completely decentralized environment without authoritative institutions</strong>. This is like being in a room full of strangers where you need not only to communicate but also to verify identities, securely exchange goods, collaborate on tasks, and maintain fair payment mechanisms.</p>
+<p>If TCP/IP solved the problem of &ldquo;how to build roads,&rdquo; then Web3 needs to solve the problem of &ldquo;how to establish a complete socio-economic system without government.&rdquo; This system requires coordination across multiple dimensions including identity authentication, property rights, contract execution, and dispute resolution.</p>
+<h2 id="the-multi-dimensional-challenges-of-web3-protocol-stack">The Multi-dimensional Challenges of Web3 Protocol Stack<a hidden class="anchor" aria-hidden="true" href="#the-multi-dimensional-challenges-of-web3-protocol-stack">#</a></h2>
+<p>Let us examine the complexity of Web3 infrastructure from a more comprehensive perspective:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Module</th>
+          <th>Objective</th>
+          <th>Existing Projects</th>
+          <th>Maturity Level</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Connectivity</strong></td>
+          <td>Gossip networks, P2P, secure routing</td>
+          <td>libp2p, waku, quic</td>
+          <td>✅ Relatively mature</td>
+      </tr>
+      <tr>
+          <td><strong>Decentralized Identity</strong></td>
+          <td>No reliance on CA, no reliance on PKI</td>
+          <td>ENS, DID, Ethereum Name Service</td>
+          <td>⚠️ Early stage</td>
+      </tr>
+      <tr>
+          <td><strong>Decentralized Storage</strong></td>
+          <td>Content addressing, censorship resistance, verifiability</td>
+          <td>IPFS, Arweave, Ceramic</td>
+          <td>⚠️ Semi-mature, high cost</td>
+      </tr>
+      <tr>
+          <td><strong>Decentralized Computing</strong></td>
+          <td>Verifiable execution, off-chain computation, ZK verification</td>
+          <td>RISC Zero, zkWASM, Aleo</td>
+          <td>⚠️ Very early stage</td>
+      </tr>
+      <tr>
+          <td><strong>Decentralized Payments</strong></td>
+          <td>State transitions + settlement + zkPay</td>
+          <td>Lightning, StarkNet, Aztec</td>
+          <td>✅ Initial framework</td>
+      </tr>
+      <tr>
+          <td><strong>Proof Protocol Layer (ZK)</strong></td>
+          <td>Composable, recursive, security layer</td>
+          <td>Plonky2, Halo2, Nova</td>
+          <td>✅ Mature but heavy</td>
+      </tr>
+  </tbody>
+</table>
+<p>This table reveals that genuine Web3 infrastructure faces multi-dimensional challenges. The <strong>connectivity layer</strong> is already relatively mature because it most closely resembles the problems traditional TCP/IP aimed to solve. The <strong>decentralized identity layer</strong> remains in early stages, reflecting the fundamental challenge of establishing trustworthy identity systems without central authority. The <strong>decentralized storage layer</strong> is semi-mature but costly, indicating that technical feasibility has been proven but economic models require optimization. The <strong>decentralized computing layer</strong> is very early stage because verifiable computation involves complex cryptographic proofs. The <strong>proof protocol layer</strong> is mature but heavy, which perfectly validates our point about ZK proofs — the technology itself is relatively mature, but computational costs remain high.</p>
+<hr>
+<h2 id="the-hybrid-model-of-trust-abstraction">The Hybrid Model of Trust Abstraction<a hidden class="anchor" aria-hidden="true" href="#the-hybrid-model-of-trust-abstraction">#</a></h2>
+<p>Based on our understanding of Web3&rsquo;s complexity, a genuine Layer 0 should adopt a <strong>hybrid trust model</strong>, providing different trust guarantee mechanisms according to various application scenarios and security requirements. This design approach can draw inspiration from LayerZero V2&rsquo;s architecture.</p>
+<p>LayerZero&rsquo;s architecture is modular at the verification level while remaining static at the transport level. This design achieves a crucial balance between current performance and future-oriented design. Any entity capable of verifying cross-chain data packets can join LayerZero as a Decentralized Verification Network (DVN), thereby avoiding vendor lock-in at the security level.</p>
+<p>The core principle of this design philosophy is: <strong>different messages and state transitions can choose different verification mechanisms</strong>. For high-value cross-chain asset transfers, ZK proofs can provide the strongest security guarantees. For low-risk data synchronization or state queries, optimistic verification or multi-signature mechanisms can be used to reduce costs. For applications requiring rapid response, instant confirmation mechanisms can be provided with asynchronous verification running in the background.</p>
+<p>It is worth noting that practical solutions are being explored to address ZK proof computational costs. For example, Polyhedra&rsquo;s zkLightClient directly addresses LayerZero V2&rsquo;s challenge through proof batching. Polyhedra&rsquo;s zkLightClient significantly reduces on-chain verification costs and latency by compressing multiple transaction verifications into a single ZKP. This batching technique demonstrates how to maintain ZK proof security while solving performance bottlenecks through engineering optimization.</p>
+<hr>
+<h2 id="concrete-implementation-of-the-hybrid-model">Concrete Implementation of the Hybrid Model<a hidden class="anchor" aria-hidden="true" href="#concrete-implementation-of-the-hybrid-model">#</a></h2>
+<p>Based on this approach, a genuine Layer 0 system should comprise several layers:</p>
+<p><strong>Core State Layer</strong>: For account balances, critical state transitions, and other core data, ZK proofs ensure absolute security. This data has relatively low update frequency but requires the highest security standards.</p>
+<p><strong>Extended Interaction Layer</strong>: For inter-application message passing, governance voting, data publishing, and other operations, configurable verification mechanisms are provided. Applications can choose ZK proofs, optimistic verification, or hybrid modes based on their specific needs.</p>
+<p><strong>Routing Coordination Layer</strong>: Responsible for coordination between different verification mechanisms, ensuring system-wide consistency and reliability. This layer&rsquo;s design resembles the routing layer in network protocol stacks, handling load balancing and fault recovery.</p>
+<hr>
+<h3 id="design-proposal-for-hybrid-model">Design Proposal for Hybrid Model<a hidden class="anchor" aria-hidden="true" href="#design-proposal-for-hybrid-model">#</a></h3>
+<p>When considering a hybrid model, we can reference real hybrid chain design experiences and adopt the following structure:</p>
+<p><strong>ZK Core + Optimistic Side Path Architecture</strong>: This architecture&rsquo;s core concept is maintaining the strongest security guarantees while providing optimization paths for high-frequency interaction scenarios. The default path enters the state engine through signature verification, account nonce checking, and snapshot mechanisms, enabling rapid response to most transaction requests. Simultaneously, the system asynchronously generates ZK proofs, marking them as &ldquo;strong security state blocks&rdquo; to ensure absolute safety of critical states.</p>
+<p>More importantly, this architecture provides a flexible query interface through the <code>query_proof(hash)</code> mechanism, allowing users or other chains to verify the correctness of any state transition on demand. This &ldquo;proof on demand&rdquo; design philosophy solves a crucial problem: not all state transitions require real-time ZK proofs, but all state transitions should be verifiable.</p>
+<p>This design&rsquo;s advantage lies in finding the optimal balance between performance and security. If Layer 0 is positioned as &ldquo;the final trust anchor for consensus, state, and transfers,&rdquo; then more ZK proofs are indeed better because they provide the strongest security guarantees. However, if Layer 0 needs to support high-frequency interactions and low-latency experiences, then hybrid strategies become crucial. By introducing the &ldquo;proof on demand + optimistic path&rdquo; combination mechanism, the system can maintain the highest security standards while meeting real-world application performance requirements.</p>
+<hr>
+<h2 id="understanding-trust-abstraction-evolution-through-layerzero">Understanding Trust Abstraction Evolution Through LayerZero<a hidden class="anchor" aria-hidden="true" href="#understanding-trust-abstraction-evolution-through-layerzero">#</a></h2>
+<p>In LayerZero V2, oracles and relayers have been replaced by Decentralized Verification Networks (DVNs) and permissionless executors. DVNs are responsible for verifying message accuracy before message delivery and correct execution on target chains.</p>
+<p>This evolution embodies an important design philosophy: <strong>separating verification from execution</strong>. LayerZero addresses the resource-intensive nature of developing and updating external security code by separating verification from execution. Any code not critical to security is moved to separate components — executors — which can run permissionlessly and remain isolated from verification logic.</p>
+<p>This separation not only improves system flexibility but, more importantly, provides applications with choice. LayerZero endpoints provide stable application-facing interfaces, lossless network channel abstractions, exactly-once delivery guarantees, and manage OApp security stacks. Endpoint immutability ensures long-term channel validity through enforced update isolation, configuration ownership, and channel integrity.</p>
+<hr>
+<h2 id="trade-offs-in-practical-applications">Trade-offs in Practical Applications<a hidden class="anchor" aria-hidden="true" href="#trade-offs-in-practical-applications">#</a></h2>
+<p>Let us return to practical application scenarios to understand the value of this design. Suppose we are building a cross-chain DeFi application:</p>
+<p>For <strong>large-value asset transfers</strong>, we need the highest level of security guarantees, making ZK proofs the optimal choice. Even with high computational costs, this is acceptable relative to asset value.</p>
+<p>For <strong>price information synchronization</strong>, we need speed and timeliness, allowing us to use optimistic verification mechanisms and initiate ZK proof processes only when disputes arise.</p>
+<p>For <strong>governance voting</strong>, we need transparency and tamper-resistance, allowing us to use commit-reveal mechanisms combined with delayed ZK verification.</p>
+<p>For <strong>user behavior data</strong>, we need privacy protection and batch processing, allowing us to use recursive ZK proofs to amortize computational costs.</p>
+<hr>
+<h2 id="design-philosophy-of-modular-protocol-ecosystem">Design Philosophy of Modular Protocol Ecosystem<a hidden class="anchor" aria-hidden="true" href="#design-philosophy-of-modular-protocol-ecosystem">#</a></h2>
+<p>The success of traditional TCP/IP protocol stacks lies in providing a <strong>layered, modular, and scalable architecture</strong> where each layer has clearly defined responsibility boundaries, upper layers need not concern themselves with lower-layer implementations, and lower layers provide abstract service interfaces for upper layers.</p>
+<p>However, Web3&rsquo;s complexity far exceeds traditional internet requirements. Web3&rsquo;s trust abstraction encompasses not only transaction verification but also identity authentication, data storage, computational execution, payment settlement, and multiple other dimensions. Each dimension has its own maturity level and challenges requiring coordinated development. Therefore, Web3&rsquo;s Layer 0 needs to adopt <strong>modular composition</strong> thinking, not merely layered abstraction.</p>
+<p>As we can see from our protocol stack analysis, the true Web3 TCP/IP is not just &ldquo;one protocol&rdquo; but rather a <strong>modular, composable protocol ecosystem</strong>. Different application scenarios require different trust guarantees, storage methods, computational models, and payment mechanisms.</p>
+<p>Similarly, Web3&rsquo;s Layer 0 should follow this design philosophy. LayerZero enables developers to create and configure unified applications, tokens, and data primitives — regardless of chain — through arbitrary message transmission, much like TCP/IP standardized internet communication.</p>
+<p>The key to this standardization lies not in forcing the use of specific verification mechanisms but in <strong>providing unified interfaces and abstractions</strong>. Developers can focus on business logic while delegating complex cross-chain communication, state synchronization, and security verification to the protocol layer.</p>
+<hr>
+<h2 id="technical-implementation-of-hybrid-model">Technical Implementation of Hybrid Model<a hidden class="anchor" aria-hidden="true" href="#technical-implementation-of-hybrid-model">#</a></h2>
+<p>From a technical implementation perspective, a hybrid model Layer 0 system needs to address several key issues:</p>
+<p><strong>State Management</strong>: How to maintain state consistency across different verification mechanisms? This requires designing a unified state mechanism capable of handling different types of state updates and verification results.</p>
+<p><strong>Routing Mechanism</strong>: How to automatically select appropriate verification paths based on message types and security requirements? This requires implementing intelligent routing algorithms that can balance security, cost, and performance.</p>
+<p><strong>Dispute Resolution</strong>: How to arbitrate and resolve conflicts when different verification mechanisms produce contradictory results? This requires designing layered dispute resolution mechanisms that ultimately fall back to the most secure verification methods.</p>
+<p><strong>Performance Optimization</strong>: How to maximize system throughput and response speed while ensuring security? This requires implementing various optimization techniques such as batching, parallel verification, and precomputation.</p>
+<hr>
+<h2 id="conclusion-the-future-of-trust-abstraction">Conclusion: The Future of Trust Abstraction<a hidden class="anchor" aria-hidden="true" href="#conclusion-the-future-of-trust-abstraction">#</a></h2>
+<p>ZK proofs are an important technology providing Web3 with powerful verification capabilities. However, treating them as the sole technical path for Layer 0 represents limited thinking. A genuine Layer 0 should be a <strong>trust abstraction layer</strong>capable of providing the most appropriate trust guarantee mechanisms according to different application needs and scenarios.</p>
+<p>This hybrid model design can not only fully leverage ZK proof advantages but also provide greater flexibility and scalability for the entire Web3 ecosystem. Just as TCP/IP protocol stacks achieved internet prosperity through layered and modular design, Web3&rsquo;s Layer 0 should also establish a solid foundation for next-generation decentralized applications through trust abstraction and hybrid models.</p>
+<p>In this process, we need to shift from technical implementation perspectives to protocol design perspectives, from single solutions to ecosystem construction, and from technology-first to user experience-first approaches. Only in this way can we truly build the &ldquo;TCP/IP&rdquo; of the Web3 world.</p>
+<p>Comprehensively speaking, building genuine Web3 infrastructure requires us to grasp several key points:</p>
+<ul>
+<li>
+<p><strong>Recognize that Web3 complexity far exceeds traditional internet requirements</strong>: Traditional TCP/IP only solved connectivity problems, while Web3 needs to solve multi-dimensional trust problems including identity, storage, computation, and payments in a completely decentralized environment.</p>
+</li>
+<li>
+<p><strong>ZK proofs are not the essence of Layer 0; trust abstraction is</strong>: True value lies in providing the most appropriate trust guarantee mechanisms according to different application needs, rather than forcing the use of a single technical path.</p>
+</li>
+<li>
+<p><strong>Build a modular, composable protocol ecosystem</strong>: Web3&rsquo;s Layer 0 should be a protocol ecosystem capable of flexibly combining different trust mechanisms, storage solutions, computational models, and payment methods.</p>
+</li>
+<li>
+<p><strong>Learn from LayerZero V2&rsquo;s practical experience</strong>: Through decentralized verification networks and verification-execution separation, a good balance has been achieved between modular security and protocol stability.</p>
+</li>
+</ul>
+<p>Only by deeply understanding these complexities can we truly build infrastructure suitable for the Web3 era, establishing a solid foundation for the prosperity of decentralized applications.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://sidereushu.github.io/">Sidereus Hu</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
