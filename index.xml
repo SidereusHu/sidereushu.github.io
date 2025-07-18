@@ -21,10 +21,11 @@
       <link>https://sidereushu.github.io/posts/web3s-missing-foundation--why-it-needs-a-new-tcp-ip/</link>
       <pubDate>Tue, 15 Jul 2025 00:00:00 +0000</pubDate>
       <guid>https://sidereushu.github.io/posts/web3s-missing-foundation--why-it-needs-a-new-tcp-ip/</guid>
-      <description>&lt;blockquote&gt;
+      <description>&lt;br&gt;
+&lt;blockquote&gt;
 &lt;p&gt;&lt;strong&gt;&amp;ldquo;The internet was designed to be open, but the platforms built on top of it are not.&amp;rdquo;&lt;/strong&gt;&lt;br&gt;
 ——Chris Dixon, &lt;em&gt;Rebooting the Internet&lt;/em&gt;&lt;/p&gt;&lt;/blockquote&gt;
-&lt;hr&gt;
+&lt;br&gt;
 &lt;h3 id=&#34;0-from-open-web1-to-centralized-web2-the-legacy-of-missing-trust&#34;&gt;0. From Open Web1 to Centralized Web2: The Legacy of Missing Trust&lt;/h3&gt;
 &lt;p&gt;The Web1 era began with openness. Born out of academic and military collaboration, the TCP/IP protocol stack laid the foundation for global connectivity. TCP/IP was — and remains — an &lt;strong&gt;open and permissionless stack&lt;/strong&gt;: any device following the protocol can join the network. This property of &lt;em&gt;permissionless connectivity&lt;/em&gt; created the early decentralized flavor of the Internet.&lt;/p&gt;</description>
     </item>
