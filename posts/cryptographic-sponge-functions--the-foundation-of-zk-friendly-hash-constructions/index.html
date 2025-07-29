@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Cryptographic Sponge Functions: The Foundation of ZK-Friendly Hash Constructions | Sidereus Hu</title>
+<meta name="keywords" content="">
+<meta name="description" content="
+In modern cryptography, particularly in zero-knowledge proofs and high-performance hash designs (such as Poseidon, Rescue, and Griffin), one fundamental building block appears repeatedly: the cryptographic sponge function.
+It not only offers an elegant absorb-and-squeeze paradigm but also strikes a principled balance between security and efficiency.
+
+
+
+
+I. What is a Sponge Function?
+A sponge is a flexible cryptographic structure used to absorb an input of arbitrary length and squeeze out a fixed or extensible output. Its power lies in its simplicity, relying only on a single state and a permutation function.">
+<meta name="author" content="Sidereus Hu">
+<link rel="canonical" href="https://sidereushu.github.io/posts/cryptographic-sponge-functions--the-foundation-of-zk-friendly-hash-constructions/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.93f625d739f1d6a5c6f20c146bc6a8d26b233492b34b2220c54b12fd46a04ded.css" integrity="sha256-k/Yl1znx1qXG8gwUa8ao0msjNJKzSyIgxUsS/UagTe0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://sidereushu.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://sidereushu.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://sidereushu.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://sidereushu.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://sidereushu.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://sidereushu.github.io/posts/cryptographic-sponge-functions--the-foundation-of-zk-friendly-hash-constructions/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+ 
+
+
+<meta property="og:url" content="https://sidereushu.github.io/posts/cryptographic-sponge-functions--the-foundation-of-zk-friendly-hash-constructions/">
+  <meta property="og:site_name" content="Sidereus Hu">
+  <meta property="og:title" content="Cryptographic Sponge Functions: The Foundation of ZK-Friendly Hash Constructions">
+  <meta property="og:description" content="
+In modern cryptography, particularly in zero-knowledge proofs and high-performance hash designs (such as Poseidon, Rescue, and Griffin), one fundamental building block appears repeatedly: the cryptographic sponge function.
+It not only offers an elegant absorb-and-squeeze paradigm but also strikes a principled balance between security and efficiency.
+I. What is a Sponge Function? A sponge is a flexible cryptographic structure used to absorb an input of arbitrary length and squeeze out a fixed or extensible output. Its power lies in its simplicity, relying only on a single state and a permutation function.">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-07-26T16:57:25+08:00">
+    <meta property="article:modified_time" content="2025-07-26T16:57:25+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Cryptographic Sponge Functions: The Foundation of ZK-Friendly Hash Constructions">
+<meta name="twitter:description" content="
+In modern cryptography, particularly in zero-knowledge proofs and high-performance hash designs (such as Poseidon, Rescue, and Griffin), one fundamental building block appears repeatedly: the cryptographic sponge function.
+It not only offers an elegant absorb-and-squeeze paradigm but also strikes a principled balance between security and efficiency.
+
+
+
+
+I. What is a Sponge Function?
+A sponge is a flexible cryptographic structure used to absorb an input of arbitrary length and squeeze out a fixed or extensible output. Its power lies in its simplicity, relying only on a single state and a permutation function.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://sidereushu.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Cryptographic Sponge Functions: The Foundation of ZK-Friendly Hash Constructions",
+      "item": "https://sidereushu.github.io/posts/cryptographic-sponge-functions--the-foundation-of-zk-friendly-hash-constructions/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Cryptographic Sponge Functions: The Foundation of ZK-Friendly Hash Constructions",
+  "name": "Cryptographic Sponge Functions: The Foundation of ZK-Friendly Hash Constructions",
+  "description": "\nIn modern cryptography, particularly in zero-knowledge proofs and high-performance hash designs (such as Poseidon, Rescue, and Griffin), one fundamental building block appears repeatedly: the cryptographic sponge function.\nIt not only offers an elegant absorb-and-squeeze paradigm but also strikes a principled balance between security and efficiency.\nI. What is a Sponge Function? A sponge is a flexible cryptographic structure used to absorb an input of arbitrary length and squeeze out a fixed or extensible output. Its power lies in its simplicity, relying only on a single state and a permutation function.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "\nIn modern cryptography, particularly in zero-knowledge proofs and high-performance hash designs (such as Poseidon, Rescue, and Griffin), one fundamental building block appears repeatedly: the cryptographic sponge function.\nIt not only offers an elegant absorb-and-squeeze paradigm but also strikes a principled balance between security and efficiency.\nI. What is a Sponge Function? A sponge is a flexible cryptographic structure used to absorb an input of arbitrary length and squeeze out a fixed or extensible output. Its power lies in its simplicity, relying only on a single state and a permutation function.\nThe internal state size is $b = r + c$, where:\n$r$: the rate, the portion of the state used for input/output;\n$c$: the capacity, the hidden part that ensures security.\nThe execution process consists of two phases:\nAbsorbing Phase\nThe input message is split into $r$-bit blocks. Each block is XORed into the first $r$ bits of the state, followed by applying a permutation $f$.\nSqueezing Phase\nOutput is read from the first $r$ bits. After each extraction, $f$ is applied again until the desired output length is achieved.\nThis process mimics the idea of “soaking a sponge with water and squeezing it out” — the internal state acts as a container that processes and diffuses the message before producing the final output.\nII. Generic Attacks and Indifferentiability In cryptographic analysis, we often distinguish between:\nGeneric attacks: leverage only the sponge framework itself, not the structure of the permutation.\nStructural attacks: exploit specific algebraic properties or implementation details of the permutation $f$.\nSponge constructions are notable for offering formal guarantees against generic attacks. To argue this formally, we use:\nThe Indifferentiability Framework This is a simulation-based model aiming to prove:\n“If an attacker can distinguish the sponge from a random oracle, then they must also be able to distinguish the internal permutation $f$ from a truly random one.”\nThus, if the permutation $f$ behaves like a random permutation, the entire sponge behaves like a random oracle.\nIII. What is an Externally Visible Weakness? In the indifferentiability model, only input-output behavior is visible to an attacker. Any internal details — including the state — are hidden. Therefore, only the following constitute valid attacks:\nOutput collisions: distinct inputs lead to the same output.\nSecond preimage attacks: given a hash value, find another message mapping to it.\nLength extension attacks: predict $H(M | X)$ based on $H(M)$.\n✅ Internal collisions or state coincidences are not considered attacks — unless they become externally observable.\nThis principle significantly simplifies security analysis: we only need to reason about observable behavior.\nIV. How to Claim Security in the Random Sponge Model? Just as we use idealized models like random oracles or ideal ciphers for conventional primitives, we can model sponges via:\nThe Random Sponge — a theoretical sponge behaving like a random function.\nThus, a sponge construction is secure if it is indifferentiable from a random sponge — i.e., if no adversary can distinguish it through queries alone.\nExample of a Security Claim: “We assert that our sponge-based design is secure if it does not exhibit any externally visible weaknesses that would not appear in a random sponge.”\nIn other words:\nIf an attacker can distinguish the implementation from an ideal sponge via I/O interactions alone, the construction is insecure. V. Hermetic Sponge Strategy: Black-Box Security The original Keccak paper described a sponge design philosophy that underpins its provable security:\n“Build a sponge on top of a permutation $f$ which itself is cryptographically strong, and claim that any attack better than $2^{c/2}$ implies a structural weakness in $f$.”\nThis is called the:\nHermetic Sponge Strategy The core idea is to seal the permutation inside a black box, and reduce the sponge’s security to whether the box behaves like a random oracle. Specifically:\nOnly the rate part ($r$ bits) is ever exposed;\nThe capacity ($c$ bits) remains fully hidden;\nIf an attack works better than $2^{c/2}$, it must exploit the permutation’s structure.\nThis is in contrast to classic constructions like Merkle–Damgård, which build security through incremental compression. The sponge instead assumes non-observability and indistinguishability as its defense mechanism.\nNote: Hermetic Sponge assumes an ideal world with no side-channel visibility. It doesn’t cover power, timing, or cache attacks.\nVI. Collisions and Second Preimage Attacks Sponge functions offer different security bounds depending on how they’re parameterized:\n1. Output Collisions The goal is to find $M_1 \\ne M_2$ such that:\n$H(M_1)=H(M_2)$\nIf the output length is $n \u003c c$, the attack complexity is approximately $2^{n/2}$.\n2. Internal Collisions The attacker aims to create two different messages that end in the same internal state after absorption;\nThis leads to the same output when squeezed;\nComplexity is roughly $2^{c/2}$.\nComparison: If $n \u003c c$, output collisions are easier;\nIf $n \\geq c$, it’s better to aim for inner collisions.\nThis is why in practice, designers often ensure:\nCapacity $c ≥ 2$ × output length $n$\nVII. Throughput vs. Security: Balancing r and c The sponge’s performance and security depend on how we divide the state:\n$b = r + c$: total internal state is fixed;\nIncreasing $r$: improves throughput;\nIncreasing $c$: improves security (resistance to generic attacks).\nTypical settings:\nGoal Recommended Setting Explanation 128-bit security $c = 256$, $r = b - 256$ Collision resistance ≈ $2^{128}$ High throughput Increase $r$, reduce $c$ Favor speed over generic security High security Use $c \\gg n$ Avoid inner collisions and extension This trade-off is critical in the parameterization and round-count design of sponge-based hashes like Poseidon and Griffin.\nVIII. Conclusion: Sponge as a Philosophy Sponge functions are not merely algorithmic tricks — they embody a design philosophy rooted in observability and compositional soundness.\nSecurity isn’t built from compression chaining, but from black-box indistinguishability;\nThe sponge doesn’t try to block every attack, but instead limits what the attacker can see;\nProvable security derives from indifferentiability, not ad-hoc resistance mechanisms.\nThis is why sponge functions underpin Keccak (SHA-3), Poseidon (ZK-friendly hashing), Rescue (algebraic soundness), and other modern cryptographic constructions.\n",
+  "wordCount" : "993",
+  "inLanguage": "zh",
+  "datePublished": "2025-07-26T16:57:25+08:00",
+  "dateModified": "2025-07-26T16:57:25+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "Sidereus Hu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sidereushu.github.io/posts/cryptographic-sponge-functions--the-foundation-of-zk-friendly-hash-constructions/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sidereus Hu",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sidereushu.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://sidereushu.github.io/" accesskey="h" title="Sidereus Hu (Alt + H)">Sidereus Hu</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://sidereushu.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://sidereushu.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Cryptographic Sponge Functions: The Foundation of ZK-Friendly Hash Constructions
+    </h1>
+    <div class="post-meta"><span title='2025-07-26 16:57:25 +0800 CST'>2025-07-26</span>&nbsp;·&nbsp;Sidereus Hu
+
+</div>
+  </header> 
+  <div class="post-content"><br>
+<p>In modern cryptography, particularly in zero-knowledge proofs and high-performance hash designs (such as Poseidon, Rescue, and Griffin), one fundamental building block appears repeatedly: the <strong>cryptographic sponge function</strong>.<br>
+It not only offers an elegant absorb-and-squeeze paradigm but also strikes a principled balance between <strong>security and efficiency</strong>.</p>
+<br>
+<p><img alt="SpongeFunc" loading="lazy" src="/images/SpongeFunc.png"></p>
+<br>
+<hr>
+<h3 id="i-what-is-a-sponge-function">I. What is a Sponge Function?<a hidden class="anchor" aria-hidden="true" href="#i-what-is-a-sponge-function">#</a></h3>
+<p>A <strong>sponge</strong> is a flexible cryptographic structure used to absorb an input of arbitrary length and squeeze out a fixed or extensible output. Its power lies in its simplicity, relying only on a single state and a permutation function.</p>
+<ul>
+<li>
+<p>The internal state size is $b = r + c$, where:</p>
+<ul>
+<li>
+<p>$r$: the <strong>rate</strong>, the portion of the state used for input/output;</p>
+</li>
+<li>
+<p>$c$: the <strong>capacity</strong>, the hidden part that ensures security.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>The execution process consists of two phases:</p>
+<ol>
+<li>
+<p><strong>Absorbing Phase</strong><br>
+The input message is split into $r$-bit blocks. Each block is XORed into the first $r$ bits of the state, followed by applying a permutation $f$.</p>
+</li>
+<li>
+<p><strong>Squeezing Phase</strong><br>
+Output is read from the first $r$ bits. After each extraction, $f$ is applied again until the desired output length is achieved.</p>
+</li>
+</ol>
+<p>This process mimics the idea of &ldquo;soaking a sponge with water and squeezing it out&rdquo; — the internal state acts as a container that processes and diffuses the message before producing the final output.</p>
+<br>
+<hr>
+<h3 id="ii-generic-attacks-and-indifferentiability">II. Generic Attacks and Indifferentiability<a hidden class="anchor" aria-hidden="true" href="#ii-generic-attacks-and-indifferentiability">#</a></h3>
+<p>In cryptographic analysis, we often distinguish between:</p>
+<ul>
+<li>
+<p><strong>Generic attacks</strong>: leverage only the sponge framework itself, not the structure of the permutation.</p>
+</li>
+<li>
+<p><strong>Structural attacks</strong>: exploit specific algebraic properties or implementation details of the permutation $f$.</p>
+</li>
+</ul>
+<p>Sponge constructions are notable for offering formal guarantees against generic attacks. To argue this formally, we use:</p>
+<h3 id="the-indifferentiability-framework"><strong>The Indifferentiability Framework</strong><a hidden class="anchor" aria-hidden="true" href="#the-indifferentiability-framework">#</a></h3>
+<p>This is a simulation-based model aiming to prove:</p>
+<blockquote>
+<p>“If an attacker can distinguish the sponge from a random oracle, then they must also be able to distinguish the internal permutation $f$ from a truly random one.”</p></blockquote>
+<p>Thus, if the permutation $f$ behaves like a random permutation, the entire sponge behaves like a random oracle.</p>
+<br>
+<hr>
+<h3 id="iii-what-is-an-externally-visible-weakness">III. What is an Externally Visible Weakness?<a hidden class="anchor" aria-hidden="true" href="#iii-what-is-an-externally-visible-weakness">#</a></h3>
+<p>In the indifferentiability model, only <strong>input-output behavior</strong> is visible to an attacker. Any internal details — including the state — are hidden. Therefore, only the following constitute valid attacks:</p>
+<ul>
+<li>
+<p><strong>Output collisions</strong>: distinct inputs lead to the same output.</p>
+</li>
+<li>
+<p><strong>Second preimage attacks</strong>: given a hash value, find another message mapping to it.</p>
+</li>
+<li>
+<p><strong>Length extension attacks</strong>: predict $H(M | X)$ based on $H(M)$.</p>
+</li>
+</ul>
+<p>✅ <strong>Internal collisions</strong> or state coincidences are not considered attacks — unless they become externally observable.</p>
+<p>This principle significantly simplifies security analysis: we only need to reason about observable behavior.</p>
+<br>
+<hr>
+<h3 id="iv-how-to-claim-security-in-the-random-sponge-model">IV. How to Claim Security in the Random Sponge Model?<a hidden class="anchor" aria-hidden="true" href="#iv-how-to-claim-security-in-the-random-sponge-model">#</a></h3>
+<p>Just as we use idealized models like <strong>random oracles</strong> or <strong>ideal ciphers</strong> for conventional primitives, we can model sponges via:</p>
+<blockquote>
+<p><strong>The Random Sponge</strong> — a theoretical sponge behaving like a random function.</p></blockquote>
+<p>Thus, a sponge construction is secure if it is <strong>indifferentiable</strong> from a random sponge — i.e., if no adversary can distinguish it through queries alone.</p>
+<h3 id="example-of-a-security-claim">Example of a Security Claim:<a hidden class="anchor" aria-hidden="true" href="#example-of-a-security-claim">#</a></h3>
+<blockquote>
+<p>“We assert that our sponge-based design is secure if it does not exhibit any externally visible weaknesses that would not appear in a random sponge.”</p></blockquote>
+<p>In other words:</p>
+<ul>
+<li>If an attacker can distinguish the implementation from an ideal sponge via I/O interactions alone, the construction is insecure.</li>
+</ul>
+<br>
+<hr>
+<h3 id="v-hermetic-sponge-strategy-black-box-security">V. Hermetic Sponge Strategy: Black-Box Security<a hidden class="anchor" aria-hidden="true" href="#v-hermetic-sponge-strategy-black-box-security">#</a></h3>
+<p>The original Keccak paper described a sponge design philosophy that underpins its provable security:</p>
+<blockquote>
+<p><em>“Build a sponge on top of a permutation $f$ which itself is cryptographically strong, and claim that any attack better than $2^{c/2}$ implies a structural weakness in $f$.”</em></p></blockquote>
+<p>This is called the:</p>
+<h3 id="hermetic-sponge-strategy"><strong>Hermetic Sponge Strategy</strong><a hidden class="anchor" aria-hidden="true" href="#hermetic-sponge-strategy">#</a></h3>
+<p>The core idea is to <strong>seal the permutation inside a black box</strong>, and reduce the sponge’s security to whether the box behaves like a random oracle. Specifically:</p>
+<ul>
+<li>
+<p>Only the rate part ($r$ bits) is ever exposed;</p>
+</li>
+<li>
+<p>The capacity ($c$ bits) remains fully hidden;</p>
+</li>
+<li>
+<p>If an attack works better than $2^{c/2}$, it must exploit the permutation&rsquo;s structure.</p>
+</li>
+</ul>
+<p>This is in contrast to classic constructions like Merkle–Damgård, which build security through incremental compression. The sponge instead assumes <strong>non-observability and indistinguishability</strong> as its defense mechanism.</p>
+<blockquote>
+<p><strong>Note:</strong> Hermetic Sponge assumes an ideal world with no side-channel visibility. It doesn&rsquo;t cover power, timing, or cache attacks.</p></blockquote>
+<br>
+<hr>
+<h3 id="vi-collisions-and-second-preimage-attacks">VI. Collisions and Second Preimage Attacks<a hidden class="anchor" aria-hidden="true" href="#vi-collisions-and-second-preimage-attacks">#</a></h3>
+<p>Sponge functions offer different security bounds depending on how they&rsquo;re parameterized:</p>
+<h4 id="1output-collisions">1. <strong>Output Collisions</strong><a hidden class="anchor" aria-hidden="true" href="#1output-collisions">#</a></h4>
+<ul>
+<li>
+<p>The goal is to find $M_1 \ne M_2$ such that:</p>
+<p>$H(M_1)=H(M_2)$</p>
+</li>
+<li>
+<p>If the output length is $n < c$, the attack complexity is approximately $2^{n/2}$.</p>
+</li>
+</ul>
+<h4 id="2internal-collisions">2. <strong>Internal Collisions</strong><a hidden class="anchor" aria-hidden="true" href="#2internal-collisions">#</a></h4>
+<ul>
+<li>
+<p>The attacker aims to create two different messages that end in the same internal state after absorption;</p>
+</li>
+<li>
+<p>This leads to the same output when squeezed;</p>
+</li>
+<li>
+<p>Complexity is roughly $2^{c/2}$.</p>
+</li>
+</ul>
+<h4 id="comparison">Comparison:<a hidden class="anchor" aria-hidden="true" href="#comparison">#</a></h4>
+<ul>
+<li>
+<p>If $n < c$, output collisions are easier;</p>
+</li>
+<li>
+<p>If $n \geq c$, it’s better to aim for inner collisions.</p>
+</li>
+</ul>
+<p>This is why in practice, designers often ensure:</p>
+<blockquote>
+<p><strong>Capacity $c ≥ 2$ × output length $n$</strong></p></blockquote>
+<br>
+<hr>
+<h3 id="vii-throughput-vs-security-balancing-r-and-c">VII. Throughput vs. Security: Balancing r and c<a hidden class="anchor" aria-hidden="true" href="#vii-throughput-vs-security-balancing-r-and-c">#</a></h3>
+<p>The sponge’s performance and security depend on how we divide the state:</p>
+<ul>
+<li>
+<p>$b = r + c$: total internal state is fixed;</p>
+</li>
+<li>
+<p>Increasing $r$: improves throughput;</p>
+</li>
+<li>
+<p>Increasing $c$: improves security (resistance to generic attacks).</p>
+</li>
+</ul>
+<p>Typical settings:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Goal</th>
+          <th>Recommended Setting</th>
+          <th>Explanation</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>128-bit security</td>
+          <td>$c = 256$, $r = b - 256$</td>
+          <td>Collision resistance ≈ $2^{128}$</td>
+      </tr>
+      <tr>
+          <td>High throughput</td>
+          <td>Increase $r$, reduce $c$</td>
+          <td>Favor speed over generic security</td>
+      </tr>
+      <tr>
+          <td>High security</td>
+          <td>Use $c \gg n$</td>
+          <td>Avoid inner collisions and extension</td>
+      </tr>
+  </tbody>
+</table>
+<p>This trade-off is critical in the parameterization and round-count design of sponge-based hashes like Poseidon and Griffin.</p>
+<br>
+<hr>
+<h3 id="viii-conclusion-sponge-as-a-philosophy">VIII. Conclusion: Sponge as a Philosophy<a hidden class="anchor" aria-hidden="true" href="#viii-conclusion-sponge-as-a-philosophy">#</a></h3>
+<p>Sponge functions are not merely algorithmic tricks — they embody a <strong>design philosophy rooted in observability and compositional soundness</strong>.</p>
+<ul>
+<li>
+<p>Security isn&rsquo;t built from compression chaining, but from <strong>black-box indistinguishability</strong>;</p>
+</li>
+<li>
+<p>The sponge doesn&rsquo;t try to block every attack, but instead limits what the attacker can see;</p>
+</li>
+<li>
+<p>Provable security derives from <strong>indifferentiability</strong>, not ad-hoc resistance mechanisms.</p>
+</li>
+</ul>
+<p>This is why sponge functions underpin Keccak (SHA-3), Poseidon (ZK-friendly hashing), Rescue (algebraic soundness), and other modern cryptographic constructions.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://sidereushu.github.io/">Sidereus Hu</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

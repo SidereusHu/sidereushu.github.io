@@ -6,8 +6,23 @@
     <description>Recent content on Sidereus Hu</description>
     <generator>Hugo -- 0.148.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 17 Jul 2025 16:57:25 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 26 Jul 2025 16:57:25 +0800</lastBuildDate>
     <atom:link href="https://sidereushu.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cryptographic Sponge Functions: The Foundation of ZK-Friendly Hash Constructions</title>
+      <link>https://sidereushu.github.io/posts/cryptographic-sponge-functions--the-foundation-of-zk-friendly-hash-constructions/</link>
+      <pubDate>Sat, 26 Jul 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/cryptographic-sponge-functions--the-foundation-of-zk-friendly-hash-constructions/</guid>
+      <description>&lt;br&gt;
+&lt;p&gt;In modern cryptography, particularly in zero-knowledge proofs and high-performance hash designs (such as Poseidon, Rescue, and Griffin), one fundamental building block appears repeatedly: the &lt;strong&gt;cryptographic sponge function&lt;/strong&gt;.&lt;br&gt;
+It not only offers an elegant absorb-and-squeeze paradigm but also strikes a principled balance between &lt;strong&gt;security and efficiency&lt;/strong&gt;.&lt;/p&gt;
+&lt;br&gt;
+&lt;p&gt;&lt;img alt=&#34;SpongeFunc&#34; loading=&#34;lazy&#34; src=&#34;https://sidereushu.github.io/images/SpongeFunc.png&#34;&gt;&lt;/p&gt;
+&lt;br&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;i-what-is-a-sponge-function&#34;&gt;I. What is a Sponge Function?&lt;/h3&gt;
+&lt;p&gt;A &lt;strong&gt;sponge&lt;/strong&gt; is a flexible cryptographic structure used to absorb an input of arbitrary length and squeeze out a fixed or extensible output. Its power lies in its simplicity, relying only on a single state and a permutation function.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>ZK Proofs Are Not the Essence of Layer 0, Trust Abstraction Is</title>
       <link>https://sidereushu.github.io/posts/zk-proofs-are-not-the-essence-of-layer-0-trust-abstraction-is/</link>
