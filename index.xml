@@ -6,8 +6,75 @@
     <description>Recent content on Sidereus Hu</description>
     <generator>Hugo -- 0.148.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 26 Jul 2025 16:57:25 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 27 Jul 2025 16:57:25 +0800</lastBuildDate>
     <atom:link href="https://sidereushu.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Practical Recommendations (for Gnark &#43; BLS12-831 &#43; Compress Mode)</title>
+      <link>https://sidereushu.github.io/posts/practical-recommendations-for-gnark-&#43;-bls12-831-&#43;-compress-mode/</link>
+      <pubDate>Sun, 27 Jul 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/practical-recommendations-for-gnark-&#43;-bls12-831-&#43;-compress-mode/</guid>
+      <description>&lt;br&gt;
+&lt;p&gt;&lt;strong&gt;Suggested Parameters:&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;Parameter&lt;/th&gt;
+          &lt;th&gt;Suggested (Width 2)&lt;/th&gt;
+          &lt;th&gt;Suggested (Width 3)&lt;/th&gt;
+          &lt;th&gt;Notes&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Prime Field&lt;/td&gt;
+          &lt;td&gt;BLS12-831&lt;/td&gt;
+          &lt;td&gt;BLS12-831&lt;/td&gt;
+          &lt;td&gt;Newly supported field in Gnark&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Width &lt;em&gt;t&lt;/em&gt;&lt;/td&gt;
+          &lt;td&gt;2&lt;/td&gt;
+          &lt;td&gt;3&lt;/td&gt;
+          &lt;td&gt;Width 3 is preferred if Gnark supports it&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;S-box&lt;/td&gt;
+          &lt;td&gt;$x^5$&lt;/td&gt;
+          &lt;td&gt;$x^5$&lt;/td&gt;
+          &lt;td&gt;Common and secure choice over prime fields&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Full Rounds&lt;/td&gt;
+          &lt;td&gt;8&lt;/td&gt;
+          &lt;td&gt;8&lt;/td&gt;
+          &lt;td&gt;Avoid using fewer than 8 rounds&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Partial Rounds&lt;/td&gt;
+          &lt;td&gt;22&lt;/td&gt;
+          &lt;td&gt;14–17&lt;/td&gt;
+          &lt;td&gt;Based on updated recommendations&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Mode&lt;/td&gt;
+          &lt;td&gt;Compress Mode&lt;/td&gt;
+          &lt;td&gt;Compress Mode&lt;/td&gt;
+          &lt;td&gt;Used for input compression in UTXO models&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Security Level&lt;/td&gt;
+          &lt;td&gt;≥128 bits&lt;/td&gt;
+          &lt;td&gt;≥128 bits&lt;/td&gt;
+          &lt;td&gt;Default setting meets the requirement&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;additional-notes&#34;&gt;Additional Notes&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Security Analysis&lt;/strong&gt;: Considers recent advances in algebraic attacks such as Gröbner basis methods, [KR21], [BCD+20], and [ABM23].&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Cryptographic Sponge Functions: The Foundation of ZK-Friendly Hash Constructions</title>
       <link>https://sidereushu.github.io/posts/cryptographic-sponge-functions--the-foundation-of-zk-friendly-hash-constructions/</link>

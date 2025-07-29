@@ -164,6 +164,21 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">Practical Recommendations (for Gnark &#43; BLS12-831 &#43; Compress Mode)
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>
+Suggested Parameters:
+Parameter Suggested (Width 2) Suggested (Width 3) Notes Prime Field BLS12-831 BLS12-831 Newly supported field in Gnark Width t 2 3 Width 3 is preferred if Gnark supports it S-box $x^5$ $x^5$ Common and secure choice over prime fields Full Rounds 8 8 Avoid using fewer than 8 rounds Partial Rounds 22 14–17 Based on updated recommendations Mode Compress Mode Compress Mode Used for input compression in UTXO models Security Level ≥128 bits ≥128 bits Default setting meets the requirement Additional Notes Security Analysis: Considers recent advances in algebraic attacks such as Gröbner basis methods, [KR21], [BCD&#43;20], and [ABM23].
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-07-27 16:57:25 +0800 CST'>2025-07-27</span>&nbsp;·&nbsp;Sidereus Hu</footer>
+  <a class="entry-link" aria-label="post link to Practical Recommendations (for Gnark &#43; BLS12-831 &#43; Compress Mode)" href="https://sidereushu.github.io/posts/practical-recommendations-for-gnark-&#43;-bls12-831-&#43;-compress-mode/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">Cryptographic Sponge Functions: The Foundation of ZK-Friendly Hash Constructions
     </h2>
   </header>
