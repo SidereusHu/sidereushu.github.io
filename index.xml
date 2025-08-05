@@ -70,10 +70,10 @@
 &lt;p&gt;In [GKR25], the authors present a comprehensive analysis of Gröbner basis attacks against Poseidon2 in Sponge mode through Table 5. This analysis is based on a two-step approach: the GB step (Macaulay bound) and the FGLM step (&lt;code&gt;conjectured dI&lt;/code&gt;). Subsequently, the authors derive the minimum partial rounds values $r_P$ that can be configured, as shown in Table 3.&lt;/p&gt;</description>
     </item>
     <item>
-      <title>Practical Recommendations (for Gnark &#43; BLS12-831 &#43; Compress Mode)</title>
-      <link>https://sidereushu.github.io/posts/practical-recommendations-for-gnark-&#43;-bls12-831-&#43;-compress-mode/</link>
+      <title>Practical Recommendations (for Gnark &#43; BLS12-381 &#43; Compress Mode)</title>
+      <link>https://sidereushu.github.io/posts/practical-recommendations-for-gnark-&#43;-bls12-381-&#43;-compress-mode/</link>
       <pubDate>Sun, 27 Jul 2025 16:57:25 +0800</pubDate>
-      <guid>https://sidereushu.github.io/posts/practical-recommendations-for-gnark-&#43;-bls12-831-&#43;-compress-mode/</guid>
+      <guid>https://sidereushu.github.io/posts/practical-recommendations-for-gnark-&#43;-bls12-381-&#43;-compress-mode/</guid>
       <description>&lt;br&gt;
 &lt;p&gt;&lt;strong&gt;Suggested Parameters:&lt;/strong&gt;&lt;/p&gt;
 &lt;table&gt;
@@ -88,8 +88,8 @@
   &lt;tbody&gt;
       &lt;tr&gt;
           &lt;td&gt;Prime Field&lt;/td&gt;
-          &lt;td&gt;BLS12-831&lt;/td&gt;
-          &lt;td&gt;BLS12-831&lt;/td&gt;
+          &lt;td&gt;BLS12-381&lt;/td&gt;
+          &lt;td&gt;BLS12-381&lt;/td&gt;
           &lt;td&gt;Newly supported field in Gnark&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
