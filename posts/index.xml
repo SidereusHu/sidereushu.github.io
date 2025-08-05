@@ -60,6 +60,7 @@
       &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;br&gt;
 &lt;h2 id=&#34;key-points&#34;&gt;Key Points&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;strong&gt;Evolution of Attack Methods&lt;/strong&gt;: Beyond traditional analytical approaches such as statistical analysis, algebraic attacks (particularly Gröbner basis attacks) have been recognized by the academic community as significantly more effective and have become the primary research focus in recent years.&lt;/li&gt;
