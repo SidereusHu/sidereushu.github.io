@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Practical Recommendations (for Poseidon2 &#43; BLS12-381 &#43; Compress Mode) | Sidereus Hu</title>
+<meta name="keywords" content="">
+<meta name="description" content="
+Suggested Parameters:
+
+  
+      
+          Parameter
+          Suggested (Width 2)
+          Suggested (Width 3)
+          Notes
+      
+  
+  
+      
+          Prime Field
+          BLS12-381
+          BLS12-381
+          Newly supported field in Gnark
+      
+      
+          Width t
+          2
+          3
+          Width 3 is preferred if Gnark supports it
+      
+      
+          S-box
+          $x^5$
+          $x^5$
+          Common and secure choice over prime fields
+      
+      
+          Full Rounds
+          8
+          8
+          Avoid using fewer than 8 rounds
+      
+      
+          Partial Rounds
+          22
+          14–17
+          Based on updated recommendations
+      
+      
+          Mode
+          Compress Mode
+          Compress Mode
+          Used for input compression in UTXO models
+      
+      
+          Security Level
+          ≥128 bits
+          ≥128 bits
+          Default setting meets the requirement
+      
+  
+
+
+Additional Notes
+
+
+Security Analysis: Considers recent advances in algebraic attacks such as Gröbner basis methods, [KR21], [BCD&#43;20], [ABM23], and [GKR25].">
+<meta name="author" content="Sidereus Hu">
+<link rel="canonical" href="https://sidereushu.github.io/posts/practical-recommendations-for-poseidon2-&#43;-bls12-381-&#43;-compress-mode/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.93f625d739f1d6a5c6f20c146bc6a8d26b233492b34b2220c54b12fd46a04ded.css" integrity="sha256-k/Yl1znx1qXG8gwUa8ao0msjNJKzSyIgxUsS/UagTe0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://sidereushu.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://sidereushu.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://sidereushu.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://sidereushu.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://sidereushu.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://sidereushu.github.io/posts/practical-recommendations-for-poseidon2-&#43;-bls12-381-&#43;-compress-mode/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+ 
+
+
+<meta property="og:url" content="https://sidereushu.github.io/posts/practical-recommendations-for-poseidon2-&#43;-bls12-381-&#43;-compress-mode/">
+  <meta property="og:site_name" content="Sidereus Hu">
+  <meta property="og:title" content="Practical Recommendations (for Poseidon2 &#43; BLS12-381 &#43; Compress Mode)">
+  <meta property="og:description" content="
+Suggested Parameters:
+Parameter Suggested (Width 2) Suggested (Width 3) Notes Prime Field BLS12-381 BLS12-381 Newly supported field in Gnark Width t 2 3 Width 3 is preferred if Gnark supports it S-box $x^5$ $x^5$ Common and secure choice over prime fields Full Rounds 8 8 Avoid using fewer than 8 rounds Partial Rounds 22 14–17 Based on updated recommendations Mode Compress Mode Compress Mode Used for input compression in UTXO models Security Level ≥128 bits ≥128 bits Default setting meets the requirement Additional Notes Security Analysis: Considers recent advances in algebraic attacks such as Gröbner basis methods, [KR21], [BCD&#43;20], [ABM23], and [GKR25].">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-07-27T16:57:25+08:00">
+    <meta property="article:modified_time" content="2025-07-27T16:57:25+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Practical Recommendations (for Poseidon2 &#43; BLS12-381 &#43; Compress Mode)">
+<meta name="twitter:description" content="
+Suggested Parameters:
+
+  
+      
+          Parameter
+          Suggested (Width 2)
+          Suggested (Width 3)
+          Notes
+      
+  
+  
+      
+          Prime Field
+          BLS12-381
+          BLS12-381
+          Newly supported field in Gnark
+      
+      
+          Width t
+          2
+          3
+          Width 3 is preferred if Gnark supports it
+      
+      
+          S-box
+          $x^5$
+          $x^5$
+          Common and secure choice over prime fields
+      
+      
+          Full Rounds
+          8
+          8
+          Avoid using fewer than 8 rounds
+      
+      
+          Partial Rounds
+          22
+          14–17
+          Based on updated recommendations
+      
+      
+          Mode
+          Compress Mode
+          Compress Mode
+          Used for input compression in UTXO models
+      
+      
+          Security Level
+          ≥128 bits
+          ≥128 bits
+          Default setting meets the requirement
+      
+  
+
+
+Additional Notes
+
+
+Security Analysis: Considers recent advances in algebraic attacks such as Gröbner basis methods, [KR21], [BCD&#43;20], [ABM23], and [GKR25].">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://sidereushu.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Practical Recommendations (for Poseidon2 + BLS12-381 + Compress Mode)",
+      "item": "https://sidereushu.github.io/posts/practical-recommendations-for-poseidon2-+-bls12-381-+-compress-mode/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Practical Recommendations (for Poseidon2 + BLS12-381 + Compress Mode)",
+  "name": "Practical Recommendations (for Poseidon2 \u002b BLS12-381 \u002b Compress Mode)",
+  "description": "\nSuggested Parameters:\nParameter Suggested (Width 2) Suggested (Width 3) Notes Prime Field BLS12-381 BLS12-381 Newly supported field in Gnark Width t 2 3 Width 3 is preferred if Gnark supports it S-box $x^5$ $x^5$ Common and secure choice over prime fields Full Rounds 8 8 Avoid using fewer than 8 rounds Partial Rounds 22 14–17 Based on updated recommendations Mode Compress Mode Compress Mode Used for input compression in UTXO models Security Level ≥128 bits ≥128 bits Default setting meets the requirement Additional Notes Security Analysis: Considers recent advances in algebraic attacks such as Gröbner basis methods, [KR21], [BCD+20], [ABM23], and [GKR25].\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "\nSuggested Parameters:\nParameter Suggested (Width 2) Suggested (Width 3) Notes Prime Field BLS12-381 BLS12-381 Newly supported field in Gnark Width t 2 3 Width 3 is preferred if Gnark supports it S-box $x^5$ $x^5$ Common and secure choice over prime fields Full Rounds 8 8 Avoid using fewer than 8 rounds Partial Rounds 22 14–17 Based on updated recommendations Mode Compress Mode Compress Mode Used for input compression in UTXO models Security Level ≥128 bits ≥128 bits Default setting meets the requirement Additional Notes Security Analysis: Considers recent advances in algebraic attacks such as Gröbner basis methods, [KR21], [BCD+20], [ABM23], and [GKR25].\nSimplified and updated design guidance: No longer uses $ x \\mapsto x^{-1} $ or the STARKAD family.\nClearer round number recommendations: Based on the latest cryptanalysis.\nEfficiency emphasis: Prime fields like BLS12-381 offer superior performance in ZKP systems such as Gnark.\n",
+  "wordCount" : "143",
+  "inLanguage": "zh",
+  "datePublished": "2025-07-27T16:57:25+08:00",
+  "dateModified": "2025-07-27T16:57:25+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "Sidereus Hu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sidereushu.github.io/posts/practical-recommendations-for-poseidon2-+-bls12-381-+-compress-mode/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sidereus Hu",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sidereushu.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://sidereushu.github.io/" accesskey="h" title="Sidereus Hu (Alt + H)">Sidereus Hu</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://sidereushu.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://sidereushu.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Practical Recommendations (for Poseidon2 &#43; BLS12-381 &#43; Compress Mode)
+    </h1>
+    <div class="post-meta"><span title='2025-07-27 16:57:25 +0800 CST'>2025-07-27</span>&nbsp;·&nbsp;Sidereus Hu
+
+</div>
+  </header> 
+  <div class="post-content"><br>
+<p><strong>Suggested Parameters:</strong></p>
+<table>
+  <thead>
+      <tr>
+          <th>Parameter</th>
+          <th>Suggested (Width 2)</th>
+          <th>Suggested (Width 3)</th>
+          <th>Notes</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Prime Field</td>
+          <td>BLS12-381</td>
+          <td>BLS12-381</td>
+          <td>Newly supported field in Gnark</td>
+      </tr>
+      <tr>
+          <td>Width <em>t</em></td>
+          <td>2</td>
+          <td>3</td>
+          <td>Width 3 is preferred if Gnark supports it</td>
+      </tr>
+      <tr>
+          <td>S-box</td>
+          <td>$x^5$</td>
+          <td>$x^5$</td>
+          <td>Common and secure choice over prime fields</td>
+      </tr>
+      <tr>
+          <td>Full Rounds</td>
+          <td>8</td>
+          <td>8</td>
+          <td>Avoid using fewer than 8 rounds</td>
+      </tr>
+      <tr>
+          <td>Partial Rounds</td>
+          <td>22</td>
+          <td>14–17</td>
+          <td>Based on updated recommendations</td>
+      </tr>
+      <tr>
+          <td>Mode</td>
+          <td>Compress Mode</td>
+          <td>Compress Mode</td>
+          <td>Used for input compression in UTXO models</td>
+      </tr>
+      <tr>
+          <td>Security Level</td>
+          <td>≥128 bits</td>
+          <td>≥128 bits</td>
+          <td>Default setting meets the requirement</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="additional-notes">Additional Notes<a hidden class="anchor" aria-hidden="true" href="#additional-notes">#</a></h3>
+<ul>
+<li>
+<p><strong>Security Analysis</strong>: Considers recent advances in algebraic attacks such as Gröbner basis methods, [KR21], [BCD+20], [ABM23], and [GKR25].</p>
+</li>
+<li>
+<p><strong>Simplified and updated design guidance</strong>: No longer uses $ x \mapsto x^{-1} $ or the STARKAD family.</p>
+</li>
+<li>
+<p><strong>Clearer round number recommendations</strong>: Based on the latest cryptanalysis.</p>
+</li>
+<li>
+<p><strong>Efficiency emphasis</strong>: Prime fields like <strong>BLS12-381</strong> offer superior performance in ZKP systems such as Gnark.</p>
+</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://sidereushu.github.io/">Sidereus Hu</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
