@@ -2,13 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://sidereushu.github.io/posts/</loc>
-    <lastmod>2025-07-27T16:57:25+08:00</lastmod>
+    <loc>https://sidereushu.github.io/posts/poseidon2-hash-security-analysis--gr%C3%B6bner-basis-attack-evaluation/</loc>
+    <lastmod>2025-08-02T16:57:25+08:00</lastmod>
   </url><url>
-    <loc>https://sidereushu.github.io/posts/practical-recommendations-for-gnark-&#43;-bls12-831-&#43;-compress-mode/</loc>
-    <lastmod>2025-07-27T16:57:25+08:00</lastmod>
+    <loc>https://sidereushu.github.io/posts/</loc>
+    <lastmod>2025-08-02T16:57:25+08:00</lastmod>
   </url><url>
     <loc>https://sidereushu.github.io/</loc>
+    <lastmod>2025-08-02T16:57:25+08:00</lastmod>
+  </url><url>
+    <loc>https://sidereushu.github.io/posts/practical-recommendations-for-gnark-&#43;-bls12-831-&#43;-compress-mode/</loc>
     <lastmod>2025-07-27T16:57:25+08:00</lastmod>
   </url><url>
     <loc>https://sidereushu.github.io/posts/cryptographic-sponge-functions--the-foundation-of-zk-friendly-hash-constructions/</loc>

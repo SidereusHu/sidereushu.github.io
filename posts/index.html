@@ -164,13 +164,27 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">Poseidon2 Hash Security Analysis: Gröbner Basis Attack Evaluation
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>
+Work Key Idea Effectiveness on Poseidon [FP20] Closed-form degree expression Useful for modeling GB attacks [BBLP22] Skipping (multiple) full rounds Reduces effective non-linear depth [ABM24] Round-level GB modeling Shows underestimated vulnerability at κ = 1024 [BBL&#43;24] FreeLunch GB attacks Not effective due to low S-box degree [KLR24] “Six Worlds” framework Not yet applied; potential for future work [GKR25] Forward GB Attack Exploiting Subspace Trails original analysis under- or overestimates the number of rounds needed for security. [BBB&#43;25] Iterated resultants Reduces to simple univariate case Key Points Evolution of Attack Methods: Beyond traditional analytical approaches such as statistical analysis, algebraic attacks (particularly Gröbner basis attacks) have been recognized by the academic community as significantly more effective and have become the primary research focus in recent years. Parameter Customization Challenges: Poseidon hash offers extensive customizable parameter space, which leads to issues of conservative security assumptions and potential overestimation. Current Research Status: The results provided by [ABM24] are excellent, but their acceptance in the community remains limited at present. In [GKR25], the authors present a comprehensive analysis of Gröbner basis attacks against Poseidon2 in Sponge mode through Table 5. This analysis is based on a two-step approach: the GB step (Macaulay bound) and the FGLM step (conjectured dI). Subsequently, the authors derive the minimum partial rounds values $r_P$ that can be configured, as shown in Table 3.
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-08-02 16:57:25 +0800 CST'>2025-08-02</span>&nbsp;·&nbsp;Sidereus Hu</footer>
+  <a class="entry-link" aria-label="post link to Poseidon2 Hash Security Analysis: Gröbner Basis Attack Evaluation" href="https://sidereushu.github.io/posts/poseidon2-hash-security-analysis--gr%C3%B6bner-basis-attack-evaluation/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">Practical Recommendations (for Gnark &#43; BLS12-831 &#43; Compress Mode)
     </h2>
   </header>
   <div class="entry-content">
     <p>
 Suggested Parameters:
-Parameter Suggested (Width 2) Suggested (Width 3) Notes Prime Field BLS12-831 BLS12-831 Newly supported field in Gnark Width t 2 3 Width 3 is preferred if Gnark supports it S-box $x^5$ $x^5$ Common and secure choice over prime fields Full Rounds 8 8 Avoid using fewer than 8 rounds Partial Rounds 22 14–17 Based on updated recommendations Mode Compress Mode Compress Mode Used for input compression in UTXO models Security Level ≥128 bits ≥128 bits Default setting meets the requirement Additional Notes Security Analysis: Considers recent advances in algebraic attacks such as Gröbner basis methods, [KR21], [BCD&#43;20], and [ABM23].
+Parameter Suggested (Width 2) Suggested (Width 3) Notes Prime Field BLS12-831 BLS12-831 Newly supported field in Gnark Width t 2 3 Width 3 is preferred if Gnark supports it S-box $x^5$ $x^5$ Common and secure choice over prime fields Full Rounds 8 8 Avoid using fewer than 8 rounds Partial Rounds 22 14–17 Based on updated recommendations Mode Compress Mode Compress Mode Used for input compression in UTXO models Security Level ≥128 bits ≥128 bits Default setting meets the requirement Additional Notes Security Analysis: Considers recent advances in algebraic attacks such as Gröbner basis methods, [KR21], [BCD&#43;20], [ABM23], and [GKR25].
 ...</p>
   </div>
   <footer class="entry-footer"><span title='2025-07-27 16:57:25 +0800 CST'>2025-07-27</span>&nbsp;·&nbsp;Sidereus Hu</footer>
@@ -305,18 +319,12 @@ The core breakthrough of quantum computing does not lie in macro-level advanceme
   <footer class="entry-footer"><span title='2024-11-15 16:57:25 +0800 CST'>2024-11-15</span>&nbsp;·&nbsp;Sidereus Hu</footer>
   <a class="entry-link" aria-label="post link to From Macro to Micro - A Computational Revolution Reshaping Cryptography" href="https://sidereushu.github.io/posts/from-macro-to-micro---a-computational-revolution-reshaping-cryptography/"></a>
 </article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p></p>
-  </div>
-  <footer class="entry-footer">Sidereus Hu</footer>
-  <a class="entry-link" aria-label="post link to " href="https://sidereushu.github.io/posts/images/short-term/"></a>
-</article>
+<footer class="page-footer">
+  <nav class="pagination">
+    <a class="next" href="https://sidereushu.github.io/posts/page/2/">下一页&nbsp;&nbsp;»
+    </a>
+  </nav>
+</footer>
     </main>
     
 <footer class="footer">
