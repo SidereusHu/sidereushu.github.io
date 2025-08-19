@@ -6,8 +6,24 @@
     <description>Recent content in Posts on Sidereus Hu</description>
     <generator>Hugo -- 0.148.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 02 Aug 2025 16:57:25 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 17 Aug 2025 16:57:25 +0800</lastBuildDate>
     <atom:link href="https://sidereushu.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Poseidon Hash Algebraic Attack Analysis (Designer&#39;s Perspective)</title>
+      <link>https://sidereushu.github.io/posts/poseidon-hash-algebraic-attack-analysis-designers-perspective/</link>
+      <pubDate>Sun, 17 Aug 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/poseidon-hash-algebraic-attack-analysis-designers-perspective/</guid>
+      <description>&lt;br&gt;
+&lt;p&gt;In recent years, &amp;ldquo;ZK-friendly&amp;rdquo; hash functions designed for zero-knowledge proof (ZK) scenarios have gained widespread attention. They are typically based on carefully constructed algebraic structures to exhibit lower constraint counts in arithmetic circuits, thereby achieving higher efficiency in proof systems. However, it is precisely this algebraic friendliness that exposes them to potential attack surfaces under certain analytical models. Particularly in recent years, algebraic analysis methods—such as Gröbner basis attacks and polynomial degree reduction techniques utilizing subspace trajectories—have seen significant research interest in the cryptanalysis field and have gradually become one of the core tools for evaluating the security of such hash functions.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Poseidon Hash Algebraic Attack Analysis (Analyst&#39;s Perspective)</title>
+      <link>https://sidereushu.github.io/posts/poseidon-hash-algebraic-attack-analysis-analysts-perspective/</link>
+      <pubDate>Tue, 12 Aug 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/poseidon-hash-algebraic-attack-analysis-analysts-perspective/</guid>
+      <description>&lt;br&gt;
+&lt;p&gt;In recent years, &amp;ldquo;ZK-friendly&amp;rdquo; hash functions designed for zero-knowledge proof (ZK) scenarios have gained widespread attention. They are typically based on carefully constructed algebraic structures to exhibit lower constraint counts in arithmetic circuits, thereby achieving higher efficiency in proof systems. However, it is precisely this algebraic friendliness that exposes them to potential attack surfaces under certain analytical models. Particularly in recent years, algebraic analysis methods—such as Gröbner basis attacks and polynomial degree reduction techniques utilizing subspace trajectories—have seen significant research interest in the cryptanalysis field and have gradually become one of the core tools for evaluating the security of such hash functions.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Poseidon2 Hash Security Analysis: Gröbner Basis Attack Evaluation</title>
       <link>https://sidereushu.github.io/posts/poseidon2-hash-security-analysis--gr%C3%B6bner-basis-attack-evaluation/</link>
