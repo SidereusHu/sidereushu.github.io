@@ -17,6 +17,15 @@
 &lt;p&gt;In recent years, &amp;ldquo;ZK-friendly&amp;rdquo; hash functions designed for zero-knowledge proof (ZK) scenarios have received widespread attention. They are typically based on carefully constructed algebraic structures to achieve lower constraint counts in arithmetic circuits, thereby enabling higher efficiency in proof systems. However, it is precisely this algebraic friendliness that exposes potential attack surfaces under certain analysis models. Particularly in recent years, algebraic analysis methods—such as Gröbner basis attacks and polynomial degree reduction techniques using subspace trails—have gained significant research interest in the cryptanalysis field and have gradually become one of the core tools for evaluating the security of such hash functions.&lt;/p&gt;</description>
     </item>
     <item>
+      <title>Overview and Evaluation of Round-by-Round Modeling Analysis for Poseidon Hash</title>
+      <link>https://sidereushu.github.io/posts/overview-and-evaluation-of-round-by-round-modeling-analysis-for-poseidon-hash/</link>
+      <pubDate>Mon, 25 Aug 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/overview-and-evaluation-of-round-by-round-modeling-analysis-for-poseidon-hash/</guid>
+      <description>&lt;br&gt;
+&lt;p&gt;Poseidon is a &lt;strong&gt;ZK-friendly hash function&lt;/strong&gt;, and its security evaluation largely relies on theoretical modeling of the complexity of &lt;strong&gt;Gröbner basis (GB) attacks&lt;/strong&gt;. Early security analyses (such as [GKR+19], [GLR+20]) primarily employed &lt;strong&gt;input–output modeling&lt;/strong&gt; (directly converting the input-output relationship of the entire function into a polynomial equation system) and calculated the so-called &lt;strong&gt;degree of regularity&lt;/strong&gt; on this model to estimate the complexity of GB attacks.&lt;/p&gt;
+&lt;p&gt;In [GLR+20], another approach was mentioned—&lt;strong&gt;round-level modeling&lt;/strong&gt;: introducing new variables for each S-Box in each round, thereby decomposing the entire function into equation systems for multiple rounds.&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>Poseidon Hash Algebraic Attack Analysis (Designer&#39;s Perspective)</title>
       <link>https://sidereushu.github.io/posts/poseidon-hash-algebraic-attack-analysis-designers-perspective/</link>
       <pubDate>Sun, 17 Aug 2025 16:57:25 +0800</pubDate>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Overview and Evaluation of Round-by-Round Modeling Analysis for Poseidon Hash | Sidereus Hu</title>
+<meta name="keywords" content="">
+<meta name="description" content="
+Poseidon is a ZK-friendly hash function, and its security evaluation largely relies on theoretical modeling of the complexity of Gröbner basis (GB) attacks. Early security analyses (such as [GKR&#43;19], [GLR&#43;20]) primarily employed input–output modeling (directly converting the input-output relationship of the entire function into a polynomial equation system) and calculated the so-called degree of regularity on this model to estimate the complexity of GB attacks.
+In [GLR&#43;20], another approach was mentioned—round-level modeling: introducing new variables for each S-Box in each round, thereby decomposing the entire function into equation systems for multiple rounds.">
+<meta name="author" content="Sidereus Hu">
+<link rel="canonical" href="https://sidereushu.github.io/posts/overview-and-evaluation-of-round-by-round-modeling-analysis-for-poseidon-hash/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.93f625d739f1d6a5c6f20c146bc6a8d26b233492b34b2220c54b12fd46a04ded.css" integrity="sha256-k/Yl1znx1qXG8gwUa8ao0msjNJKzSyIgxUsS/UagTe0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://sidereushu.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://sidereushu.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://sidereushu.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://sidereushu.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://sidereushu.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://sidereushu.github.io/posts/overview-and-evaluation-of-round-by-round-modeling-analysis-for-poseidon-hash/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+ 
+
+
+<meta property="og:url" content="https://sidereushu.github.io/posts/overview-and-evaluation-of-round-by-round-modeling-analysis-for-poseidon-hash/">
+  <meta property="og:site_name" content="Sidereus Hu">
+  <meta property="og:title" content="Overview and Evaluation of Round-by-Round Modeling Analysis for Poseidon Hash">
+  <meta property="og:description" content="
+Poseidon is a ZK-friendly hash function, and its security evaluation largely relies on theoretical modeling of the complexity of Gröbner basis (GB) attacks. Early security analyses (such as [GKR&#43;19], [GLR&#43;20]) primarily employed input–output modeling (directly converting the input-output relationship of the entire function into a polynomial equation system) and calculated the so-called degree of regularity on this model to estimate the complexity of GB attacks.
+In [GLR&#43;20], another approach was mentioned—round-level modeling: introducing new variables for each S-Box in each round, thereby decomposing the entire function into equation systems for multiple rounds.">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-08-25T16:57:25+08:00">
+    <meta property="article:modified_time" content="2025-08-25T16:57:25+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Overview and Evaluation of Round-by-Round Modeling Analysis for Poseidon Hash">
+<meta name="twitter:description" content="
+Poseidon is a ZK-friendly hash function, and its security evaluation largely relies on theoretical modeling of the complexity of Gröbner basis (GB) attacks. Early security analyses (such as [GKR&#43;19], [GLR&#43;20]) primarily employed input–output modeling (directly converting the input-output relationship of the entire function into a polynomial equation system) and calculated the so-called degree of regularity on this model to estimate the complexity of GB attacks.
+In [GLR&#43;20], another approach was mentioned—round-level modeling: introducing new variables for each S-Box in each round, thereby decomposing the entire function into equation systems for multiple rounds.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://sidereushu.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Overview and Evaluation of Round-by-Round Modeling Analysis for Poseidon Hash",
+      "item": "https://sidereushu.github.io/posts/overview-and-evaluation-of-round-by-round-modeling-analysis-for-poseidon-hash/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Overview and Evaluation of Round-by-Round Modeling Analysis for Poseidon Hash",
+  "name": "Overview and Evaluation of Round-by-Round Modeling Analysis for Poseidon Hash",
+  "description": "\nPoseidon is a ZK-friendly hash function, and its security evaluation largely relies on theoretical modeling of the complexity of Gröbner basis (GB) attacks. Early security analyses (such as [GKR+19], [GLR+20]) primarily employed input–output modeling (directly converting the input-output relationship of the entire function into a polynomial equation system) and calculated the so-called degree of regularity on this model to estimate the complexity of GB attacks.\nIn [GLR+20], another approach was mentioned—round-level modeling: introducing new variables for each S-Box in each round, thereby decomposing the entire function into equation systems for multiple rounds.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "\nPoseidon is a ZK-friendly hash function, and its security evaluation largely relies on theoretical modeling of the complexity of Gröbner basis (GB) attacks. Early security analyses (such as [GKR+19], [GLR+20]) primarily employed input–output modeling (directly converting the input-output relationship of the entire function into a polynomial equation system) and calculated the so-called degree of regularity on this model to estimate the complexity of GB attacks.\nIn [GLR+20], another approach was mentioned—round-level modeling: introducing new variables for each S-Box in each round, thereby decomposing the entire function into equation systems for multiple rounds.\nNotably, recent work [ABM24] revisited the feasibility of round-by-round modeling. They directly referenced the approach from [GLR+20] but further used practical experiments to validate the effectiveness of round-by-round modeling in GB attacks, rather than merely relying on theoretical speculation.\nABM24’s Method Under the round-by-round modeling model used in [ABM24]:\nThe input and output of each S-Box are independent variables; Polynomial equations for each round only involve the S-Box inputs/outputs and linear layer of the current round; This results in lower degree equations in the system (especially when some rounds are linearized), facilitating faster solving by GB algorithms. Under this modeling, one key indicator of the attack is $D_{\\mathrm{reg}}$ (degree of regularity), which affects the complexity estimation of Gröbner basis solving.\n[ABM24] argued that $D_{\\mathrm{reg}}$ was overestimated, meaning that while the system was previously considered more difficult to solve, it might actually not be that hard.\n[ABM24] discovered an assumption error in previous $D_{\\mathrm{reg}}$ calculations:\nOriginally assumed the equation system was a regular system, but it actually wasn’t.\nTherefore, the correct number of equations and variables should be: $$(R_{F}−1)⋅t+R_{P}+r$$ where: - $R_{F}$ = number of full rounds - $R_{P}​$ = number of partial rounds - $t$ = state size - $r$ = rate, with $r≥t/3$\nUnder this correction, the more precise $D_{\\mathrm{reg}}$ estimation formula becomes: $$D_{\\mathrm{reg}} ≈ \\frac {r⋅R_{F}} {2} + R_{P} + α$$(where $α$ is a small constant related to system structure)\nABM24’s Conclusions Main Findings\n[ABM24] analyzed Poseidon’s security assumptions and found that the degree growth rate (degree of regularity) is slower than originally assumed by the designers.\nThis means that under certain parameters, the recommended number of rounds is insufficient to achieve the claimed security level.\nSpecific Impact\n1024-bit security level: Clearly demonstrated a complete attack instance (i.e., security was significantly overestimated).\n512-bit and 384-bit security levels: Security analysis is also invalid, but they did not successfully provide complete attacks—the authors believe other factors in the design may have hindered the final step of the attack.\n128-bit and 256-bit security levels: No vulnerable parameter sets were found; the designers’ original security estimates remain valid at these levels.\nScope Limitations\nTheir conclusions lean toward asymptotic analysis, not claiming all parameters are problematic, but pointing out that under certain high-security-level parameters, theoretical resistance is worse than expected. Poseidon Authors’ Evaluation of [ABM24] Poseidon authors accepted [ABM24]’s correction in their updated paper, incorporating the new $D_{\\mathrm{reg}}$ formula.\nHowever, Poseidon authors stated that this correction has no impact on currently used parameters, as commonly used instances still satisfy security conditions. Specifically:\nSecurity level at 128-bit Modulus size around 64 bits or 256 bits Common SNARK parameters $t∈{3,5}$ Common FRI parameters $t∈{12,24}$ All of these remain unaffected. Therefore, Poseidon authors continued with their original security analysis framework: $$\\Big(\\frac {V+D_{\\mathrm{reg}}}{D_{\\mathrm{reg}}}\\Big)^2 \\geq 2^{\\kappa}$$ where:\nTotal number of variables $V=(R_{F}-1)\\cdot t + R_{P} +r$ $\\kappa$ is the target security strength Summary of Poseidon authors’ evaluation of [ABM24]:\n[ABM24] pointed out that $D_{\\mathrm{reg}}$ estimates in early round-by-round modeling were too high and provided a more accurate calculation formula. Poseidon authors acknowledged this correction and incorporated it into their analysis framework, but found it has no security impact on currently deployed Poseidon instances.\nPoseidon2 Authors’ Evaluation of [ABM24] The Poseidon2 paper acknowledged including ABM24’s results in their security analysis references (i.e., they at least considered its conclusions).\nPoseidon2 believes [ABM24]’s results will not affect the number of rounds for any $\\text{Poseidon}^{π}$ function instance, because the parameter space of $\\text{Poseidon}^{π}$ (especially modulus size $p$, state width $t$, security target $κ$) does not fall within the region where [ABM24] found reduced security margins.\nPoseidon2 authors believe [ABM24]’s results have no practical impact, so they do not adjust the number of rounds in Poseidon2’s parameter selection and security analysis due to this, nor do they specifically discuss [ABM24]’s attack model.\n[GKR25] Authors’ Evaluation of [ABM24] [GKR25] (a new paper by the Poseidon author team) did not adopt this round-by-round modeling approach.\nReasoning: Poseidon’s designers had already argued in early work ([GKR+19] Appendix C.2.2) that round-by-round modeling is weaker than directly modeling the entire input-output relationship (i.e., less favorable to attackers).\nIn other words, if your attack is based on input–output modeling, you might find lower complexity Gröbner basis attacks, while the round-by-round decomposition adopted by [ABM24] would actually increase complexity.\nAdditionally, the affected instances given by [ABM24] (1024-bit security) have very uncommon parameter choices, far higher than security levels used in actual deployments (typically 128-bit or 256-bit).\nOpen Problems\nAlthough Poseidon authors believe round-by-round modeling is weaker, they also acknowledge that there is currently no strict mathematical proof. So [GKR25] treats this as an open problem—future researchers could attempt to formally verify whether “round-by-round modeling” is indeed always weaker than input–output modeling under all parameters and conditions. ",
+  "wordCount" : "878",
+  "inLanguage": "zh",
+  "datePublished": "2025-08-25T16:57:25+08:00",
+  "dateModified": "2025-08-25T16:57:25+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "Sidereus Hu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sidereushu.github.io/posts/overview-and-evaluation-of-round-by-round-modeling-analysis-for-poseidon-hash/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sidereus Hu",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sidereushu.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://sidereushu.github.io/" accesskey="h" title="Sidereus Hu (Alt + H)">Sidereus Hu</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://sidereushu.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://sidereushu.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Overview and Evaluation of Round-by-Round Modeling Analysis for Poseidon Hash
+    </h1>
+    <div class="post-meta"><span title='2025-08-25 16:57:25 +0800 CST'>2025-08-25</span>&nbsp;·&nbsp;Sidereus Hu
+
+</div>
+  </header> 
+  <div class="post-content"><br>
+<p>Poseidon is a <strong>ZK-friendly hash function</strong>, and its security evaluation largely relies on theoretical modeling of the complexity of <strong>Gröbner basis (GB) attacks</strong>. Early security analyses (such as [GKR+19], [GLR+20]) primarily employed <strong>input–output modeling</strong> (directly converting the input-output relationship of the entire function into a polynomial equation system) and calculated the so-called <strong>degree of regularity</strong> on this model to estimate the complexity of GB attacks.</p>
+<p>In [GLR+20], another approach was mentioned—<strong>round-level modeling</strong>: introducing new variables for each S-Box in each round, thereby decomposing the entire function into equation systems for multiple rounds.</p>
+<p>Notably, recent work [ABM24] <strong>revisited the feasibility of round-by-round modeling</strong>. They directly referenced the approach from [GLR+20] but further used <strong>practical experiments</strong> to validate the effectiveness of round-by-round modeling in GB attacks, rather than merely relying on theoretical speculation.</p>
+<br>
+<h2 id="abm24s-method">ABM24&rsquo;s Method<a hidden class="anchor" aria-hidden="true" href="#abm24s-method">#</a></h2>
+<p>Under the <strong>round-by-round modeling</strong> model used in [ABM24]:</p>
+<ul>
+<li>The input and output of each S-Box are independent variables;</li>
+<li>Polynomial equations for each round only involve the S-Box inputs/outputs and linear layer of the current round;</li>
+<li>This results in lower degree equations in the system (especially when some rounds are linearized), facilitating faster solving by GB algorithms.</li>
+</ul>
+<p>Under this modeling, one key indicator of the attack is <strong>$D_{\mathrm{reg}}$ (degree of regularity)</strong>, which affects the complexity estimation of Gröbner basis solving.</p>
+<p>[ABM24] argued that $D_{\mathrm{reg}}$ was overestimated, meaning that while the system was previously considered more difficult to solve, it might actually not be that hard.</p>
+<p>[ABM24] discovered an assumption error in previous $D_{\mathrm{reg}}$ calculations:</p>
+<ul>
+<li>
+<p>Originally assumed the equation system was a <strong>regular system</strong>, but it actually wasn&rsquo;t.</p>
+</li>
+<li>
+<p>Therefore, the correct number of equations and variables should be:
+</p>
+$$(R_{F}−1)⋅t+R_{P}+r$$<p> where: - $R_{F}$ = number of full rounds - $R_{P}​$ = number of partial rounds - $t$ = state size - $r$ = rate, with $r≥t/3$</p>
+</li>
+<li>
+<p>Under this correction, the more precise $D_{\mathrm{reg}}$ estimation formula becomes: </p>
+$$D_{\mathrm{reg}} ≈ \frac {r⋅R_{F}} {2} + R_{P} + α$$<p>(where $α$ is a small constant related to system structure)</p>
+</li>
+</ul>
+<br>
+<h2 id="abm24s-conclusions">ABM24&rsquo;s Conclusions<a hidden class="anchor" aria-hidden="true" href="#abm24s-conclusions">#</a></h2>
+<ul>
+<li>
+<p><strong>Main Findings</strong></p>
+<ul>
+<li>
+<p>[ABM24] analyzed Poseidon&rsquo;s security assumptions and found that the degree growth rate (degree of regularity) is slower than originally assumed by the designers.</p>
+</li>
+<li>
+<p>This means that under certain parameters, the recommended number of rounds is insufficient to achieve the claimed security level.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Specific Impact</strong></p>
+<ul>
+<li>
+<p><strong>1024-bit security level</strong>: Clearly demonstrated a complete attack instance (i.e., security was significantly overestimated).</p>
+</li>
+<li>
+<p><strong>512-bit and 384-bit security levels</strong>: Security analysis is also invalid, but they did not successfully provide complete attacks—the authors believe other factors in the design may have hindered the final step of the attack.</p>
+</li>
+<li>
+<p><strong>128-bit and 256-bit security levels</strong>: No vulnerable parameter sets were found; the designers&rsquo; original security estimates remain valid at these levels.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Scope Limitations</strong></p>
+<ul>
+<li>Their conclusions lean toward <strong>asymptotic analysis</strong>, not claiming all parameters are problematic, but pointing out that under certain high-security-level parameters, theoretical resistance is worse than expected.</li>
+</ul>
+</li>
+</ul>
+<br>
+<h2 id="poseidon-authors-evaluation-of-abm24">Poseidon Authors&rsquo; Evaluation of [ABM24]<a hidden class="anchor" aria-hidden="true" href="#poseidon-authors-evaluation-of-abm24">#</a></h2>
+<ul>
+<li>
+<p>Poseidon authors accepted [ABM24]&rsquo;s correction in their updated paper, incorporating the new $D_{\mathrm{reg}}$ formula.</p>
+</li>
+<li>
+<p><strong>However</strong>, Poseidon authors stated that this correction <strong>has no impact on currently used parameters</strong>, as commonly used instances still satisfy security conditions. Specifically:</p>
+<ul>
+<li>Security level at <strong>128-bit</strong></li>
+<li>Modulus size around 64 bits or 256 bits</li>
+<li>Common SNARK parameters $t∈{3,5}$</li>
+<li>Common FRI parameters $t∈{12,24}$</li>
+<li>All of these remain unaffected.</li>
+</ul>
+</li>
+</ul>
+<p>Therefore, Poseidon authors continued with their original security analysis framework:
+</p>
+$$\Big(\frac {V+D_{\mathrm{reg}}}{D_{\mathrm{reg}}}\Big)^2 \geq 2^{\kappa}$$<p> where:</p>
+<ul>
+<li>Total number of variables $V=(R_{F}-1)\cdot t + R_{P} +r$</li>
+<li>$\kappa$ is the target security strength</li>
+</ul>
+<p>Summary of Poseidon authors&rsquo; evaluation of [ABM24]:</p>
+<blockquote>
+<p>[ABM24] pointed out that $D_{\mathrm{reg}}$ estimates in early round-by-round modeling were too high and provided a more accurate calculation formula. Poseidon authors acknowledged this correction and incorporated it into their analysis framework, but found it has no security impact on currently deployed Poseidon instances.</p></blockquote>
+<br>
+<h2 id="poseidon2-authors-evaluation-of-abm24">Poseidon2 Authors&rsquo; Evaluation of [ABM24]<a hidden class="anchor" aria-hidden="true" href="#poseidon2-authors-evaluation-of-abm24">#</a></h2>
+<ul>
+<li>
+<p>The Poseidon2 paper acknowledged including ABM24&rsquo;s results in their security analysis references (i.e., they at least considered its conclusions).</p>
+</li>
+<li>
+<p>Poseidon2 believes [ABM24]&rsquo;s results <strong>will not affect</strong> the number of rounds for any $\text{Poseidon}^{π}$ function instance, because the parameter space of $\text{Poseidon}^{π}$ (especially modulus size $p$, state width $t$, security target $κ$) does not fall within the region where [ABM24] found reduced security margins.</p>
+</li>
+<li>
+<p>Poseidon2 authors believe [ABM24]&rsquo;s results have no practical impact, so they do not <strong>adjust the number of rounds</strong> in Poseidon2&rsquo;s parameter selection and security analysis due to this, nor do they specifically discuss [ABM24]&rsquo;s attack model.</p>
+</li>
+</ul>
+<br>
+<h2 id="gkr25-authors-evaluation-of-abm24">[GKR25] Authors&rsquo; Evaluation of [ABM24]<a hidden class="anchor" aria-hidden="true" href="#gkr25-authors-evaluation-of-abm24">#</a></h2>
+<ul>
+<li>
+<p>[GKR25] (a new paper by the Poseidon author team) <strong>did not adopt this round-by-round modeling</strong> approach.</p>
+<ul>
+<li>
+<p>Reasoning: Poseidon&rsquo;s designers had already argued in early work ([GKR+19] Appendix C.2.2) that round-by-round modeling is <strong>weaker</strong> than directly modeling the entire input-output relationship (i.e., less favorable to attackers).</p>
+</li>
+<li>
+<p>In other words, if your attack is based on input–output modeling, you might find lower complexity Gröbner basis attacks, while the round-by-round decomposition adopted by [ABM24] would actually increase complexity.</p>
+</li>
+<li>
+<p>Additionally, the affected instances given by [ABM24] (1024-bit security) have very <strong>uncommon</strong> parameter choices, far higher than security levels used in actual deployments (typically 128-bit or 256-bit).</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Open Problems</strong></p>
+<ul>
+<li>Although Poseidon authors believe round-by-round modeling is weaker, they also acknowledge that there is currently no strict mathematical proof. So [GKR25] treats this as an open problem—future researchers could attempt to formally verify whether &ldquo;round-by-round modeling&rdquo; is indeed always weaker than input–output modeling under all parameters and conditions.</li>
+</ul>
+</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://sidereushu.github.io/">Sidereus Hu</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
