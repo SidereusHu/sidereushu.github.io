@@ -137,8 +137,8 @@ Work Key Idea Effectiveness on Poseidon [FP20] Closed-form degree expression Use
   <meta property="og:locale" content="zh-cn">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2025-08-02T16:57:25+08:00">
-    <meta property="article:modified_time" content="2025-08-02T16:57:25+08:00">
+    <meta property="article:published_time" content="2025-08-09T16:57:25+08:00">
+    <meta property="article:modified_time" content="2025-08-09T16:57:25+08:00">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Poseidon2 Hash Security Analysis: Gröbner Basis Attack Evaluation">
 <meta name="twitter:description" content="
@@ -231,8 +231,8 @@ In [GKR25], the authors present a comprehensive analysis of Gröbner basis attac
   "articleBody": "\nWork Key Idea Effectiveness on Poseidon [FP20] Closed-form degree expression Useful for modeling GB attacks [BBLP22] Skipping (multiple) full rounds Reduces effective non-linear depth [ABM24] Round-level GB modeling Shows underestimated vulnerability at κ = 1024 [BBL+24] FreeLunch GB attacks Not effective due to low S-box degree [KLR24] “Six Worlds” framework Not yet applied; potential for future work [GKR25] Forward GB Attack Exploiting Subspace Trails original analysis under- or overestimates the number of rounds needed for security. [BBB+25] Iterated resultants Reduces to simple univariate case Key Points Evolution of Attack Methods: Beyond traditional analytical approaches such as statistical analysis, algebraic attacks (particularly Gröbner basis attacks) have been recognized by the academic community as significantly more effective and have become the primary research focus in recent years. Parameter Customization Challenges: Poseidon hash offers extensive customizable parameter space, which leads to issues of conservative security assumptions and potential overestimation. Current Research Status: The results provided by [ABM24] are excellent, but their acceptance in the community remains limited at present. In [GKR25], the authors present a comprehensive analysis of Gröbner basis attacks against Poseidon2 in Sponge mode through Table 5. This analysis is based on a two-step approach: the GB step (Macaulay bound) and the FGLM step (conjectured dI). Subsequently, the authors derive the minimum partial rounds values $r_P$ that can be configured, as shown in Table 3.\nNote: While the authors provide analysis data for both Sponge mode (Table 5) and Compress mode (Table 6), they only provide partial rounds settings similar to Table 3 for the Sponge mode. Based on the data from Table 6 and combining the Gröbner basis attack complexity formula $(d_{MAC})^{\\omega}$ with $\\omega = 2$ as used in Table 3, we perform the following calculations:\nSecurity Threshold Calculation To achieve 128-bit security, we need to satisfy:\n$$(d_{MAC})^2 \\geq 2^{128}$$Taking the square root of both sides, we get the requirement for the Macaulay Bound $d_{MAC}$:\n$$d_{MAC} \\geq 2^{64}$$Taking the logarithm, we obtain our required security threshold:\n$$\\log_2(d_{MAC}) \\geq 64$$Any parameter configuration where $\\log_2(d_{MAC})$ is greater than or equal to 64 can be considered secure against this attack.\nAnalysis from Table 5 Now, let’s examine Table 5 (a) GB step. This table demonstrates how various complexity indicators change when the number of partial rounds $r_P$ increases from 1 to 5, for fixed parameters $t$, $d$, $c$. We focus particularly on the Macaulay bound d_MAC row, where the values in parentheses represent the pre-calculated $\\log_2(d_{MAC})$ values.\nTaking the first row of Table 5 as an example, with parameters $t=3$, $d=1$, $c=1$, $\\ell=1$:\nWhen $r_P = 1$: $\\log_2(d_{MAC}) = 27$ (\u003c 64, not secure) When $r_P = 2$: $\\log_2(d_{MAC}) = 33$ (\u003c 64, not secure) When $r_P = 3$: $\\log_2(d_{MAC}) = 51$ (\u003c 64, not secure) When $r_P = 4$: $\\log_2(d_{MAC}) = 87$ (\u003e 64, secure) When $r_P = 5$: $\\log_2(d_{MAC}) = 105$ (\u003e 64, secure) Conclusion For the parameter set $t=3$, $d=1$, $c=1$, $\\ell=1$, only 4 partial rounds are required to elevate the complexity of the most powerful Gröbner basis subspace optimization attack above the 128-bit security level.\n",
   "wordCount" : "506",
   "inLanguage": "zh",
-  "datePublished": "2025-08-02T16:57:25+08:00",
-  "dateModified": "2025-08-02T16:57:25+08:00",
+  "datePublished": "2025-08-09T16:57:25+08:00",
+  "dateModified": "2025-08-09T16:57:25+08:00",
   "author":{
     "@type": "Person",
     "name": "Sidereus Hu"
@@ -314,7 +314,7 @@ In [GKR25], the authors present a comprehensive analysis of Gröbner basis attac
     <h1 class="post-title entry-hint-parent">
       Poseidon2 Hash Security Analysis: Gröbner Basis Attack Evaluation
     </h1>
-    <div class="post-meta"><span title='2025-08-02 16:57:25 +0800 CST'>2025-08-02</span>&nbsp;·&nbsp;Sidereus Hu
+    <div class="post-meta"><span title='2025-08-09 16:57:25 +0800 CST'>2025-08-09</span>&nbsp;·&nbsp;Sidereus Hu
 
 </div>
   </header> 

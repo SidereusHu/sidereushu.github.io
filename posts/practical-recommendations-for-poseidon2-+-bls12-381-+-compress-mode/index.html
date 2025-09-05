@@ -144,8 +144,8 @@ Parameter Suggested (Width 2) Suggested (Width 3) Notes Prime Field BLS12-381 BL
   <meta property="og:locale" content="zh-cn">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2025-07-27T16:57:25+08:00">
-    <meta property="article:modified_time" content="2025-07-27T16:57:25+08:00">
+    <meta property="article:published_time" content="2025-08-03T16:57:25+08:00">
+    <meta property="article:modified_time" content="2025-08-03T16:57:25+08:00">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Practical Recommendations (for Poseidon2 &#43; BLS12-381 &#43; Compress Mode)">
 <meta name="twitter:description" content="
@@ -244,8 +244,8 @@ Security Analysis: Considers recent advances in algebraic attacks such as Gröbn
   "articleBody": "\nSuggested Parameters:\nParameter Suggested (Width 2) Suggested (Width 3) Notes Prime Field BLS12-381 BLS12-381 Newly supported field in Gnark Width t 2 3 Width 3 is preferred if Gnark supports it S-box $x^5$ $x^5$ Common and secure choice over prime fields Full Rounds 8 8 Avoid using fewer than 8 rounds Partial Rounds 22 14–17 Based on updated recommendations Mode Compress Mode Compress Mode Used for input compression in UTXO models Security Level ≥128 bits ≥128 bits Default setting meets the requirement Additional Notes Security Analysis: Considers recent advances in algebraic attacks such as Gröbner basis methods, [KR21], [BCD+20], [ABM23], and [GKR25].\nSimplified and updated design guidance: No longer uses $ x \\mapsto x^{-1} $ or the STARKAD family.\nClearer round number recommendations: Based on the latest cryptanalysis.\nEfficiency emphasis: Prime fields like BLS12-381 offer superior performance in ZKP systems such as Gnark.\n",
   "wordCount" : "143",
   "inLanguage": "zh",
-  "datePublished": "2025-07-27T16:57:25+08:00",
-  "dateModified": "2025-07-27T16:57:25+08:00",
+  "datePublished": "2025-08-03T16:57:25+08:00",
+  "dateModified": "2025-08-03T16:57:25+08:00",
   "author":{
     "@type": "Person",
     "name": "Sidereus Hu"
@@ -327,7 +327,7 @@ Security Analysis: Considers recent advances in algebraic attacks such as Gröbn
     <h1 class="post-title entry-hint-parent">
       Practical Recommendations (for Poseidon2 &#43; BLS12-381 &#43; Compress Mode)
     </h1>
-    <div class="post-meta"><span title='2025-07-27 16:57:25 +0800 CST'>2025-07-27</span>&nbsp;·&nbsp;Sidereus Hu
+    <div class="post-meta"><span title='2025-08-03 16:57:25 +0800 CST'>2025-08-03</span>&nbsp;·&nbsp;Sidereus Hu
 
 </div>
   </header> 
