@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Consensus Layer Signature Scheme Considerations: Evolution from BLS to the Post-Quantum Era | Sidereus Hu</title>
+<meta name="keywords" content="">
+<meta name="description" content="
+With the rapid development of quantum computing technology, blockchain systems face unprecedented security challenges. Particularly for the consensus layers of mainstream blockchains like Ethereum, the BLS signature schemes they rely on will become vulnerable in the face of quantum computers. This article delves into the considerations for choosing consensus layer signature schemes, focusing on analyzing the trade-offs between hash-based XMSS schemes and lattice-based Falcon schemes in different scenarios, and exploring new signature paradigms for ZK-native chains.">
+<meta name="author" content="Sidereus Hu">
+<link rel="canonical" href="https://sidereushu.github.io/posts/consensus-layer-signature-scheme-considerations-evolution-from-bls-to-the-post-quantum-era/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.93f625d739f1d6a5c6f20c146bc6a8d26b233492b34b2220c54b12fd46a04ded.css" integrity="sha256-k/Yl1znx1qXG8gwUa8ao0msjNJKzSyIgxUsS/UagTe0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://sidereushu.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://sidereushu.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://sidereushu.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://sidereushu.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://sidereushu.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://sidereushu.github.io/posts/consensus-layer-signature-scheme-considerations-evolution-from-bls-to-the-post-quantum-era/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+ 
+
+
+<meta property="og:url" content="https://sidereushu.github.io/posts/consensus-layer-signature-scheme-considerations-evolution-from-bls-to-the-post-quantum-era/">
+  <meta property="og:site_name" content="Sidereus Hu">
+  <meta property="og:title" content="Consensus Layer Signature Scheme Considerations: Evolution from BLS to the Post-Quantum Era">
+  <meta property="og:description" content="
+With the rapid development of quantum computing technology, blockchain systems face unprecedented security challenges. Particularly for the consensus layers of mainstream blockchains like Ethereum, the BLS signature schemes they rely on will become vulnerable in the face of quantum computers. This article delves into the considerations for choosing consensus layer signature schemes, focusing on analyzing the trade-offs between hash-based XMSS schemes and lattice-based Falcon schemes in different scenarios, and exploring new signature paradigms for ZK-native chains.">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-09-16T16:57:25+08:00">
+    <meta property="article:modified_time" content="2025-09-16T16:57:25+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Consensus Layer Signature Scheme Considerations: Evolution from BLS to the Post-Quantum Era">
+<meta name="twitter:description" content="
+With the rapid development of quantum computing technology, blockchain systems face unprecedented security challenges. Particularly for the consensus layers of mainstream blockchains like Ethereum, the BLS signature schemes they rely on will become vulnerable in the face of quantum computers. This article delves into the considerations for choosing consensus layer signature schemes, focusing on analyzing the trade-offs between hash-based XMSS schemes and lattice-based Falcon schemes in different scenarios, and exploring new signature paradigms for ZK-native chains.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://sidereushu.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Consensus Layer Signature Scheme Considerations: Evolution from BLS to the Post-Quantum Era",
+      "item": "https://sidereushu.github.io/posts/consensus-layer-signature-scheme-considerations-evolution-from-bls-to-the-post-quantum-era/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Consensus Layer Signature Scheme Considerations: Evolution from BLS to the Post-Quantum Era",
+  "name": "Consensus Layer Signature Scheme Considerations: Evolution from BLS to the Post-Quantum Era",
+  "description": "\nWith the rapid development of quantum computing technology, blockchain systems face unprecedented security challenges. Particularly for the consensus layers of mainstream blockchains like Ethereum, the BLS signature schemes they rely on will become vulnerable in the face of quantum computers. This article delves into the considerations for choosing consensus layer signature schemes, focusing on analyzing the trade-offs between hash-based XMSS schemes and lattice-based Falcon schemes in different scenarios, and exploring new signature paradigms for ZK-native chains.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "\nWith the rapid development of quantum computing technology, blockchain systems face unprecedented security challenges. Particularly for the consensus layers of mainstream blockchains like Ethereum, the BLS signature schemes they rely on will become vulnerable in the face of quantum computers. This article delves into the considerations for choosing consensus layer signature schemes, focusing on analyzing the trade-offs between hash-based XMSS schemes and lattice-based Falcon schemes in different scenarios, and exploring new signature paradigms for ZK-native chains.\n1. Quantum Threats and Special Requirements of Consensus Layers 1.1 Current Challenges Since Ethereum’s The Merge upgrade in 2022, it has adopted a PoS consensus mechanism where validators use BLS signatures to confirm blocks and votes. BLS signatures have excellent aggregation properties—thousands of signatures can be compressed into a single proof, greatly reducing storage and bandwidth requirements. However, these signature schemes based on elliptic curve cryptography are vulnerable to quantum computers running Shor’s algorithm.\nIt is estimated that within 10-15 years, computers with millions of qubits may be able to break ECDSA/BLS. Therefore, finding signature schemes that can both resist quantum attacks and meet the special needs of consensus layers has become an urgent priority.\n1.2 Special Requirements of Consensus Layers Consensus layer signature schemes must meet the following key requirements:\nPost-quantum security: Ability to resist attacks from Grover’s and Shor’s algorithms Efficient aggregation capability: Support for non-interactive aggregation of thousands of validator signatures Low verification cost: On-chain verification gas costs must be controllable Bandwidth-friendly: Aggregated signature sizes should be reasonable Implementation simplicity: Easy to audit, reducing the risk of implementation errors 2. Main Candidates for Post-Quantum Signature Schemes 2.1 XMSS: The Conservative Hash-Based Choice Core Principles XMSS (eXtended Merkle Signature Scheme) is a stateful hash signature scheme that organizes multiple one-time signatures (WOTS+) through a Merkle tree. Its security relies entirely on the one-way property of the underlying hash function, which is the most conservative and widely accepted assumption in cryptography.\nAdvantages in Consensus Layers Minimal security assumptions: Only relies on hash functions, no complex algebraic structures needed Aggregation-friendly: While XMSS signatures don’t support native aggregation, their verification process mainly involves hash operations, making them very suitable for “proof-based aggregation” through ZK-SNARKs/STARKs Forward security: Each signing key can only be used once; even if keys are compromised, past signatures remain secure Practical Parameters and Optimizations In Ethereum proposals, through optimizations like Target Sum Winternitz (TSW) encoding, XMSS signature sizes can be controlled within the 2-4 KB range. Combined with pqSNARKs, thousands of signatures can be aggregated into a single compact proof:\nOriginal: 4,096 validator signatures ≈ 16 MB After aggregation: Single proof \u003c 1 MB 2.2 Falcon: The Compact Lattice-Based Scheme Core Characteristics Falcon is based on the NTRU lattice problem and is one of the NIST-standardized post-quantum signature schemes. Its greatest advantage is extremely compact signatures:\nFalcon-512: Signature ~666 bytes Falcon-1024: Signature ~1.3 KB Challenges in Consensus Layers Aggregation complexity: Falcon doesn’t support native aggregation and faces serious challenges when combined with ZK proof systems Arithmetization difficulties: Verifying Falcon signatures involves complex polynomial operations and norm calculations, making conversion to ZK circuits extremely costly Theoretical uncertainties: Under the Quantum Random Oracle Model (QROM), security proofs rely on “rewinding” techniques that fail. Existing “Falcon aggregation” schemes (like LaBRADOR) require additional algebraic structures and rewinding techniques, but their security proofs are questionable under quantum models (random oracle paradox, infeasibility of quantum rewinding). 2.3 Why Choose XMSS Over Falcon? Let’s understand this choice through detailed comparison:\nDimension XMSS Falcon Consensus Layer Impact Security Assumptions Hash functions (minimal) NTRU lattice (more complex) XMSS more conservative, lower long-term risk Single Signature Size 2-4 KB \u003c 1 KB Falcon better individually, but gap narrows after aggregation Aggregation Scheme ZK-friendly (hash circuits) ZK-difficult (algebraic circuits) Decisive factor: XMSS aggregation efficiency far exceeds Falcon Implementation Complexity Low (hash only) High (floating-point, FFT, side-channels) XMSS easier to audit and implement securely State Management Required (stateful) Not required (stateless) Falcon more convenient in user scenarios Key insight: The core need of consensus layers is aggregation, and XMSS’s hash structure is naturally suited for ZK proof systems, while Falcon’s lattice-based structure leads to explosive proof generation costs.\n3. Proof-Based Aggregation: The Synergy of XMSS + ZK 3.1 Workflow 1. Collection phase: Aggregator collects thousands of XMSS signatures 2. Proof generation: Run verification program, generate ZK proof for \"all signatures are valid\" 3. On-chain verification: Only need to verify a single compact ZK proof 3.2 Why Does XMSS Excel in This Model? The core operation for verifying XMSS signatures is hash computation. “Circuit-friendly” hash functions like Poseidon and Rescue are extremely efficient in the arithmetization process. In contrast, Falcon verification involves:\nComplex operations on polynomial rings High-precision norm calculations Lattice basis reduction related operations The circuit representation of these operations may be several orders of magnitude larger than hashes, directly causing explosive growth in proof generation time and costs.\n3.3 Deep Considerations of Quantum Security Under the Quantum Random Oracle Model (QROM), many classical security proof techniques fail. Particularly, the Falcon + ZK combination faces the “rewinding paradox”:\nClassical proofs rely on repeatedly “rewinding” queries to extract keys Quantum attackers query in superposition states, breaking the foundation of rewinding arguments XMSS’s simple hash structure avoids these theoretical pitfalls 4. New Paradigms for ZK-Native Chains: Poseidon Preimage Proofs 4.1 Conceptual Innovation In ZK-native chains, a new signature paradigm is emerging: using “proof of knowing preimage x such that Poseidon(x) = Y” as identity authentication. This essentially uses the ZK proof system itself as the signature mechanism.\n4.2 Advantage Analysis Circuit nativeness: Poseidon is designed specifically for ZK circuits with minimal constraint counts Flexible composition: Can bind arbitrary context (timestamps, chain state, etc.) in proofs Privacy enhancement: Only reveals the proof, leaking no information about the preimage 4.3 Practical Challenges Traditional signature generation: Millisecond level ZK proof generation: Second to minute level (depending on circuit scale) Verification comparison: Traditional signature verification: O(1) simple operations SNARK verification: O(1) but larger constants STARK verification: O(log n) or higher Key trade-off: While proof generation is much slower, if the entire system is ZK-native, this approach can bring unprecedented composability and privacy features.\n5. Practical Recommendations: Layered Strategy Based on the above analysis, we recommend adopting a layered strategy:\n5.1 Consensus Layer Choice: XMSS + pqSNARKs\nRationale:\nFixed validator set, manageable state management Aggregation is core requirement, XMSS + ZK combination is optimal Conservative security assumptions, suitable for long-term critical infrastructure 5.2 Execution Layer Choice: Falcon or other compact schemes\nRationale:\nDiverse users, stateless is more practical Single signature size directly affects gas costs No need for large-scale aggregation 5.3 ZK-Native Application Layer Choice: Poseidon preimage proofs\nRationale:\nDeep integration with application logic Clear advantages in composability and privacy Proof costs can be amortized through batch processing ## Conclusion The choice of consensus layer signature schemes is not just a technical decision, but a security commitment for the next decade or even longer. XMSS represents a conservative yet pragmatic choice—through the simplest cryptographic assumptions, combined with innovative proof aggregation technology, it lays a solid foundation for blockchain consensus in the post-quantum era.\nWhile lattice-based schemes like Falcon are superior in some metrics, the special needs of consensus layers—particularly large-scale signature aggregation—make XMSS a more suitable choice. Meanwhile, the rise of ZK-native chains brings entirely new design spaces for signature schemes, and innovative approaches like Poseidon preimage proofs demonstrate the enormous potential of deep integration of cryptographic primitives.\nUltimately, there is no “optimal” signature scheme, only the most appropriate choice for specific scenarios. Through a layered strategy, we can adopt the most suitable schemes at the consensus layer, execution layer, and application layer respectively, building a post-quantum blockchain system that is both secure and efficient.\nReferences RFC 8391 - XMSS: eXtended Merkle Signature Scheme NIST Post-Quantum Cryptography Standardization Ethereum Research Forum - Consensus Layer PQC Discussions Hash-Based Multi-Signatures for Post-Quantum Ethereum Poseidon: A New Hash Function for Zero-Knowledge Proof Systems Falcon: Fast-Fourier Lattice-based Compact Signatures over NTRU The Lean Consensus Roadmap Target Sum Winternitz: An Improvement to the Winternitz Signature Scheme ",
+  "wordCount" : "1330",
+  "inLanguage": "zh",
+  "datePublished": "2025-09-16T16:57:25+08:00",
+  "dateModified": "2025-09-16T16:57:25+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "Sidereus Hu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sidereushu.github.io/posts/consensus-layer-signature-scheme-considerations-evolution-from-bls-to-the-post-quantum-era/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sidereus Hu",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sidereushu.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://sidereushu.github.io/" accesskey="h" title="Sidereus Hu (Alt + H)">Sidereus Hu</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://sidereushu.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://sidereushu.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Consensus Layer Signature Scheme Considerations: Evolution from BLS to the Post-Quantum Era
+    </h1>
+    <div class="post-meta"><span title='2025-09-16 16:57:25 +0800 CST'>2025-09-16</span>&nbsp;·&nbsp;Sidereus Hu
+
+</div>
+  </header> 
+  <div class="post-content"><br>
+<p>With the rapid development of quantum computing technology, blockchain systems face unprecedented security challenges. Particularly for the consensus layers of mainstream blockchains like Ethereum, the BLS signature schemes they rely on will become vulnerable in the face of quantum computers. This article delves into the considerations for choosing consensus layer signature schemes, focusing on analyzing the trade-offs between hash-based XMSS schemes and lattice-based Falcon schemes in different scenarios, and exploring new signature paradigms for ZK-native chains.</p>
+<br>
+<h2 id="1-quantum-threats-and-special-requirements-of-consensus-layers">1. Quantum Threats and Special Requirements of Consensus Layers<a hidden class="anchor" aria-hidden="true" href="#1-quantum-threats-and-special-requirements-of-consensus-layers">#</a></h2>
+<h3 id="11-current-challenges">1.1 Current Challenges<a hidden class="anchor" aria-hidden="true" href="#11-current-challenges">#</a></h3>
+<p>Since Ethereum&rsquo;s The Merge upgrade in 2022, it has adopted a PoS consensus mechanism where validators use BLS signatures to confirm blocks and votes. BLS signatures have excellent aggregation properties—thousands of signatures can be compressed into a single proof, greatly reducing storage and bandwidth requirements. However, these signature schemes based on elliptic curve cryptography are vulnerable to quantum computers running Shor&rsquo;s algorithm.</p>
+<p>It is estimated that within 10-15 years, computers with millions of qubits may be able to break ECDSA/BLS. Therefore, finding signature schemes that can both resist quantum attacks and meet the special needs of consensus layers has become an urgent priority.</p>
+<h3 id="12-special-requirements-of-consensus-layers">1.2 Special Requirements of Consensus Layers<a hidden class="anchor" aria-hidden="true" href="#12-special-requirements-of-consensus-layers">#</a></h3>
+<p>Consensus layer signature schemes must meet the following key requirements:</p>
+<ul>
+<li><strong>Post-quantum security</strong>: Ability to resist attacks from Grover&rsquo;s and Shor&rsquo;s algorithms</li>
+<li><strong>Efficient aggregation capability</strong>: Support for non-interactive aggregation of thousands of validator signatures</li>
+<li><strong>Low verification cost</strong>: On-chain verification gas costs must be controllable</li>
+<li><strong>Bandwidth-friendly</strong>: Aggregated signature sizes should be reasonable</li>
+<li><strong>Implementation simplicity</strong>: Easy to audit, reducing the risk of implementation errors</li>
+</ul>
+<br>
+<h2 id="2-main-candidates-for-post-quantum-signature-schemes">2. Main Candidates for Post-Quantum Signature Schemes<a hidden class="anchor" aria-hidden="true" href="#2-main-candidates-for-post-quantum-signature-schemes">#</a></h2>
+<h3 id="21-xmss-the-conservative-hash-based-choice">2.1 XMSS: The Conservative Hash-Based Choice<a hidden class="anchor" aria-hidden="true" href="#21-xmss-the-conservative-hash-based-choice">#</a></h3>
+<h4 id="core-principles">Core Principles<a hidden class="anchor" aria-hidden="true" href="#core-principles">#</a></h4>
+<p>XMSS (eXtended Merkle Signature Scheme) is a stateful hash signature scheme that organizes multiple one-time signatures (WOTS+) through a Merkle tree. Its security relies entirely on the one-way property of the underlying hash function, which is the most conservative and widely accepted assumption in cryptography.</p>
+<h4 id="advantages-in-consensus-layers">Advantages in Consensus Layers<a hidden class="anchor" aria-hidden="true" href="#advantages-in-consensus-layers">#</a></h4>
+<ol>
+<li><strong>Minimal security assumptions</strong>: Only relies on hash functions, no complex algebraic structures needed</li>
+<li><strong>Aggregation-friendly</strong>: While XMSS signatures don&rsquo;t support native aggregation, their verification process mainly involves hash operations, making them very suitable for &ldquo;proof-based aggregation&rdquo; through ZK-SNARKs/STARKs</li>
+<li><strong>Forward security</strong>: Each signing key can only be used once; even if keys are compromised, past signatures remain secure</li>
+</ol>
+<h4 id="practical-parameters-and-optimizations">Practical Parameters and Optimizations<a hidden class="anchor" aria-hidden="true" href="#practical-parameters-and-optimizations">#</a></h4>
+<p>In Ethereum proposals, through optimizations like Target Sum Winternitz (TSW) encoding, XMSS signature sizes can be controlled within the 2-4 KB range. Combined with pqSNARKs, thousands of signatures can be aggregated into a single compact proof:</p>
+<pre tabindex="0"><code>Original: 4,096 validator signatures ≈ 16 MB
+After aggregation: Single proof &lt; 1 MB
+</code></pre><h3 id="22-falcon-the-compact-lattice-based-scheme">2.2 Falcon: The Compact Lattice-Based Scheme<a hidden class="anchor" aria-hidden="true" href="#22-falcon-the-compact-lattice-based-scheme">#</a></h3>
+<h4 id="core-characteristics">Core Characteristics<a hidden class="anchor" aria-hidden="true" href="#core-characteristics">#</a></h4>
+<p>Falcon is based on the NTRU lattice problem and is one of the NIST-standardized post-quantum signature schemes. Its greatest advantage is extremely compact signatures:</p>
+<ul>
+<li>Falcon-512: Signature ~666 bytes</li>
+<li>Falcon-1024: Signature ~1.3 KB</li>
+</ul>
+<h4 id="challenges-in-consensus-layers">Challenges in Consensus Layers<a hidden class="anchor" aria-hidden="true" href="#challenges-in-consensus-layers">#</a></h4>
+<ol>
+<li><strong>Aggregation complexity</strong>: Falcon doesn&rsquo;t support native aggregation and faces serious challenges when combined with ZK proof systems</li>
+<li><strong>Arithmetization difficulties</strong>: Verifying Falcon signatures involves complex polynomial operations and norm calculations, making conversion to ZK circuits extremely costly</li>
+<li><strong>Theoretical uncertainties</strong>: Under the Quantum Random Oracle Model (QROM), security proofs rely on &ldquo;rewinding&rdquo; techniques that fail. Existing &ldquo;Falcon aggregation&rdquo; schemes (like LaBRADOR) require additional algebraic structures and rewinding techniques, but their security proofs are questionable under quantum models (random oracle paradox, infeasibility of quantum rewinding).</li>
+</ol>
+<h3 id="23-why-choose-xmss-over-falcon">2.3 Why Choose XMSS Over Falcon?<a hidden class="anchor" aria-hidden="true" href="#23-why-choose-xmss-over-falcon">#</a></h3>
+<p>Let&rsquo;s understand this choice through detailed comparison:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Dimension</th>
+          <th>XMSS</th>
+          <th>Falcon</th>
+          <th>Consensus Layer Impact</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Security Assumptions</strong></td>
+          <td>Hash functions (minimal)</td>
+          <td>NTRU lattice (more complex)</td>
+          <td>XMSS more conservative, lower long-term risk</td>
+      </tr>
+      <tr>
+          <td><strong>Single Signature Size</strong></td>
+          <td>2-4 KB</td>
+          <td>&lt; 1 KB</td>
+          <td>Falcon better individually, but gap narrows after aggregation</td>
+      </tr>
+      <tr>
+          <td><strong>Aggregation Scheme</strong></td>
+          <td>ZK-friendly (hash circuits)</td>
+          <td>ZK-difficult (algebraic circuits)</td>
+          <td><strong>Decisive factor</strong>: XMSS aggregation efficiency far exceeds Falcon</td>
+      </tr>
+      <tr>
+          <td><strong>Implementation Complexity</strong></td>
+          <td>Low (hash only)</td>
+          <td>High (floating-point, FFT, side-channels)</td>
+          <td>XMSS easier to audit and implement securely</td>
+      </tr>
+      <tr>
+          <td><strong>State Management</strong></td>
+          <td>Required (stateful)</td>
+          <td>Not required (stateless)</td>
+          <td>Falcon more convenient in user scenarios</td>
+      </tr>
+  </tbody>
+</table>
+<p>Key insight: <strong>The core need of consensus layers is aggregation</strong>, and XMSS&rsquo;s hash structure is naturally suited for ZK proof systems, while Falcon&rsquo;s lattice-based structure leads to explosive proof generation costs.</p>
+<br>
+<h2 id="3-proof-based-aggregation-the-synergy-of-xmss--zk">3. Proof-Based Aggregation: The Synergy of XMSS + ZK<a hidden class="anchor" aria-hidden="true" href="#3-proof-based-aggregation-the-synergy-of-xmss--zk">#</a></h2>
+<h3 id="31-workflow">3.1 Workflow<a hidden class="anchor" aria-hidden="true" href="#31-workflow">#</a></h3>
+<pre tabindex="0"><code>1. Collection phase: Aggregator collects thousands of XMSS signatures
+2. Proof generation: Run verification program, generate ZK proof for &#34;all signatures are valid&#34;
+3. On-chain verification: Only need to verify a single compact ZK proof
+</code></pre><h3 id="32-why-does-xmss-excel-in-this-model">3.2 Why Does XMSS Excel in This Model?<a hidden class="anchor" aria-hidden="true" href="#32-why-does-xmss-excel-in-this-model">#</a></h3>
+<p>The core operation for verifying XMSS signatures is hash computation. &ldquo;Circuit-friendly&rdquo; hash functions like Poseidon and Rescue are extremely efficient in the arithmetization process. In contrast, Falcon verification involves:</p>
+<ul>
+<li>Complex operations on polynomial rings</li>
+<li>High-precision norm calculations</li>
+<li>Lattice basis reduction related operations</li>
+</ul>
+<p>The circuit representation of these operations may be several orders of magnitude larger than hashes, directly causing explosive growth in proof generation time and costs.</p>
+<h3 id="33-deep-considerations-of-quantum-security">3.3 Deep Considerations of Quantum Security<a hidden class="anchor" aria-hidden="true" href="#33-deep-considerations-of-quantum-security">#</a></h3>
+<p>Under the Quantum Random Oracle Model (QROM), many classical security proof techniques fail. Particularly, the Falcon + ZK combination faces the &ldquo;rewinding paradox&rdquo;:</p>
+<ul>
+<li>Classical proofs rely on repeatedly &ldquo;rewinding&rdquo; queries to extract keys</li>
+<li>Quantum attackers query in superposition states, breaking the foundation of rewinding arguments</li>
+<li>XMSS&rsquo;s simple hash structure avoids these theoretical pitfalls</li>
+</ul>
+<br>
+<h2 id="4-new-paradigms-for-zk-native-chains-poseidon-preimage-proofs">4. New Paradigms for ZK-Native Chains: Poseidon Preimage Proofs<a hidden class="anchor" aria-hidden="true" href="#4-new-paradigms-for-zk-native-chains-poseidon-preimage-proofs">#</a></h2>
+<h3 id="41-conceptual-innovation">4.1 Conceptual Innovation<a hidden class="anchor" aria-hidden="true" href="#41-conceptual-innovation">#</a></h3>
+<p>In ZK-native chains, a new signature paradigm is emerging: using &ldquo;proof of knowing preimage x such that Poseidon(x) = Y&rdquo; as identity authentication. This essentially uses the ZK proof system itself as the signature mechanism.</p>
+<h3 id="42-advantage-analysis">4.2 Advantage Analysis<a hidden class="anchor" aria-hidden="true" href="#42-advantage-analysis">#</a></h3>
+<ol>
+<li><strong>Circuit nativeness</strong>: Poseidon is designed specifically for ZK circuits with minimal constraint counts</li>
+<li><strong>Flexible composition</strong>: Can bind arbitrary context (timestamps, chain state, etc.) in proofs</li>
+<li><strong>Privacy enhancement</strong>: Only reveals the proof, leaking no information about the preimage</li>
+</ol>
+<h3 id="43-practical-challenges">4.3 Practical Challenges<a hidden class="anchor" aria-hidden="true" href="#43-practical-challenges">#</a></h3>
+<pre tabindex="0"><code>Traditional signature generation: Millisecond level
+ZK proof generation: Second to minute level (depending on circuit scale)
+
+Verification comparison:
+Traditional signature verification: O(1) simple operations
+SNARK verification: O(1) but larger constants
+STARK verification: O(log n) or higher
+</code></pre><p>Key trade-off: While proof generation is much slower, if the entire system is ZK-native, this approach can bring unprecedented composability and privacy features.</p>
+<br>
+<h2 id="5-practical-recommendations-layered-strategy">5. Practical Recommendations: Layered Strategy<a hidden class="anchor" aria-hidden="true" href="#5-practical-recommendations-layered-strategy">#</a></h2>
+<p>Based on the above analysis, we recommend adopting a layered strategy:</p>
+<h3 id="51-consensus-layer">5.1 Consensus Layer<a hidden class="anchor" aria-hidden="true" href="#51-consensus-layer">#</a></h3>
+<p><strong>Choice: XMSS + pqSNARKs</strong></p>
+<p>Rationale:</p>
+<ul>
+<li>Fixed validator set, manageable state management</li>
+<li>Aggregation is core requirement, XMSS + ZK combination is optimal</li>
+<li>Conservative security assumptions, suitable for long-term critical infrastructure</li>
+</ul>
+<h3 id="52-execution-layer">5.2 Execution Layer<a hidden class="anchor" aria-hidden="true" href="#52-execution-layer">#</a></h3>
+<p><strong>Choice: Falcon or other compact schemes</strong></p>
+<p>Rationale:</p>
+<ul>
+<li>Diverse users, stateless is more practical</li>
+<li>Single signature size directly affects gas costs</li>
+<li>No need for large-scale aggregation</li>
+</ul>
+<h3 id="53-zk-native-application-layer">5.3 ZK-Native Application Layer<a hidden class="anchor" aria-hidden="true" href="#53-zk-native-application-layer">#</a></h3>
+<p><strong>Choice: Poseidon preimage proofs</strong></p>
+<p>Rationale:</p>
+<ul>
+<li>Deep integration with application logic</li>
+<li>Clear advantages in composability and privacy</li>
+<li>Proof costs can be amortized through batch processing</li>
+</ul>
+<br>
+## Conclusion
+<p>The choice of consensus layer signature schemes is not just a technical decision, but a security commitment for the next decade or even longer. XMSS represents a conservative yet pragmatic choice—through the simplest cryptographic assumptions, combined with innovative proof aggregation technology, it lays a solid foundation for blockchain consensus in the post-quantum era.</p>
+<p>While lattice-based schemes like Falcon are superior in some metrics, the special needs of consensus layers—particularly large-scale signature aggregation—make XMSS a more suitable choice. Meanwhile, the rise of ZK-native chains brings entirely new design spaces for signature schemes, and innovative approaches like Poseidon preimage proofs demonstrate the enormous potential of deep integration of cryptographic primitives.</p>
+<p>Ultimately, there is no &ldquo;optimal&rdquo; signature scheme, only the most appropriate choice for specific scenarios. Through a layered strategy, we can adopt the most suitable schemes at the consensus layer, execution layer, and application layer respectively, building a post-quantum blockchain system that is both secure and efficient.</p>
+<br>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ol>
+<li>RFC 8391 - XMSS: eXtended Merkle Signature Scheme</li>
+<li>NIST Post-Quantum Cryptography Standardization</li>
+<li>Ethereum Research Forum - Consensus Layer PQC Discussions</li>
+<li>Hash-Based Multi-Signatures for Post-Quantum Ethereum</li>
+<li>Poseidon: A New Hash Function for Zero-Knowledge Proof Systems</li>
+<li>Falcon: Fast-Fourier Lattice-based Compact Signatures over NTRU</li>
+<li>The Lean Consensus Roadmap</li>
+<li>Target Sum Winternitz: An Improvement to the Winternitz Signature Scheme</li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://sidereushu.github.io/">Sidereus Hu</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
