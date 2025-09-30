@@ -6,8 +6,16 @@
     <description>Recent content in Posts on Sidereus Hu</description>
     <generator>Hugo -- 0.148.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 16 Sep 2025 16:57:25 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 29 Sep 2025 16:57:25 +0800</lastBuildDate>
     <atom:link href="https://sidereushu.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Poseidon Hash Algebraic Attacks (Calculation Tools)</title>
+      <link>https://sidereushu.github.io/posts/poseidon-hash-algebraic-attacks-calculation-tools/</link>
+      <pubDate>Mon, 29 Sep 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/poseidon-hash-algebraic-attacks-calculation-tools/</guid>
+      <description>&lt;br&gt;
+&lt;p&gt;In recent years, &amp;ldquo;ZK-friendly&amp;rdquo; hash functions designed for zero-knowledge proof (ZK) scenarios have received widespread attention. They are typically based on carefully constructed algebraic structures to achieve lower constraint counts in arithmetic circuits, thereby enabling higher efficiency in proof systems. However, it is precisely this algebraic friendliness that exposes potential attack surfaces under certain analysis models. Particularly in recent years, algebraic analysis methods—such as Gröbner basis attacks and polynomial degree reduction techniques using subspace trails—have gained significant research interest in the cryptanalysis field and have gradually become one of the core tools for evaluating the security of such hash functions.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Consensus Layer Signature Scheme Considerations: Evolution from BLS to the Post-Quantum Era</title>
       <link>https://sidereushu.github.io/posts/consensus-layer-signature-scheme-considerations-evolution-from-bls-to-the-post-quantum-era/</link>
@@ -15,14 +23,6 @@
       <guid>https://sidereushu.github.io/posts/consensus-layer-signature-scheme-considerations-evolution-from-bls-to-the-post-quantum-era/</guid>
       <description>&lt;br&gt;
 &lt;p&gt;With the rapid development of quantum computing technology, blockchain systems face unprecedented security challenges. Particularly for the consensus layers of mainstream blockchains like Ethereum, the BLS signature schemes they rely on will become vulnerable in the face of quantum computers. This article delves into the considerations for choosing consensus layer signature schemes, focusing on analyzing the trade-offs between hash-based XMSS schemes and lattice-based Falcon schemes in different scenarios, and exploring new signature paradigms for ZK-native chains.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Poseidon Hash Algebraic Attacks (Calculation Tools)</title>
-      <link>https://sidereushu.github.io/posts/poseidon-hash-algebraic-attacks-calculation-tools/</link>
-      <pubDate>Tue, 09 Sep 2025 16:57:25 +0800</pubDate>
-      <guid>https://sidereushu.github.io/posts/poseidon-hash-algebraic-attacks-calculation-tools/</guid>
-      <description>&lt;br&gt;
-&lt;p&gt;In recent years, &amp;ldquo;ZK-friendly&amp;rdquo; hash functions designed for zero-knowledge proof (ZK) scenarios have received widespread attention. They are typically based on carefully constructed algebraic structures to achieve lower constraint counts in arithmetic circuits, thereby enabling higher efficiency in proof systems. However, it is precisely this algebraic friendliness that exposes potential attack surfaces under certain analysis models. Particularly in recent years, algebraic analysis methods—such as Gröbner basis attacks and polynomial degree reduction techniques using subspace trails—have gained significant research interest in the cryptanalysis field and have gradually become one of the core tools for evaluating the security of such hash functions.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Overview and Evaluation of Round-by-Round Modeling Analysis for Poseidon Hash</title>
