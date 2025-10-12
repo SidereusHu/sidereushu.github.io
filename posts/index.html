@@ -164,6 +164,23 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">Research on VK Uniqueness and Salt in Plonk Setup Phase
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>
+Plonk’s Setup Phase In Plonk’s Setup Phase (SRS Generation Phase), we first obtain a Structured Reference String (SRS). The SRS contains powers of a secret exponent $τ$ (used for polynomial commitments):
+$$SRS={g^{τ^0},g^{τ^1},g^{τ^2},\ldots,g^{τ^n}}$$This step is one-time and global (universal SRS).
+Then, for a specific circuit $C$, we derive the Proving Key (PK) and Verifying Key (VK):
+$$(PK,~VK)\leftarrow \mathrm{Plonk.Setup}(C, SRS)$$The PK tuple contains polynomials for each gate, permutation, and constraint in the circuit (commitments encoded with $\tau$); the VK tuple contains public polynomial commitments &#43; selector domain information &#43; constant verification structures.
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-10-11 16:57:25 +0800 CST'>2025-10-11</span>&nbsp;·&nbsp;Sidereus Hu</footer>
+  <a class="entry-link" aria-label="post link to Research on VK Uniqueness and Salt in Plonk Setup Phase" href="https://sidereushu.github.io/posts/research-on-vk-uniqueness-and-salt-in-plonk-setup-phase/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">Poseidon Hash Algebraic Attacks (Calculation Tools)
     </h2>
   </header>
@@ -291,22 +308,6 @@ Let us approach this question from a more fundamental perspective.
   </div>
   <footer class="entry-footer"><span title='2025-07-17 16:57:25 +0800 CST'>2025-07-17</span>&nbsp;·&nbsp;Sidereus Hu</footer>
   <a class="entry-link" aria-label="post link to ZK Proofs Are Not the Essence of Layer 0, Trust Abstraction Is" href="https://sidereushu.github.io/posts/zk-proofs-are-not-the-essence-of-layer-0-trust-abstraction-is/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Web3’s Missing Foundation - Why It Needs a New TCP/IP
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>
-“The internet was designed to be open, but the platforms built on top of it are not.”
-——Chris Dixon, Rebooting the Internet
-0. From Open Web1 to Centralized Web2: The Legacy of Missing Trust The Web1 era began with openness. Born out of academic and military collaboration, the TCP/IP protocol stack laid the foundation for global connectivity. TCP/IP was — and remains — an open and permissionless stack: any device following the protocol can join the network. This property of permissionless connectivity created the early decentralized flavor of the Internet.
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2025-07-15 00:00:00 +0000 UTC'>2025-07-15</span>&nbsp;·&nbsp;Sidereus Hu</footer>
-  <a class="entry-link" aria-label="post link to Web3’s Missing Foundation - Why It Needs a New TCP/IP" href="https://sidereushu.github.io/posts/web3s-missing-foundation--why-it-needs-a-new-tcp-ip/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">

@@ -6,8 +6,20 @@
     <description>Recent content in Posts on Sidereus Hu</description>
     <generator>Hugo -- 0.148.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 29 Sep 2025 16:57:25 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 11 Oct 2025 16:57:25 +0800</lastBuildDate>
     <atom:link href="https://sidereushu.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Research on VK Uniqueness and Salt in Plonk Setup Phase</title>
+      <link>https://sidereushu.github.io/posts/research-on-vk-uniqueness-and-salt-in-plonk-setup-phase/</link>
+      <pubDate>Sat, 11 Oct 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/research-on-vk-uniqueness-and-salt-in-plonk-setup-phase/</guid>
+      <description>&lt;br&gt;
+&lt;h2 id=&#34;plonks-setup-phase&#34;&gt;Plonk&amp;rsquo;s Setup Phase&lt;/h2&gt;
+&lt;p&gt;In Plonk&amp;rsquo;s &lt;strong&gt;Setup Phase (SRS Generation Phase)&lt;/strong&gt;, we first obtain a Structured Reference String (SRS). The SRS contains powers of a secret exponent $τ$ (used for polynomial commitments):&lt;/p&gt;
+$$SRS={g^{τ^0},g^{τ^1},g^{τ^2},\ldots,g^{τ^n}}$$&lt;p&gt;This step is &lt;strong&gt;one-time and global (universal SRS)&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Then, for a specific circuit $C$, we derive the Proving Key (PK) and Verifying Key (VK):&lt;/p&gt;
+$$(PK,~VK)\leftarrow \mathrm{Plonk.Setup}(C, SRS)$$&lt;p&gt;The PK tuple contains polynomials for each gate, permutation, and constraint in the circuit (commitments encoded with $\tau$); the VK tuple contains public polynomial commitments + selector domain information + constant verification structures.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Poseidon Hash Algebraic Attacks (Calculation Tools)</title>
       <link>https://sidereushu.github.io/posts/poseidon-hash-algebraic-attacks-calculation-tools/</link>

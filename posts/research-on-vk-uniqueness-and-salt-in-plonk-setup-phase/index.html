@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Research on VK Uniqueness and Salt in Plonk Setup Phase | Sidereus Hu</title>
+<meta name="keywords" content="">
+<meta name="description" content="
+Plonk&rsquo;s Setup Phase
+In Plonk&rsquo;s Setup Phase (SRS Generation Phase), we first obtain a Structured Reference String (SRS). The SRS contains powers of a secret exponent $τ$ (used for polynomial commitments):
+$$SRS={g^{τ^0},g^{τ^1},g^{τ^2},\ldots,g^{τ^n}}$$This step is one-time and global (universal SRS).
+Then, for a specific circuit $C$, we derive the Proving Key (PK) and Verifying Key (VK):
+$$(PK,~VK)\leftarrow \mathrm{Plonk.Setup}(C, SRS)$$The PK tuple contains polynomials for each gate, permutation, and constraint in the circuit (commitments encoded with $\tau$); the VK tuple contains public polynomial commitments &#43; selector domain information &#43; constant verification structures.">
+<meta name="author" content="Sidereus Hu">
+<link rel="canonical" href="https://sidereushu.github.io/posts/research-on-vk-uniqueness-and-salt-in-plonk-setup-phase/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.93f625d739f1d6a5c6f20c146bc6a8d26b233492b34b2220c54b12fd46a04ded.css" integrity="sha256-k/Yl1znx1qXG8gwUa8ao0msjNJKzSyIgxUsS/UagTe0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://sidereushu.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://sidereushu.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://sidereushu.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://sidereushu.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://sidereushu.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://sidereushu.github.io/posts/research-on-vk-uniqueness-and-salt-in-plonk-setup-phase/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+ 
+
+
+<meta property="og:url" content="https://sidereushu.github.io/posts/research-on-vk-uniqueness-and-salt-in-plonk-setup-phase/">
+  <meta property="og:site_name" content="Sidereus Hu">
+  <meta property="og:title" content="Research on VK Uniqueness and Salt in Plonk Setup Phase">
+  <meta property="og:description" content="
+Plonk’s Setup Phase In Plonk’s Setup Phase (SRS Generation Phase), we first obtain a Structured Reference String (SRS). The SRS contains powers of a secret exponent $τ$ (used for polynomial commitments):
+$$SRS={g^{τ^0},g^{τ^1},g^{τ^2},\ldots,g^{τ^n}}$$This step is one-time and global (universal SRS).
+Then, for a specific circuit $C$, we derive the Proving Key (PK) and Verifying Key (VK):
+$$(PK,~VK)\leftarrow \mathrm{Plonk.Setup}(C, SRS)$$The PK tuple contains polynomials for each gate, permutation, and constraint in the circuit (commitments encoded with $\tau$); the VK tuple contains public polynomial commitments &#43; selector domain information &#43; constant verification structures.">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-10-11T16:57:25+08:00">
+    <meta property="article:modified_time" content="2025-10-11T16:57:25+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Research on VK Uniqueness and Salt in Plonk Setup Phase">
+<meta name="twitter:description" content="
+Plonk&rsquo;s Setup Phase
+In Plonk&rsquo;s Setup Phase (SRS Generation Phase), we first obtain a Structured Reference String (SRS). The SRS contains powers of a secret exponent $τ$ (used for polynomial commitments):
+$$SRS={g^{τ^0},g^{τ^1},g^{τ^2},\ldots,g^{τ^n}}$$This step is one-time and global (universal SRS).
+Then, for a specific circuit $C$, we derive the Proving Key (PK) and Verifying Key (VK):
+$$(PK,~VK)\leftarrow \mathrm{Plonk.Setup}(C, SRS)$$The PK tuple contains polynomials for each gate, permutation, and constraint in the circuit (commitments encoded with $\tau$); the VK tuple contains public polynomial commitments &#43; selector domain information &#43; constant verification structures.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://sidereushu.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Research on VK Uniqueness and Salt in Plonk Setup Phase",
+      "item": "https://sidereushu.github.io/posts/research-on-vk-uniqueness-and-salt-in-plonk-setup-phase/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Research on VK Uniqueness and Salt in Plonk Setup Phase",
+  "name": "Research on VK Uniqueness and Salt in Plonk Setup Phase",
+  "description": "\nPlonk\u0026rsquo;s Setup Phase In Plonk\u0026rsquo;s Setup Phase (SRS Generation Phase), we first obtain a Structured Reference String (SRS). The SRS contains powers of a secret exponent $τ$ (used for polynomial commitments):\n$$SRS={g^{τ^0},g^{τ^1},g^{τ^2},\\ldots,g^{τ^n}}$$This step is one-time and global (universal SRS).\nThen, for a specific circuit $C$, we derive the Proving Key (PK) and Verifying Key (VK):\n$$(PK,~VK)\\leftarrow \\mathrm{Plonk.Setup}(C, SRS)$$The PK tuple contains polynomials for each gate, permutation, and constraint in the circuit (commitments encoded with $\\tau$); the VK tuple contains public polynomial commitments + selector domain information + constant verification structures.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "\nPlonk’s Setup Phase In Plonk’s Setup Phase (SRS Generation Phase), we first obtain a Structured Reference String (SRS). The SRS contains powers of a secret exponent $τ$ (used for polynomial commitments):\n$$SRS={g^{τ^0},g^{τ^1},g^{τ^2},\\ldots,g^{τ^n}}$$This step is one-time and global (universal SRS).\nThen, for a specific circuit $C$, we derive the Proving Key (PK) and Verifying Key (VK):\n$$(PK,~VK)\\leftarrow \\mathrm{Plonk.Setup}(C, SRS)$$The PK tuple contains polynomials for each gate, permutation, and constraint in the circuit (commitments encoded with $\\tau$); the VK tuple contains public polynomial commitments + selector domain information + constant verification structures.\nImplementation of VK Uniqueness in Plonk Mathematical Expression of Circuits: In PLONK, the complete structure and constraints of a circuit $C$ are ultimately defined mathematically through a set of selector polynomials ${q_L,q_R,q_M,q_O,q_C}$ and permutation polynomials ${\\sigma_{S1},\\sigma_{S2},\\sigma_{S3}}$. These polynomials collectively encode what type each gate is (addition gate, multiplication gate, or custom gate) and the wiring relationships between gates.\nVK is a Commitment to the Circuit: The core components of VK are precisely the commitments to these polynomials that define the circuit structure. Specifically, it contains (but is not limited to) commitment values evaluated at the secret point $s$ in the SRS for these polynomials:\n$$vk={\\ldots,[q_L(s)]_1,[q_R(s)]_1,\\ldots,[\\sigma_{S1}(s)]_1,\\ldots}$$When the semantic substance of the statement differs, the circuit structure will be different.\nExample:\nUser A proves “I know the proving key PK_A corresponding to VK_A”\nUser B proves “I know the proving key PK_B corresponding to VK_B”\nIf the circuit logic corresponding to these two VKs is different (e.g., different number of arithmetic gates, different constraint matrices),\nthen their structures ${q_L,q_R,q_M,q_O,q_C}$ must be different.\nTherefore, the resulting VK (Verification Key) must also be different.\nThat is to say:\nIf “knowing PK_A” and “knowing PK_B” require implementing different logic in the circuit → the circuits are different;\nIf both call the same verifier function, just with different parameters → the circuit is the same.\nUsing Salt to Achieve VK Uniqueness For situations requiring “different VK for each user”, this can be achieved by:\nAdding user-specific constants in the circuit definition (such as public key, salt, session id);\nOr “compiling” these constants into the circuit when generating it;\nThus making the circuit structure $C_i$ different, and VK consequently different.\nFormally:\n$$C_i=C(logic,~user_{salt_i})\\quad \\Rightarrow \\quad vk_i=Setup(C_i,~SRS)$$Compared to modifying coefficients which can also make VK different, this approach means:\nThe circuit logic must change;\nThe circuit must be recompiled (requiring regeneration of the constraint system);\nCannot be universally reused.\nWhile the “salt” approach is:\nAdding a public input constant to the circuit;\nThis constant participates in some hash or gate constraint;\nLogically still the same, but the circuit instance (i.e., specific coefficient values) is different;\nTherefore VK is also uniquified, but the circuit template can still be universal.\nConcerns and Recommendations Regarding Salt in the Project Description The concerns mainly stem from understanding the traditional use of “salt” in cryptography, such as in hash functions or key derivation functions (KDF):\nTraditional Salt (e.g., password hashing):\nPurpose: Increase entropy to defend against precomputation attacks (such as rainbow tables).\nProperties: Must be random or at least unique.\nSecurity concerns: How to securely store salt, how to ensure its randomness.\nHowever, the role and security model of this “salt” used to achieve VK uniqueness in PLONK circuits is completely different. We can dispel readers’ concerns by redefining the purpose of this “salt”.\nThe “Salt” Here is Not an Entropy Source, but a “Domain Separator” It would be more accurate to understand this “salt” as a public, deterministic identifier. Its purpose is not to add randomness, but to perform domain separation—that is, to cryptographically split a universal circuit template into multiple unrelated, unique instances.\n",
+  "wordCount" : "601",
+  "inLanguage": "zh",
+  "datePublished": "2025-10-11T16:57:25+08:00",
+  "dateModified": "2025-10-11T16:57:25+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "Sidereus Hu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sidereushu.github.io/posts/research-on-vk-uniqueness-and-salt-in-plonk-setup-phase/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sidereus Hu",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sidereushu.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://sidereushu.github.io/" accesskey="h" title="Sidereus Hu (Alt + H)">Sidereus Hu</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://sidereushu.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://sidereushu.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Research on VK Uniqueness and Salt in Plonk Setup Phase
+    </h1>
+    <div class="post-meta"><span title='2025-10-11 16:57:25 +0800 CST'>2025-10-11</span>&nbsp;·&nbsp;Sidereus Hu
+
+</div>
+  </header> 
+  <div class="post-content"><br>
+<h2 id="plonks-setup-phase">Plonk&rsquo;s Setup Phase<a hidden class="anchor" aria-hidden="true" href="#plonks-setup-phase">#</a></h2>
+<p>In Plonk&rsquo;s <strong>Setup Phase (SRS Generation Phase)</strong>, we first obtain a Structured Reference String (SRS). The SRS contains powers of a secret exponent $τ$ (used for polynomial commitments):</p>
+$$SRS={g^{τ^0},g^{τ^1},g^{τ^2},\ldots,g^{τ^n}}$$<p>This step is <strong>one-time and global (universal SRS)</strong>.</p>
+<p>Then, for a specific circuit $C$, we derive the Proving Key (PK) and Verifying Key (VK):</p>
+$$(PK,~VK)\leftarrow \mathrm{Plonk.Setup}(C, SRS)$$<p>The PK tuple contains polynomials for each gate, permutation, and constraint in the circuit (commitments encoded with $\tau$); the VK tuple contains public polynomial commitments + selector domain information + constant verification structures.</p>
+<br>
+<h2 id="implementation-of-vk-uniqueness-in-plonk">Implementation of VK Uniqueness in Plonk<a hidden class="anchor" aria-hidden="true" href="#implementation-of-vk-uniqueness-in-plonk">#</a></h2>
+<p><strong>Mathematical Expression of Circuits</strong>: In PLONK, the complete structure and constraints of a circuit $C$ are ultimately defined mathematically through a set of selector polynomials ${q_L,q_R,q_M,q_O,q_C}$ and permutation polynomials ${\sigma_{S1},\sigma_{S2},\sigma_{S3}}$. These polynomials collectively encode what type each gate is (addition gate, multiplication gate, or custom gate) and the wiring relationships between gates.</p>
+<p><strong>VK is a Commitment to the Circuit</strong>: The core components of VK are precisely the commitments to these polynomials that define the circuit structure. Specifically, it contains (but is not limited to) commitment values evaluated at the secret point $s$ in the SRS for these polynomials:</p>
+$$vk={\ldots,[q_L(s)]_1,[q_R(s)]_1,\ldots,[\sigma_{S1}(s)]_1,\ldots}$$<p>When the semantic substance of the statement differs, the circuit structure will be different.</p>
+<p>Example:</p>
+<blockquote>
+<p>User A proves &ldquo;I know the proving key PK_A corresponding to VK_A&rdquo;<br>
+User B proves &ldquo;I know the proving key PK_B corresponding to VK_B&rdquo;</p></blockquote>
+<p>If the circuit logic corresponding to these two VKs is different (e.g., different number of arithmetic gates, different constraint matrices),<br>
+then their structures ${q_L,q_R,q_M,q_O,q_C}$ must be different.<br>
+Therefore, the resulting VK (Verification Key) must also be different.</p>
+<p>That is to say:</p>
+<ul>
+<li>
+<p>If &ldquo;knowing PK_A&rdquo; and &ldquo;knowing PK_B&rdquo; require implementing different logic in the circuit → the circuits are different;</p>
+</li>
+<li>
+<p>If both call the same verifier function, just with different parameters → the circuit is the same.</p>
+</li>
+</ul>
+<br>
+<h3 id="using-salt-to-achieve-vk-uniqueness"><strong>Using Salt to Achieve VK Uniqueness</strong><a hidden class="anchor" aria-hidden="true" href="#using-salt-to-achieve-vk-uniqueness">#</a></h3>
+<p>For situations requiring &ldquo;different VK for each user&rdquo;, this can be achieved by:</p>
+<ul>
+<li>
+<p>Adding user-specific constants in the circuit definition (such as public key, salt, session id);</p>
+</li>
+<li>
+<p>Or &ldquo;compiling&rdquo; these constants into the circuit when generating it;</p>
+</li>
+<li>
+<p>Thus making the circuit structure $C_i$ different, and VK consequently different.</p>
+</li>
+</ul>
+<p>Formally:</p>
+$$C_i=C(logic,~user_{salt_i})\quad \Rightarrow \quad vk_i=Setup(C_i,~SRS)$$<p>Compared to modifying coefficients which can also make VK different, this approach means:</p>
+<ul>
+<li>
+<p>The circuit logic must change;</p>
+</li>
+<li>
+<p>The circuit must be recompiled (requiring regeneration of the constraint system);</p>
+</li>
+<li>
+<p>Cannot be universally reused.</p>
+</li>
+</ul>
+<p>While the &ldquo;salt&rdquo; approach is:</p>
+<ul>
+<li>
+<p>Adding a public input constant to the circuit;</p>
+</li>
+<li>
+<p>This constant participates in some hash or gate constraint;</p>
+</li>
+<li>
+<p>Logically still the same, but the circuit instance (i.e., specific coefficient values) is different;</p>
+</li>
+<li>
+<p>Therefore VK is also uniquified, but the circuit template can still be universal.</p>
+</li>
+</ul>
+<br>
+<h2 id="concerns-and-recommendations-regarding-salt-in-the-project-description">Concerns and Recommendations Regarding Salt in the Project Description<a hidden class="anchor" aria-hidden="true" href="#concerns-and-recommendations-regarding-salt-in-the-project-description">#</a></h2>
+<p>The concerns mainly stem from understanding the traditional use of &ldquo;salt&rdquo; in cryptography, such as in hash functions or key derivation functions (KDF):</p>
+<ul>
+<li>
+<p><strong>Traditional Salt (e.g., password hashing)</strong>:</p>
+<ul>
+<li>
+<p><strong>Purpose</strong>: Increase entropy to defend against precomputation attacks (such as rainbow tables).</p>
+</li>
+<li>
+<p><strong>Properties</strong>: Must be random or at least unique.</p>
+</li>
+<li>
+<p><strong>Security concerns</strong>: How to securely store salt, how to ensure its randomness.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>However, the <strong>role and security model</strong> of this &ldquo;salt&rdquo; used to achieve VK uniqueness in PLONK circuits is <strong>completely different</strong>. We can dispel readers&rsquo; concerns by redefining the purpose of this &ldquo;salt&rdquo;.</p>
+<h4 id="the-salt-here-is-not-an-entropy-source-but-a-domain-separator">The &ldquo;Salt&rdquo; Here is Not an Entropy Source, but a &ldquo;Domain Separator&rdquo;<a hidden class="anchor" aria-hidden="true" href="#the-salt-here-is-not-an-entropy-source-but-a-domain-separator">#</a></h4>
+<p>It would be more accurate to understand this &ldquo;salt&rdquo; as a <strong>public, deterministic identifier</strong>. Its purpose is not to add randomness, but to perform <strong>domain separation</strong>—that is, to cryptographically split a universal circuit template into multiple unrelated, unique instances.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://sidereushu.github.io/">Sidereus Hu</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
