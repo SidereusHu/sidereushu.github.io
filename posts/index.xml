@@ -6,8 +6,22 @@
     <description>Recent content in Posts on Sidereus Hu</description>
     <generator>Hugo -- 0.148.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 11 Oct 2025 16:57:25 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 23 Oct 2025 16:57:25 +0800</lastBuildDate>
     <atom:link href="https://sidereushu.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reorg Attacks I</title>
+      <link>https://sidereushu.github.io/posts/reorg-attacks-i/</link>
+      <pubDate>Thu, 23 Oct 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/reorg-attacks-i/</guid>
+      <description>&lt;br&gt;
+&lt;h2 id=&#34;core-objective&#34;&gt;Core Objective&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Core Purpose&lt;/strong&gt;: The goal of the attack (by Byzantine validators) is &lt;strong&gt;not&lt;/strong&gt; to break the system (such as double-spending), but rather to manipulate block publication and voting so that their &amp;ldquo;privately held&amp;rdquo; block (b₁) defeats an honest block (b₂), thereby becoming the main chain.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Ultimate Gain&lt;/strong&gt;: By making the honest b₂ block become &amp;ldquo;orphaned,&amp;rdquo; Byzantine validators can &amp;ldquo;steal&amp;rdquo; the block rewards that should have belonged to the b₂ proposer, thus obtaining &amp;ldquo;higher rewards.&amp;rdquo;&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Research on VK Uniqueness and Salt in Plonk Setup Phase</title>
       <link>https://sidereushu.github.io/posts/research-on-vk-uniqueness-and-salt-in-plonk-setup-phase/</link>
