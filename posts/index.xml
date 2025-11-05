@@ -6,8 +6,19 @@
     <description>Recent content in Posts on Sidereus Hu</description>
     <generator>Hugo -- 0.148.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 23 Oct 2025 16:57:25 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 04 Nov 2025 16:57:25 +0800</lastBuildDate>
     <atom:link href="https://sidereushu.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reorg Attacks in Ethereum PoS</title>
+      <link>https://sidereushu.github.io/posts/reorg-attacks-in-ethereum-pos/</link>
+      <pubDate>Tue, 04 Nov 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/reorg-attacks-in-ethereum-pos/</guid>
+      <description>&lt;br&gt;
+&lt;p&gt;In this article, we expand on Reorg Attacks once again. We mainly analyze how Reorg Attacks are launched in the Ethereum PoS Protocol and identify the vulnerable points where attacks can be launched. Before this, combined with our previous meeting discussions, it is necessary to first review the Ethereum PoS Protocol to help us reach consensus on fundamental knowledge.&lt;/p&gt;
+&lt;h2 id=&#34;i--preliminaries&#34;&gt;I.  Preliminaries&lt;/h2&gt;
+&lt;h4 id=&#34;11--gasper&#34;&gt;1.1  Gasper&lt;/h4&gt;
+&lt;p&gt;Ethereum now uses a Proof-of Stake (PoS) consensus mechanism called &lt;strong&gt;Gasper&lt;/strong&gt;. Gasper integrates two protocols: &lt;strong&gt;Casper the Friendly Finality Gadget (FFG)&lt;/strong&gt;, a protocol ensuring the finality of transactions; a modified version of the &lt;strong&gt;Greedy Heaviest-Observed Sub-Tree (HLMD GHOST)&lt;/strong&gt; for selecting the canonical chain.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Reorg Attacks I</title>
       <link>https://sidereushu.github.io/posts/reorg-attacks-i/</link>

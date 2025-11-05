@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Reorg Attacks in Ethereum PoS | Sidereus Hu</title>
+<meta name="keywords" content="">
+<meta name="description" content="
+In this article, we expand on Reorg Attacks once again. We mainly analyze how Reorg Attacks are launched in the Ethereum PoS Protocol and identify the vulnerable points where attacks can be launched. Before this, combined with our previous meeting discussions, it is necessary to first review the Ethereum PoS Protocol to help us reach consensus on fundamental knowledge.
+I.  Preliminaries
+1.1  Gasper
+Ethereum now uses a Proof-of Stake (PoS) consensus mechanism called Gasper. Gasper integrates two protocols: Casper the Friendly Finality Gadget (FFG), a protocol ensuring the finality of transactions; a modified version of the Greedy Heaviest-Observed Sub-Tree (HLMD GHOST) for selecting the canonical chain.">
+<meta name="author" content="Sidereus Hu">
+<link rel="canonical" href="https://sidereushu.github.io/posts/reorg-attacks-in-ethereum-pos/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.93f625d739f1d6a5c6f20c146bc6a8d26b233492b34b2220c54b12fd46a04ded.css" integrity="sha256-k/Yl1znx1qXG8gwUa8ao0msjNJKzSyIgxUsS/UagTe0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://sidereushu.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://sidereushu.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://sidereushu.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://sidereushu.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://sidereushu.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://sidereushu.github.io/posts/reorg-attacks-in-ethereum-pos/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+ 
+
+
+<meta property="og:url" content="https://sidereushu.github.io/posts/reorg-attacks-in-ethereum-pos/">
+  <meta property="og:site_name" content="Sidereus Hu">
+  <meta property="og:title" content="Reorg Attacks in Ethereum PoS">
+  <meta property="og:description" content="
+In this article, we expand on Reorg Attacks once again. We mainly analyze how Reorg Attacks are launched in the Ethereum PoS Protocol and identify the vulnerable points where attacks can be launched. Before this, combined with our previous meeting discussions, it is necessary to first review the Ethereum PoS Protocol to help us reach consensus on fundamental knowledge.
+I. Preliminaries 1.1 Gasper Ethereum now uses a Proof-of Stake (PoS) consensus mechanism called Gasper. Gasper integrates two protocols: Casper the Friendly Finality Gadget (FFG), a protocol ensuring the finality of transactions; a modified version of the Greedy Heaviest-Observed Sub-Tree (HLMD GHOST) for selecting the canonical chain.">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-11-04T16:57:25+08:00">
+    <meta property="article:modified_time" content="2025-11-04T16:57:25+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Reorg Attacks in Ethereum PoS">
+<meta name="twitter:description" content="
+In this article, we expand on Reorg Attacks once again. We mainly analyze how Reorg Attacks are launched in the Ethereum PoS Protocol and identify the vulnerable points where attacks can be launched. Before this, combined with our previous meeting discussions, it is necessary to first review the Ethereum PoS Protocol to help us reach consensus on fundamental knowledge.
+I.  Preliminaries
+1.1  Gasper
+Ethereum now uses a Proof-of Stake (PoS) consensus mechanism called Gasper. Gasper integrates two protocols: Casper the Friendly Finality Gadget (FFG), a protocol ensuring the finality of transactions; a modified version of the Greedy Heaviest-Observed Sub-Tree (HLMD GHOST) for selecting the canonical chain.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://sidereushu.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Reorg Attacks in Ethereum PoS",
+      "item": "https://sidereushu.github.io/posts/reorg-attacks-in-ethereum-pos/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Reorg Attacks in Ethereum PoS",
+  "name": "Reorg Attacks in Ethereum PoS",
+  "description": "\nIn this article, we expand on Reorg Attacks once again. We mainly analyze how Reorg Attacks are launched in the Ethereum PoS Protocol and identify the vulnerable points where attacks can be launched. Before this, combined with our previous meeting discussions, it is necessary to first review the Ethereum PoS Protocol to help us reach consensus on fundamental knowledge.\nI. Preliminaries 1.1 Gasper Ethereum now uses a Proof-of Stake (PoS) consensus mechanism called Gasper. Gasper integrates two protocols: Casper the Friendly Finality Gadget (FFG), a protocol ensuring the finality of transactions; a modified version of the Greedy Heaviest-Observed Sub-Tree (HLMD GHOST) for selecting the canonical chain.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "\nIn this article, we expand on Reorg Attacks once again. We mainly analyze how Reorg Attacks are launched in the Ethereum PoS Protocol and identify the vulnerable points where attacks can be launched. Before this, combined with our previous meeting discussions, it is necessary to first review the Ethereum PoS Protocol to help us reach consensus on fundamental knowledge.\nI. Preliminaries 1.1 Gasper Ethereum now uses a Proof-of Stake (PoS) consensus mechanism called Gasper. Gasper integrates two protocols: Casper the Friendly Finality Gadget (FFG), a protocol ensuring the finality of transactions; a modified version of the Greedy Heaviest-Observed Sub-Tree (HLMD GHOST) for selecting the canonical chain.\nNamely, every honest validator in the system only proposes new blocks that extend its canonical chain and votes for blocks on its canonical chain. Eventually, one chain will be finalized according to FFG, so the system achieves safety (i.e., no double spending) and liveness (i.e., transactions submitted to the system are eventually finalized).\n1.2 Security properties The Ethereum PoS protocol satisfies the following properties.\n• (Safety) If an honest validator finalizes a chain led by block b, another honest validator finalizes a chain led by block b ′ , and the two chains have the same length, b = b ′ . • (Liveness) The length of the finalized chain eventually grows for all honest validators. (Time). Time is divided into epochs and each epoch includes 32 slots. Each slot lasts for 12 seconds. Each validator is assigned to one slot in an epoch randomly.\n1.3 Why does Ethereum’s Casper FFG choose to vote once every 32 slots (one epoch), rather than every slot, or every 64, 128, or longer intervals? If voting occurs at every slot, meaning an attestation (vote) must be submitted in each slot (12 seconds), it would cause message explosion. Even with aggregation (aggregated signatures) to reduce data volume, aggregation itself requires additional network communication (BLS signature aggregation involves many-to-many gossip), and validators still need to broadcast, sign, verify, and synchronize across the entire network. Network bandwidth, signature verification burden, and on-chain storage costs would all rise exponentially. Moreover, with voting at every slot:\nVote results would change almost every 12 seconds; The consensus mechanism would need to constantly update justified/finalized states; Fork choice stability would greatly decrease (due to frequent vote graph oscillations). Therefore, to control system load and consensus fluctuations, Ethereum designed a “pace controller”: epoch (32 slots).\nThrough simulation and testing, the Ethereum research team found:\n32 slots (≈ 6.4 minutes) represents a reasonable balance point among network propagation delay, validator count, and finality delay.\nPS: We can refer to the computational model behind Ethereum’s research conclusions and, combined with our project background, set an appropriate balance point.\nIf the epoch becomes larger and voting frequency decreases, it brings significant security and liveness issues:\nDecreased Security FFG’s security proof relies on “2/3 validator’s latest votes.” If the voting cycle is lengthened, attackers have more time to manipulate network delays or forks, creating conflicting justified checkpoints. The longer the delay, the easier the system falls into an uncertain state unable to determine the canonical chain. Excessive Finality Delay Assuming a checkpoint can only be justified once every 64 slots, it would take at least two epochs to finalize (FFG requires two consecutive justifications). This means at least 2×64×12=1536 seconds ≈ 25.6 minutes to achieve finality, which is extremely poor for user experience. Extended Attack Window Validator “slashing conditions” (double-signing penalties) are based on constraints between checkpoint votes (source-target relationships). If epoch intervals are too large, attackers can manipulate more chain states between votes (e.g., double vote), and system detection delay increases. 1.4 Basic concepts (Time). Time is divided into epochs and each epoch includes 32 slots. Each slot lasts for 12 seconds. Each validator is assigned to one slot in an epoch randomly.\n(Block). A block b consists of four fields: the slot number, the hash of the parent block, a set of attestations, and a batch of transactions.\n(Attestation). An attestation is a vote by an attestor, denoted as att. Each att consists of the slot number, hashes of source and target checkpoints, and the hash of head block. The slot number implies the time when the attestation is created. The source and target are used for finality. The source is the last justified checkpoint (to be described shortly) and the target is the last checkpoint block received by the validator. The head field is selected by the HLMD GHOST rule, which is the leaf block of the canonical chain. We say att is an attestation for the block in the head field or an attestation for the checkpoint block in the target field, without any ambiguity.\n(Aggregated attestation). The attestations that share identical source, target, and head can be aggregated into a single aggregated attestation. If attestation is a vote for the block b in the head field, it is also considered a vote for all the blocks led by b.\n(Finality). A checkpoint block cp might be justified and finalized. Informally, if a block is finalized, its order will never be reversed. Checkpoint cp is justified after two-thirds of attestations with cp as target are included in the chain. If a checkpoint that extends the justified block cp is also justified, cp is finalized. When cp is finalized, any blocks on the chain led by cp are finalized. A block can be justified or finalized according to the Casper FFG protocol.\nII. Ethereum PoS Protocol for validator $v_i$. Global / Local Parameters\nt: Global slot counter (time counter). Each validator vi maintains locally: T: Block tree (locally observed block/fork tree); P: Attestation pool (collected attestation and aggregate messages). 1. Slot Start — Proposer Phase (lines 01–07) At the start of slot t, if vi is selected as the proposer for this slot: Call FORKCHOICE to get the current canonical head p (line 03). Retrieve unincluded attestation set atts from local P (typically, proposers package them into new blocks to reduce bandwidth/encourage propagation). Package transactions txs, construct PROPOSE message and broadcast. Goal: Advance the chain, provide packed transactions and attestations included in the block to help the network reach consensus on weight. 2. Attestor Phase (lines 08–14) At T + ∆ (allowing for message propagation), committee members vote on the current FORKCHOICE output h, and report the current source checkpoint (s) and target checkpoint (c). These attestations are used for Casper FFG’s justify/finalize logic (finality). Note: Attestations are first sent to the committee (or entire network), then aggregated by aggregators. 3.1 Aggregator Phase (lines 15–19) Aggregators collect attestations for slot t (line 17), use BLS or other aggregated signatures to construct AGGREGATE, and broadcast to all validators. Aggregation reduces bandwidth and allows most validators to quickly see the overall voting situation for the slot. 3.2 Aggregator Phase: Block Reception Processing (lines 20–23) Upon receiving a new block, add it to the local block tree T. If the block is a checkpoint (i.e., the block of the first slot of an epoch), update checkpoint state based on the block’s parent chain (this point is exploited in Attack-II). 3.3 Aggregator Phase: Receiving attestation / aggregate (lines 24–25) Store received attestations or aggregates in local P. These attestations form the basis for weight calculation in FORKCHOICE.\nFORKCHOICE Implementation (HLMD-GHOST form) (lines 26–35) Starting from the last justified checkpoint as root, recursively select the root of the “heaviest weighted subtree” until reaching a leaf node; return the leaf as the current head. Tie-break uses alphabetical order (theoretical simplification). Actual implementations may use hash or VRF for more random tie-breaking. Line 30 is marked as the exploitation point for Attack-I: Attackers manipulate attestations (or proposer boosting) to change subtree weights, thereby influencing FORKCHOICE selection. Attack-I Exploitation Point (line 30) Essence: HLMD-GHOST only selects the heaviest subtree based on attestation weight. If an attacker can control which attestations are seen by which nodes, or artificially increase the “effective weight” of a certain branch (e.g., proposer boosting), they can make a malicious chain appear “heavier,” thus being selected by FORKCHOICE. Typical Methods: Withholding blocks/attestations, selective release, proposer boosting (temporarily increasing the weight of the proposer’s proposed branch). Consequences: Causes reorg, transaction rollback, disrupts liveness (or in extreme cases affects finality). ",
+  "wordCount" : "1367",
+  "inLanguage": "zh",
+  "datePublished": "2025-11-04T16:57:25+08:00",
+  "dateModified": "2025-11-04T16:57:25+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "Sidereus Hu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sidereushu.github.io/posts/reorg-attacks-in-ethereum-pos/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sidereus Hu",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sidereushu.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://sidereushu.github.io/" accesskey="h" title="Sidereus Hu (Alt + H)">Sidereus Hu</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://sidereushu.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://sidereushu.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Reorg Attacks in Ethereum PoS
+    </h1>
+    <div class="post-meta"><span title='2025-11-04 16:57:25 +0800 CST'>2025-11-04</span>&nbsp;·&nbsp;Sidereus Hu
+
+</div>
+  </header> 
+  <div class="post-content"><br>
+<p>In this article, we expand on Reorg Attacks once again. We mainly analyze how Reorg Attacks are launched in the Ethereum PoS Protocol and identify the vulnerable points where attacks can be launched. Before this, combined with our previous meeting discussions, it is necessary to first review the Ethereum PoS Protocol to help us reach consensus on fundamental knowledge.</p>
+<h2 id="i--preliminaries">I.  Preliminaries<a hidden class="anchor" aria-hidden="true" href="#i--preliminaries">#</a></h2>
+<h4 id="11--gasper">1.1  Gasper<a hidden class="anchor" aria-hidden="true" href="#11--gasper">#</a></h4>
+<p>Ethereum now uses a Proof-of Stake (PoS) consensus mechanism called <strong>Gasper</strong>. Gasper integrates two protocols: <strong>Casper the Friendly Finality Gadget (FFG)</strong>, a protocol ensuring the finality of transactions; a modified version of the <strong>Greedy Heaviest-Observed Sub-Tree (HLMD GHOST)</strong> for selecting the canonical chain.</p>
+<p>Namely, every honest validator in the system only proposes new blocks that extend its canonical chain and votes for blocks on its canonical chain. Eventually, one chain will be finalized according to FFG, so the system achieves <strong>safety</strong> (i.e., no double spending) and <strong>liveness</strong> (i.e., transactions submitted to the system are eventually finalized).</p>
+<h4 id="12--security-properties">1.2  Security properties<a hidden class="anchor" aria-hidden="true" href="#12--security-properties">#</a></h4>
+<p>The Ethereum PoS protocol satisfies the following properties.</p>
+<pre><code>• (Safety) If an honest validator finalizes a chain led by block b, another honest validator finalizes a chain led by block b ′ , and the two chains have the same length, b = b ′ . 
+
+• (Liveness) The length of the finalized chain eventually grows for all honest validators.
+</code></pre>
+<p>(<strong>Time</strong>). Time is divided into <em>epochs</em> and each epoch includes 32 slots. Each slot lasts for 12 seconds. Each validator is assigned to one slot in an epoch randomly.</p>
+<h4 id="13--why-does-ethereums-casper-ffg-choose-to-vote-once-every-32-slots-one-epoch-rather-than-every-slot-or-every-64-128-or-longer-intervals">1.3  Why does Ethereum&rsquo;s Casper FFG choose to vote once every 32 slots (one epoch), rather than every slot, or every 64, 128, or longer intervals?<a hidden class="anchor" aria-hidden="true" href="#13--why-does-ethereums-casper-ffg-choose-to-vote-once-every-32-slots-one-epoch-rather-than-every-slot-or-every-64-128-or-longer-intervals">#</a></h4>
+<p>If voting occurs at every slot, meaning an attestation (vote) must be submitted in each slot (12 seconds), it would cause message explosion. Even with aggregation (aggregated signatures) to reduce data volume, aggregation itself requires additional network communication (BLS signature aggregation involves many-to-many gossip), and validators still need to broadcast, sign, verify, and synchronize across the entire network. <strong>Network bandwidth, signature verification burden, and on-chain storage costs would all rise exponentially.</strong> Moreover, with voting at every slot:</p>
+<ul>
+<li>Vote results would change almost every 12 seconds;</li>
+<li>The consensus mechanism would need to constantly update justified/finalized states;</li>
+<li>Fork choice stability would greatly decrease (due to frequent vote graph oscillations).</li>
+</ul>
+<p>Therefore, to control system load and consensus fluctuations, Ethereum designed a &ldquo;pace controller&rdquo;: <strong>epoch (32 slots)</strong>.</p>
+<p>Through simulation and testing, the Ethereum research team found:</p>
+<blockquote>
+<p>32 slots (≈ 6.4 minutes) represents a reasonable balance point among network propagation delay, validator count, and finality delay.</p></blockquote>
+<p>PS: We can refer to the computational model behind Ethereum&rsquo;s research conclusions and, combined with our project background, set an appropriate balance point.</p>
+<p>If the epoch becomes larger and voting frequency decreases, it brings significant security and liveness issues:</p>
+<ol>
+<li><strong>Decreased Security</strong>
+<ul>
+<li>FFG&rsquo;s security proof relies on &ldquo;2/3 validator&rsquo;s latest votes.&rdquo; If the voting cycle is lengthened, attackers have more time to manipulate network delays or forks, creating conflicting justified checkpoints.</li>
+<li>The longer the delay, the easier the system falls into an uncertain state unable to determine the canonical chain.</li>
+</ul>
+</li>
+<li><strong>Excessive Finality Delay</strong>
+<ul>
+<li>Assuming a checkpoint can only be justified once every 64 slots, it would take at least two epochs to finalize (FFG requires two consecutive justifications).</li>
+<li>This means at least 2×64×12=1536 seconds ≈ 25.6 minutes to achieve finality, which is extremely poor for user experience.</li>
+</ul>
+</li>
+<li><strong>Extended Attack Window</strong>
+<ul>
+<li>Validator &ldquo;slashing conditions&rdquo; (double-signing penalties) are based on constraints between checkpoint votes (source-target relationships).</li>
+<li>If epoch intervals are too large, attackers can manipulate more chain states between votes (e.g., double vote), and system detection delay increases.</li>
+</ul>
+</li>
+</ol>
+<h4 id="14--basic-concepts">1.4  Basic concepts<a hidden class="anchor" aria-hidden="true" href="#14--basic-concepts">#</a></h4>
+<p>(<strong>Time</strong>). Time is divided into <em>epochs</em> and each epoch includes 32 slots. Each slot lasts for 12 seconds. Each validator is assigned to one slot in an epoch randomly.</p>
+<p>(<strong>Block</strong>). A block <em>b</em> consists of four fields: the <em>slot number</em>, the <em>hash of the parent block</em>, <em>a set of attestations</em>, and <em>a batch of transactions</em>.</p>
+<p>(<strong>Attestation</strong>). An attestation is a vote by an attestor, denoted as <em>att</em>. Each <em>att</em> consists of the <em>slot number</em>, <em>hashes of source and target checkpoints</em>, and <em>the hash of head block</em>. The slot number implies the time when the attestation is created. The source and target are used for finality. The source is the last justified checkpoint (to be described shortly) and the target is the last checkpoint block received by the validator. The head field is selected by the HLMD GHOST rule, which is the leaf block of the canonical chain. We say <em>att</em> is an attestation for the block in the head field or an attestation for the checkpoint block in the target field, without any ambiguity.</p>
+<p>(<strong>Aggregated attestation</strong>). The attestations that share identical <em>source</em>, <em>target</em>, and <em>head</em> can be aggregated into a single aggregated attestation. If attestation is a vote for the block <em>b</em> in the head field, it is also considered a vote for all the blocks led by <em>b</em>.</p>
+<p>(<strong>Finality</strong>). A checkpoint block <em>cp</em> might be justified and finalized. Informally, if a block is finalized, its order will never be reversed. Checkpoint <em>cp</em> is justified after two-thirds of attestations with <em>cp</em> as target are included in the chain. If a checkpoint that extends the justified block <em>cp</em> is also justified, <em>cp</em> is finalized. When <em>cp</em> is finalized, any blocks on the chain led by <em>cp</em> are finalized. A block can be justified or finalized according to the Casper FFG protocol.</p>
+<h2 id="ii--ethereum-pos-protocol-for-validator-">II.  Ethereum PoS Protocol for validator $v_i$.<a hidden class="anchor" aria-hidden="true" href="#ii--ethereum-pos-protocol-for-validator-">#</a></h2>
+<p><strong>Global / Local Parameters</strong></p>
+<ul>
+<li><code>t</code>: Global slot counter (time counter).</li>
+<li>Each validator <code>vi</code> maintains locally:
+<ul>
+<li><code>T</code>: Block tree (locally observed block/fork tree);</li>
+<li><code>P</code>: Attestation pool (collected attestation and aggregate messages).</li>
+</ul>
+</li>
+</ul>
+<p><img loading="lazy" src="/images/EthPoS0.png"></p>
+<hr>
+<h4 id="1--slot-start--proposer-phase-lines-0107">1.  Slot Start — Proposer Phase (lines 01–07)<a hidden class="anchor" aria-hidden="true" href="#1--slot-start--proposer-phase-lines-0107">#</a></h4>
+<p><img loading="lazy" src="/images/EthPoS1_7.png"></p>
+<ul>
+<li>At the start of slot <code>t</code>, if <code>vi</code> is selected as the proposer for this slot:
+<ul>
+<li>Call <code>FORKCHOICE</code> to get the current canonical head <code>p</code> (line 03).</li>
+<li>Retrieve unincluded attestation set <code>atts</code> from local <code>P</code> (typically, proposers package them into new blocks to reduce bandwidth/encourage propagation).</li>
+<li>Package transactions <code>txs</code>, construct <code>PROPOSE</code> message and broadcast.</li>
+</ul>
+</li>
+<li><strong>Goal</strong>: Advance the chain, provide packed transactions and attestations included in the block to help the network reach consensus on weight.</li>
+</ul>
+<h4 id="2--attestor-phase-lines-0814">2.  Attestor Phase (lines 08–14)<a hidden class="anchor" aria-hidden="true" href="#2--attestor-phase-lines-0814">#</a></h4>
+<p><img loading="lazy" src="/images/EthPoS8_14.png"></p>
+<ul>
+<li>At <code>T + ∆</code> (allowing for message propagation), committee members vote on the current <code>FORKCHOICE</code> output <code>h</code>, and report the current <code>source checkpoint (s)</code> and <code>target checkpoint (c)</code>.</li>
+<li>These attestations are used for Casper FFG&rsquo;s justify/finalize logic (finality).</li>
+<li>Note: Attestations are first sent to the committee (or entire network), then aggregated by aggregators.</li>
+</ul>
+<h4 id="31--aggregator-phase-lines-1519">3.1  Aggregator Phase (lines 15–19)<a hidden class="anchor" aria-hidden="true" href="#31--aggregator-phase-lines-1519">#</a></h4>
+<p><img loading="lazy" src="/images/EthPoS15_19.png"></p>
+<ul>
+<li>Aggregators collect attestations for slot <code>t</code> (line 17), use BLS or other aggregated signatures to construct <code>AGGREGATE</code>, and broadcast to all validators.</li>
+<li>Aggregation reduces bandwidth and allows most validators to quickly see the overall voting situation for the slot.</li>
+</ul>
+<h5 id="32--aggregator-phase-block-reception-processing-lines-2023">3.2  Aggregator Phase: Block Reception Processing (lines 20–23)<a hidden class="anchor" aria-hidden="true" href="#32--aggregator-phase-block-reception-processing-lines-2023">#</a></h5>
+<p><img loading="lazy" src="/images/EthPoS20_23.png"></p>
+<ul>
+<li>Upon receiving a new block, add it to the local block tree <code>T</code>.</li>
+<li>If the block is a checkpoint (i.e., the block of the first slot of an epoch), <strong>update checkpoint state based on the block&rsquo;s parent chain</strong> (this point is exploited in Attack-II).</li>
+</ul>
+<h5 id="33-aggregator-phase-receiving-attestation--aggregate-lines-2425">3.3 Aggregator Phase: Receiving attestation / aggregate (lines 24–25)<a hidden class="anchor" aria-hidden="true" href="#33-aggregator-phase-receiving-attestation--aggregate-lines-2425">#</a></h5>
+<p><img loading="lazy" src="/images/EthPoS24_25.png"></p>
+<p>Store received attestations or aggregates in local <code>P</code>. These attestations form the basis for weight calculation in FORKCHOICE.</p>
+<p><img loading="lazy" src="/images/ReorgAttack.png"></p>
+<p><img loading="lazy" src="/images/Reorg_Sandwich.png"></p>
+<p><img loading="lazy" src="/images/Reorg_Balancing.png"></p>
+<h4 id="forkchoice-implementation-hlmd-ghost-form-lines-2635">FORKCHOICE Implementation (HLMD-GHOST form) (lines 26–35)<a hidden class="anchor" aria-hidden="true" href="#forkchoice-implementation-hlmd-ghost-form-lines-2635">#</a></h4>
+<p><img loading="lazy" src="/images/EthPoS26_35.png"></p>
+<ul>
+<li>Starting from the <code>last justified checkpoint</code> as root, recursively select the root of the &ldquo;heaviest weighted subtree&rdquo; until reaching a leaf node; return the leaf as the current head.</li>
+<li>Tie-break uses alphabetical order (theoretical simplification). Actual implementations may use hash or VRF for more random tie-breaking.</li>
+<li>Line 30 is marked as <strong>the exploitation point for Attack-I</strong>: Attackers manipulate attestations (or proposer boosting) to change subtree weights, thereby influencing FORKCHOICE selection.</li>
+</ul>
+<h2 id="attack-i-exploitation-point-line-30">Attack-I Exploitation Point (line 30)<a hidden class="anchor" aria-hidden="true" href="#attack-i-exploitation-point-line-30">#</a></h2>
+<ul>
+<li><strong>Essence</strong>: HLMD-GHOST only selects the heaviest subtree based on attestation weight. If an attacker can control which attestations are seen by which nodes, or artificially increase the &ldquo;effective weight&rdquo; of a certain branch (e.g., proposer boosting), they can make a malicious chain appear &ldquo;heavier,&rdquo; thus being selected by FORKCHOICE.</li>
+<li><strong>Typical Methods</strong>: Withholding blocks/attestations, selective release, proposer boosting (temporarily increasing the weight of the proposer&rsquo;s proposed branch).</li>
+<li><strong>Consequences</strong>: Causes reorg, transaction rollback, disrupts liveness (or in extreme cases affects finality).</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://sidereushu.github.io/">Sidereus Hu</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
