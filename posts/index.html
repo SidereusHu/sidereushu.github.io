@@ -164,6 +164,21 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">Unrealized Justification Reorg Attack
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>
+Ethereum now uses a Proof-of-Stake (PoS) consensus mechanism called Gasper. Gasper integrates two protocols: Casper the Friendly Finality Gadget (FFG), a protocol ensuring the finality of transactions; and a modified version of the Greedy Heaviest-Observed Sub-Tree (HLMD GHOST) for selecting the canonical chain.
+In the unrealized justification reorg attack, the attacker manipulates the justified update of checkpoints to alter the “filtered/visible” view of the block tree for honest nodes. Specifically, the attacker creates and publishes a branch containing a new checkpoint, causing honest nodes to filter out the original branch (which is canonical according to weight) from their local fork-choice viable space, thereby achieving reorganization or blocking finality.
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-11-11 00:00:00 +0000 UTC'>2025-11-11</span>&nbsp;·&nbsp;Sidereus Hu</footer>
+  <a class="entry-link" aria-label="post link to Unrealized Justification Reorg Attack" href="https://sidereushu.github.io/posts/unrealized-justification-reorg-attack/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">Reorg Attacks in Ethereum PoS
     </h2>
   </header>
@@ -292,21 +307,6 @@ Work Key Idea Effectiveness on Poseidon [FP20] Closed-form degree expression Use
   </div>
   <footer class="entry-footer"><span title='2025-08-09 16:57:25 +0800 CST'>2025-08-09</span>&nbsp;·&nbsp;Sidereus Hu</footer>
   <a class="entry-link" aria-label="post link to Poseidon2 Hash Security Analysis: Gröbner Basis Attack Evaluation" href="https://sidereushu.github.io/posts/poseidon2-hash-security-analysis--gr%C3%B6bner-basis-attack-evaluation/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Practical Recommendations (for Poseidon2 &#43; BLS12-381 &#43; Compress Mode)
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>
-Suggested Parameters:
-Parameter Suggested (Width 2) Suggested (Width 3) Notes Prime Field BLS12-381 BLS12-381 Newly supported field in Gnark Width t 2 3 Width 3 is preferred if Gnark supports it S-box $x^5$ $x^5$ Common and secure choice over prime fields Full Rounds 8 8 Avoid using fewer than 8 rounds Partial Rounds 22 14–17 Based on updated recommendations Mode Compress Mode Compress Mode Used for input compression in UTXO models Security Level ≥128 bits ≥128 bits Default setting meets the requirement Additional Notes Security Analysis: Considers recent advances in algebraic attacks such as Gröbner basis methods, [KR21], [BCD&#43;20], [ABM23], and [GKR25].
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2025-08-03 16:57:25 +0800 CST'>2025-08-03</span>&nbsp;·&nbsp;Sidereus Hu</footer>
-  <a class="entry-link" aria-label="post link to Practical Recommendations (for Poseidon2 &#43; BLS12-381 &#43; Compress Mode)" href="https://sidereushu.github.io/posts/practical-recommendations-for-poseidon2-&#43;-bls12-381-&#43;-compress-mode/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">

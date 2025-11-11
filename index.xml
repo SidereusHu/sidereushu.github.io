@@ -6,8 +6,17 @@
     <description>Recent content on Sidereus Hu</description>
     <generator>Hugo -- 0.148.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 04 Nov 2025 16:57:25 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 11 Nov 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://sidereushu.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Unrealized Justification Reorg Attack</title>
+      <link>https://sidereushu.github.io/posts/unrealized-justification-reorg-attack/</link>
+      <pubDate>Tue, 11 Nov 2025 00:00:00 +0000</pubDate>
+      <guid>https://sidereushu.github.io/posts/unrealized-justification-reorg-attack/</guid>
+      <description>&lt;br&gt;
+&lt;p&gt;Ethereum now uses a Proof-of-Stake (PoS) consensus mechanism called &lt;strong&gt;Gasper&lt;/strong&gt;. Gasper integrates two protocols: &lt;strong&gt;Casper the Friendly Finality Gadget (FFG)&lt;/strong&gt;, a protocol ensuring the finality of transactions; and a modified version of the &lt;strong&gt;Greedy Heaviest-Observed Sub-Tree (HLMD GHOST)&lt;/strong&gt; for selecting the canonical chain.&lt;/p&gt;
+&lt;p&gt;In the unrealized justification reorg attack, the attacker manipulates the justified update of checkpoints to alter the &amp;ldquo;filtered/visible&amp;rdquo; view of the block tree for honest nodes. Specifically, the attacker creates and publishes a branch containing a new checkpoint, causing honest nodes to filter out the original branch (which is canonical according to weight) from their local fork-choice viable space, thereby achieving reorganization or blocking finality.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Reorg Attacks in Ethereum PoS</title>
       <link>https://sidereushu.github.io/posts/reorg-attacks-in-ethereum-pos/</link>

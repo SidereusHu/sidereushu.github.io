@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Unrealized Justification Reorg Attack | Sidereus Hu</title>
+<meta name="keywords" content="">
+<meta name="description" content="
+Ethereum now uses a Proof-of-Stake (PoS) consensus mechanism called Gasper. Gasper integrates two protocols: Casper the Friendly Finality Gadget (FFG), a protocol ensuring the finality of transactions; and a modified version of the Greedy Heaviest-Observed Sub-Tree (HLMD GHOST) for selecting the canonical chain.
+In the unrealized justification reorg attack, the attacker manipulates the justified update of checkpoints to alter the &ldquo;filtered/visible&rdquo; view of the block tree for honest nodes. Specifically, the attacker creates and publishes a branch containing a new checkpoint, causing honest nodes to filter out the original branch (which is canonical according to weight) from their local fork-choice viable space, thereby achieving reorganization or blocking finality.">
+<meta name="author" content="Sidereus Hu">
+<link rel="canonical" href="https://sidereushu.github.io/posts/unrealized-justification-reorg-attack/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.93f625d739f1d6a5c6f20c146bc6a8d26b233492b34b2220c54b12fd46a04ded.css" integrity="sha256-k/Yl1znx1qXG8gwUa8ao0msjNJKzSyIgxUsS/UagTe0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://sidereushu.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://sidereushu.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://sidereushu.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://sidereushu.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://sidereushu.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://sidereushu.github.io/posts/unrealized-justification-reorg-attack/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+ 
+
+
+<meta property="og:url" content="https://sidereushu.github.io/posts/unrealized-justification-reorg-attack/">
+  <meta property="og:site_name" content="Sidereus Hu">
+  <meta property="og:title" content="Unrealized Justification Reorg Attack">
+  <meta property="og:description" content="
+Ethereum now uses a Proof-of-Stake (PoS) consensus mechanism called Gasper. Gasper integrates two protocols: Casper the Friendly Finality Gadget (FFG), a protocol ensuring the finality of transactions; and a modified version of the Greedy Heaviest-Observed Sub-Tree (HLMD GHOST) for selecting the canonical chain.
+In the unrealized justification reorg attack, the attacker manipulates the justified update of checkpoints to alter the “filtered/visible” view of the block tree for honest nodes. Specifically, the attacker creates and publishes a branch containing a new checkpoint, causing honest nodes to filter out the original branch (which is canonical according to weight) from their local fork-choice viable space, thereby achieving reorganization or blocking finality.">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-11-11T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-11-11T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Unrealized Justification Reorg Attack">
+<meta name="twitter:description" content="
+Ethereum now uses a Proof-of-Stake (PoS) consensus mechanism called Gasper. Gasper integrates two protocols: Casper the Friendly Finality Gadget (FFG), a protocol ensuring the finality of transactions; and a modified version of the Greedy Heaviest-Observed Sub-Tree (HLMD GHOST) for selecting the canonical chain.
+In the unrealized justification reorg attack, the attacker manipulates the justified update of checkpoints to alter the &ldquo;filtered/visible&rdquo; view of the block tree for honest nodes. Specifically, the attacker creates and publishes a branch containing a new checkpoint, causing honest nodes to filter out the original branch (which is canonical according to weight) from their local fork-choice viable space, thereby achieving reorganization or blocking finality.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://sidereushu.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Unrealized Justification Reorg Attack",
+      "item": "https://sidereushu.github.io/posts/unrealized-justification-reorg-attack/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Unrealized Justification Reorg Attack",
+  "name": "Unrealized Justification Reorg Attack",
+  "description": "\nEthereum now uses a Proof-of-Stake (PoS) consensus mechanism called Gasper. Gasper integrates two protocols: Casper the Friendly Finality Gadget (FFG), a protocol ensuring the finality of transactions; and a modified version of the Greedy Heaviest-Observed Sub-Tree (HLMD GHOST) for selecting the canonical chain.\nIn the unrealized justification reorg attack, the attacker manipulates the justified update of checkpoints to alter the \u0026ldquo;filtered/visible\u0026rdquo; view of the block tree for honest nodes. Specifically, the attacker creates and publishes a branch containing a new checkpoint, causing honest nodes to filter out the original branch (which is canonical according to weight) from their local fork-choice viable space, thereby achieving reorganization or blocking finality.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "\nEthereum now uses a Proof-of-Stake (PoS) consensus mechanism called Gasper. Gasper integrates two protocols: Casper the Friendly Finality Gadget (FFG), a protocol ensuring the finality of transactions; and a modified version of the Greedy Heaviest-Observed Sub-Tree (HLMD GHOST) for selecting the canonical chain.\nIn the unrealized justification reorg attack, the attacker manipulates the justified update of checkpoints to alter the “filtered/visible” view of the block tree for honest nodes. Specifically, the attacker creates and publishes a branch containing a new checkpoint, causing honest nodes to filter out the original branch (which is canonical according to weight) from their local fork-choice viable space, thereby achieving reorganization or blocking finality.\nThe unrealized justification reorg attack reveals a vulnerability in the interaction between Ethereum PoS’s GHOST layer and FFG layer:\nThe FFG layer is responsible for finality, but its justified state is directly used by the GHOST layer (as the starting point for fork choice);\nThe attacker can forge a “logically reasonable but not actually realized” justified checkpoint;\nThis causes the GHOST layer to discard the honest branch based on incorrect state;\nThus resulting in chain reorganization or even degraded security.\nAttack Steps: During normal operation in epoch e, honest validators maintain the canonical chain c1 with checkpoint cp0, where b1, b2, and b3 are blocks in various slots within the epoch (b3 is the last block of the epoch, and b1 is an earlier block, specifically at slot 22).\nIn epoch e, block b1 (slot 22) happens to be the first block containing sufficient attestations to justify cp0 (i.e., when b1 is seen, there are enough attestations pointing to it to make cp0 justifiable), but in the honest global view, this justification is not immediately triggered on the canonical chain (or is not considered as last-justified by honest nodes).\nIn epoch e+1, the attacker (or a controlled proposer) constructs and publishes a checkpoint cp1, deliberately setting its parent to b1 (although the more reasonable parent on the honest chain should be b3). Thus, cp1 belongs to an “early fork” chain c2 (extending from the earlier b1), rather than the honest c1.\nWhen honest nodes receive this cp1 (along with its accompanying attestations/aggregates), according to pseudocode lines 22–23, they update the checkpoint state: locally treating cp0 as justified on chain c2 (or pointing cp0’s last-justified to the c2 view), thereby switching the last-justified root to the copy of cp0 under c2.\nOnce cp0 becomes last-justified under c2, HLMD-GHOST’s FORKCHOICE (which selects the heaviest subtree starting from last-justified) will use the subtree under cp0 in c2 as the root to continue selecting the heaviest subtree. Therefore, c1 (the honest chain) will be viewed as a “non-root path” and filtered out (i.e., FORKCHOICE no longer explores down c1), thus achieving de-selection/de-visibility of the honest chain.\nTo ensure that cp1 can justify cp0, the attacker needs b1 to appear at a position within the epoch such that cp1 can obtain sufficient attestations. In the diagram example: b1 is chosen to be at slot ⌈32 × 2/3⌉ = 22.\nParameterized Calculation: Why Choose Slot 22? Why Orphan at Most 10 Blocks? Key number: To mark a checkpoint cp0 as justified, ⌈32 × 2/3⌉ = 22 validator attestations are required (because checkpoints are based on epochs, each epoch has a fixed committee size, and the finality threshold is 2/3 of total weight; in terms of quantity, rounding up gives 22).\nAttacker’s strategy: Let b1 appear at the 22nd slot of epoch e (counting from 1 to 32), so that after b1 is included/published, at most 32 − 22 = 10 subsequent slot blocks can still appear (these subsequent blocks are produced by honest proposers in the same epoch but after b1). Therefore, when the attacker publishes cp1 with b1 as parent in epoch e+1, at most these 10 subsequent honest blocks will be orphaned (no longer canonical). This design allows the attacker to keep the “damage” within an upper bound (compared to choosing a very early b1 which would orphan more blocks and be more easily detected).\nSummary:\n22 is because ⌈2/3 × 32⌉;\n10 = 32 − 22 is the maximum number of honest blocks orphaned (within that epoch).\nAttack Prerequisites and Cost To successfully launch this type of unrealized-justification reorg, the attacker typically needs to satisfy:\nControl a proposer for an epoch (specifically, the proposer who can propose cp1 in epoch e+1), or be able to tamper with the proposer’s message to accept the attacker-provided parent.\nReplicate/obtain sufficient attestations or exploit network distribution, i.e., be able to make honest nodes see cp1 and accept its accompanying attestations (at least meeting the condition for cp0 to be viewed as justified). This typically requires the attacker to control which messages are seen by which validators (targeted gossip), or release pre-aggregated attestations at the appropriate time.\nThe attacker does not need to control 2/3 of the stake, but needs precise control over message propagation timing and parent specification.\nThe attacker bears certain risks: if honest nodes can detect selective/anomalous parent specification behavior in a short time, or if the protocol has additional checks on checkpoint updates (such as requiring aggregates or time windows), the attack will fail or the attacker will be slashed (if their behavior violates slashing conditions).\nAttack cost: Resources related to attack success opportunity include proposer control (stake or time window), network layer control (partitioning or selective forwarding), and the risk of being discovered/punished.\nFeasible Mitigation Measures To resist unrealized-justification reorgs, it is recommended to place defenses on three parallel layers:\nPropagation redundancy and aggregate verifiability (network + message format level) — Only switch last_justified to that checkpoint when a verified aggregated attestation (≥2/3 signatures) is seen and the aggregate has been confirmed by other nodes through multiple independent propagation paths.\nConservative in-place decision strategy (node level) — Nodes must meet the condition of “sufficient evidence and multi-path visibility” before locally updating last-justified / changing the fork-choice starting point; introduce “freshness / stability” checks for suspicious parents and reduce their weight.\nDetection/alerting/operational tools (monitoring layer) — Record parent pointers, attestation arrival timelines, automatically score and alert, and can trigger alternative propagation or replacement aggregators.\n",
+  "wordCount" : "1018",
+  "inLanguage": "zh",
+  "datePublished": "2025-11-11T00:00:00Z",
+  "dateModified": "2025-11-11T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Sidereus Hu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sidereushu.github.io/posts/unrealized-justification-reorg-attack/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sidereus Hu",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sidereushu.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://sidereushu.github.io/" accesskey="h" title="Sidereus Hu (Alt + H)">Sidereus Hu</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://sidereushu.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://sidereushu.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Unrealized Justification Reorg Attack
+    </h1>
+    <div class="post-meta"><span title='2025-11-11 00:00:00 +0000 UTC'>2025-11-11</span>&nbsp;·&nbsp;Sidereus Hu
+
+</div>
+  </header> 
+  <div class="post-content"><br>
+<p>Ethereum now uses a Proof-of-Stake (PoS) consensus mechanism called <strong>Gasper</strong>. Gasper integrates two protocols: <strong>Casper the Friendly Finality Gadget (FFG)</strong>, a protocol ensuring the finality of transactions; and a modified version of the <strong>Greedy Heaviest-Observed Sub-Tree (HLMD GHOST)</strong> for selecting the canonical chain.</p>
+<p>In the unrealized justification reorg attack, the attacker manipulates the justified update of checkpoints to alter the &ldquo;filtered/visible&rdquo; view of the block tree for honest nodes. Specifically, the attacker creates and publishes a branch containing a new checkpoint, causing honest nodes to filter out the original branch (which is canonical according to weight) from their local fork-choice viable space, thereby achieving reorganization or blocking finality.</p>
+<p>The unrealized justification reorg attack reveals a vulnerability in the interaction between Ethereum PoS&rsquo;s GHOST layer and FFG layer:</p>
+<ul>
+<li>
+<p>The FFG layer is responsible for finality, but its justified state is directly used by the GHOST layer (as the starting point for fork choice);</p>
+</li>
+<li>
+<p>The attacker can forge a &ldquo;logically reasonable but not actually realized&rdquo; justified checkpoint;</p>
+</li>
+<li>
+<p>This causes the GHOST layer to discard the honest branch based on incorrect state;</p>
+</li>
+<li>
+<p>Thus resulting in chain reorganization or even degraded security.</p>
+</li>
+</ul>
+<p><img loading="lazy" src="/images/UnrealizedJustificationReorgAttack.png"></p>
+<h2 id="attack-steps">Attack Steps:<a hidden class="anchor" aria-hidden="true" href="#attack-steps">#</a></h2>
+<ol>
+<li>
+<p>During normal operation in epoch <code>e</code>, honest validators maintain the canonical chain <code>c1</code> with checkpoint <code>cp0</code>, where <code>b1</code>, <code>b2</code>, and <code>b3</code> are blocks in various slots within the epoch (<code>b3</code> is the last block of the epoch, and <code>b1</code> is an earlier block, specifically at slot 22).</p>
+</li>
+<li>
+<p>In epoch <code>e</code>, block <code>b1</code> (slot 22) happens to be the <strong>first block containing sufficient attestations to justify <code>cp0</code></strong> (i.e., when <code>b1</code> is seen, there are enough attestations pointing to it to make <code>cp0</code> justifiable), but in the honest global view, this justification is not immediately triggered on the canonical chain (or is not considered as last-justified by honest nodes).</p>
+</li>
+<li>
+<p>In epoch <code>e+1</code>, the attacker (or a controlled proposer) constructs and publishes a checkpoint <code>cp1</code>, deliberately setting its parent to <code>b1</code> (although the more reasonable parent on the honest chain should be <code>b3</code>). Thus, <code>cp1</code> belongs to an &ldquo;early fork&rdquo; chain <code>c2</code> (extending from the earlier <code>b1</code>), rather than the honest <code>c1</code>.</p>
+</li>
+<li>
+<p>When honest nodes receive this <code>cp1</code> (along with its accompanying attestations/aggregates), according to pseudocode lines 22–23, they <strong>update the checkpoint state</strong>: locally treating <code>cp0</code> as justified on chain <code>c2</code> (or pointing <code>cp0</code>&rsquo;s last-justified to the <code>c2</code> view), thereby switching the last-justified root to the copy of <code>cp0</code> under <code>c2</code>.</p>
+</li>
+<li>
+<p>Once <code>cp0</code> becomes last-justified under <code>c2</code>, HLMD-GHOST&rsquo;s FORKCHOICE (which selects the heaviest subtree starting from last-justified) will <strong>use the subtree under <code>cp0</code> in <code>c2</code> as the root</strong> to continue selecting the heaviest subtree. Therefore, <code>c1</code> (the honest chain) will be viewed as a &ldquo;non-root path&rdquo; and <strong>filtered out</strong> (i.e., FORKCHOICE no longer explores down <code>c1</code>), thus achieving de-selection/de-visibility of the honest chain.</p>
+</li>
+<li>
+<p>To ensure that <code>cp1</code> can justify <code>cp0</code>, the attacker needs <code>b1</code> to appear at a position within the epoch such that <code>cp1</code> can obtain sufficient attestations. In the diagram example: <code>b1</code> is chosen to be at slot ⌈32 × 2/3⌉ = 22.</p>
+</li>
+</ol>
+<h2 id="parameterized-calculation-why-choose-slot-22-why-orphan-at-most-10-blocks">Parameterized Calculation: Why Choose Slot 22? Why Orphan at Most 10 Blocks?<a hidden class="anchor" aria-hidden="true" href="#parameterized-calculation-why-choose-slot-22-why-orphan-at-most-10-blocks">#</a></h2>
+<p><strong>Key number</strong>: To mark a checkpoint <code>cp0</code> as <strong>justified</strong>, ⌈32 × 2/3⌉ = 22 validator attestations are required (because checkpoints are based on epochs, each epoch has a fixed committee size, and the finality threshold is 2/3 of total weight; in terms of quantity, rounding up gives 22).</p>
+<p><strong>Attacker&rsquo;s strategy</strong>: Let <code>b1</code> appear at the 22nd slot of epoch <code>e</code> (counting from 1 to 32), so that after <code>b1</code> is included/published, <strong>at most 32 − 22 = 10 subsequent slot blocks can still appear</strong> (these subsequent blocks are produced by honest proposers in the same epoch but after <code>b1</code>). Therefore, when the attacker publishes <code>cp1</code> with <code>b1</code> as parent in epoch <code>e+1</code>, at most these 10 subsequent honest blocks will be orphaned (no longer canonical). This design allows the attacker to keep the &ldquo;damage&rdquo; within an upper bound (compared to choosing a very early <code>b1</code> which would orphan more blocks and be more easily detected).</p>
+<p><strong>Summary</strong>:</p>
+<ul>
+<li>
+<p>22 is because ⌈2/3 × 32⌉;</p>
+</li>
+<li>
+<p>10 = 32 − 22 is the maximum number of honest blocks orphaned (within that epoch).</p>
+</li>
+</ul>
+<h2 id="attack-prerequisites-and-cost">Attack Prerequisites and Cost<a hidden class="anchor" aria-hidden="true" href="#attack-prerequisites-and-cost">#</a></h2>
+<p>To successfully launch this type of unrealized-justification reorg, the attacker typically needs to satisfy:</p>
+<ol>
+<li>
+<p><strong>Control a proposer for an epoch</strong> (specifically, the proposer who can propose <code>cp1</code> in epoch <code>e+1</code>), or be able to tamper with the proposer&rsquo;s message to accept the attacker-provided parent.</p>
+</li>
+<li>
+<p><strong>Replicate/obtain sufficient attestations or exploit network distribution</strong>, i.e., be able to make honest nodes see <code>cp1</code> and accept its accompanying attestations (at least meeting the condition for <code>cp0</code> to be viewed as justified). This typically requires the attacker to control which messages are seen by which validators (targeted gossip), or release pre-aggregated attestations at the appropriate time.</p>
+</li>
+<li>
+<p>The attacker does not need to control 2/3 of the stake, but needs precise control over message propagation timing and parent specification.</p>
+</li>
+<li>
+<p>The attacker bears certain risks: if honest nodes can detect selective/anomalous parent specification behavior in a short time, or if the protocol has additional checks on checkpoint updates (such as requiring aggregates or time windows), the attack will fail or the attacker will be slashed (if their behavior violates slashing conditions).</p>
+</li>
+</ol>
+<p><strong>Attack cost</strong>: Resources related to attack success opportunity include proposer control (stake or time window), network layer control (partitioning or selective forwarding), and the risk of being discovered/punished.</p>
+<h2 id="feasible-mitigation-measures">Feasible Mitigation Measures<a hidden class="anchor" aria-hidden="true" href="#feasible-mitigation-measures">#</a></h2>
+<p>To resist unrealized-justification reorgs, it is recommended to place defenses on three parallel layers:</p>
+<ol>
+<li>
+<p><strong>Propagation redundancy and aggregate verifiability</strong> (network + message format level) — Only switch <code>last_justified</code> to that checkpoint when a verified aggregated attestation (≥2/3 signatures) is seen and the aggregate has been confirmed by other nodes through multiple independent propagation paths.</p>
+</li>
+<li>
+<p><strong>Conservative in-place decision strategy</strong> (node level) — Nodes must meet the condition of &ldquo;sufficient evidence and multi-path visibility&rdquo; before locally updating <code>last-justified</code> / changing the fork-choice starting point; introduce &ldquo;freshness / stability&rdquo; checks for suspicious parents and reduce their weight.</p>
+</li>
+<li>
+<p><strong>Detection/alerting/operational tools</strong> (monitoring layer) — Record parent pointers, attestation arrival timelines, automatically score and alert, and can trigger alternative propagation or replacement aggregators.</p>
+</li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://sidereushu.github.io/">Sidereus Hu</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
