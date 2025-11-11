@@ -255,6 +255,7 @@ In the unrealized justification reorg attack, the attacker manipulates the justi
 <p>To ensure that <code>cp1</code> can justify <code>cp0</code>, the attacker needs <code>b1</code> to appear at a position within the epoch such that <code>cp1</code> can obtain sufficient attestations. In the diagram example: <code>b1</code> is chosen to be at slot ⌈32 × 2/3⌉ = 22.</p>
 </li>
 </ol>
+<br>
 <h2 id="parameterized-calculation-why-choose-slot-22-why-orphan-at-most-10-blocks">Parameterized Calculation: Why Choose Slot 22? Why Orphan at Most 10 Blocks?<a hidden class="anchor" aria-hidden="true" href="#parameterized-calculation-why-choose-slot-22-why-orphan-at-most-10-blocks">#</a></h2>
 <p><strong>Key number</strong>: To mark a checkpoint <code>cp0</code> as <strong>justified</strong>, ⌈32 × 2/3⌉ = 22 validator attestations are required (because checkpoints are based on epochs, each epoch has a fixed committee size, and the finality threshold is 2/3 of total weight; in terms of quantity, rounding up gives 22).</p>
 <p><strong>Attacker&rsquo;s strategy</strong>: Let <code>b1</code> appear at the 22nd slot of epoch <code>e</code> (counting from 1 to 32), so that after <code>b1</code> is included/published, <strong>at most 32 − 22 = 10 subsequent slot blocks can still appear</strong> (these subsequent blocks are produced by honest proposers in the same epoch but after <code>b1</code>). Therefore, when the attacker publishes <code>cp1</code> with <code>b1</code> as parent in epoch <code>e+1</code>, at most these 10 subsequent honest blocks will be orphaned (no longer canonical). This design allows the attacker to keep the &ldquo;damage&rdquo; within an upper bound (compared to choosing a very early <code>b1</code> which would orphan more blocks and be more easily detected).</p>
@@ -267,6 +268,7 @@ In the unrealized justification reorg attack, the attacker manipulates the justi
 <p>10 = 32 − 22 is the maximum number of honest blocks orphaned (within that epoch).</p>
 </li>
 </ul>
+<br>
 <h2 id="attack-prerequisites-and-cost">Attack Prerequisites and Cost<a hidden class="anchor" aria-hidden="true" href="#attack-prerequisites-and-cost">#</a></h2>
 <p>To successfully launch this type of unrealized-justification reorg, the attacker typically needs to satisfy:</p>
 <ol>
@@ -284,6 +286,7 @@ In the unrealized justification reorg attack, the attacker manipulates the justi
 </li>
 </ol>
 <p><strong>Attack cost</strong>: Resources related to attack success opportunity include proposer control (stake or time window), network layer control (partitioning or selective forwarding), and the risk of being discovered/punished.</p>
+<br>
 <h2 id="feasible-mitigation-measures">Feasible Mitigation Measures<a hidden class="anchor" aria-hidden="true" href="#feasible-mitigation-measures">#</a></h2>
 <p>To resist unrealized-justification reorgs, it is recommended to place defenses on three parallel layers:</p>
 <ol>
