@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Justification Withholding Reorg Attack | Sidereus Hu</title>
+<meta name="keywords" content="">
+<meta name="description" content="
+In Ethereum&rsquo;s PoS Gasper consensus, &ldquo;Checkpoint justification&rdquo; is one of the core components of chain security:
+Only when at least 2/3 of active validators in an epoch submit attestations pointing to a certain checkpoint will that checkpoint be &ldquo;justified&rdquo;.
+The Justification withholding reorg attack exploits a vulnerability in this mechanism:
+
+Attackers deliberately prevent the honest chain from collecting enough attestations, keeping the honest chain from justifying checkpoints. Meanwhile, the attackers secretly build a hidden chain and accumulate sufficient attestations. Once the timing is right, they release the hidden chain all at once, directly reorganizing an entire epoch of blocks from the honest chain.">
+<meta name="author" content="Sidereus Hu">
+<link rel="canonical" href="https://sidereushu.github.io/posts/justification-withholding-reorg-attack/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.93f625d739f1d6a5c6f20c146bc6a8d26b233492b34b2220c54b12fd46a04ded.css" integrity="sha256-k/Yl1znx1qXG8gwUa8ao0msjNJKzSyIgxUsS/UagTe0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://sidereushu.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://sidereushu.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://sidereushu.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://sidereushu.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://sidereushu.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://sidereushu.github.io/posts/justification-withholding-reorg-attack/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+ 
+
+
+<meta property="og:url" content="https://sidereushu.github.io/posts/justification-withholding-reorg-attack/">
+  <meta property="og:site_name" content="Sidereus Hu">
+  <meta property="og:title" content="Justification Withholding Reorg Attack">
+  <meta property="og:description" content="
+In Ethereum’s PoS Gasper consensus, “Checkpoint justification” is one of the core components of chain security:
+Only when at least 2/3 of active validators in an epoch submit attestations pointing to a certain checkpoint will that checkpoint be “justified”.
+The Justification withholding reorg attack exploits a vulnerability in this mechanism:
+Attackers deliberately prevent the honest chain from collecting enough attestations, keeping the honest chain from justifying checkpoints. Meanwhile, the attackers secretly build a hidden chain and accumulate sufficient attestations. Once the timing is right, they release the hidden chain all at once, directly reorganizing an entire epoch of blocks from the honest chain.">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-11-18T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-11-18T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Justification Withholding Reorg Attack">
+<meta name="twitter:description" content="
+In Ethereum&rsquo;s PoS Gasper consensus, &ldquo;Checkpoint justification&rdquo; is one of the core components of chain security:
+Only when at least 2/3 of active validators in an epoch submit attestations pointing to a certain checkpoint will that checkpoint be &ldquo;justified&rdquo;.
+The Justification withholding reorg attack exploits a vulnerability in this mechanism:
+
+Attackers deliberately prevent the honest chain from collecting enough attestations, keeping the honest chain from justifying checkpoints. Meanwhile, the attackers secretly build a hidden chain and accumulate sufficient attestations. Once the timing is right, they release the hidden chain all at once, directly reorganizing an entire epoch of blocks from the honest chain.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://sidereushu.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Justification Withholding Reorg Attack",
+      "item": "https://sidereushu.github.io/posts/justification-withholding-reorg-attack/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Justification Withholding Reorg Attack",
+  "name": "Justification Withholding Reorg Attack",
+  "description": "\nIn Ethereum\u0026rsquo;s PoS Gasper consensus, \u0026ldquo;Checkpoint justification\u0026rdquo; is one of the core components of chain security:\nOnly when at least 2/3 of active validators in an epoch submit attestations pointing to a certain checkpoint will that checkpoint be \u0026ldquo;justified\u0026rdquo;.\nThe Justification withholding reorg attack exploits a vulnerability in this mechanism:\nAttackers deliberately prevent the honest chain from collecting enough attestations, keeping the honest chain from justifying checkpoints. Meanwhile, the attackers secretly build a hidden chain and accumulate sufficient attestations. Once the timing is right, they release the hidden chain all at once, directly reorganizing an entire epoch of blocks from the honest chain.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "\nIn Ethereum’s PoS Gasper consensus, “Checkpoint justification” is one of the core components of chain security:\nOnly when at least 2/3 of active validators in an epoch submit attestations pointing to a certain checkpoint will that checkpoint be “justified”.\nThe Justification withholding reorg attack exploits a vulnerability in this mechanism:\nAttackers deliberately prevent the honest chain from collecting enough attestations, keeping the honest chain from justifying checkpoints. Meanwhile, the attackers secretly build a hidden chain and accumulate sufficient attestations. Once the timing is right, they release the hidden chain all at once, directly reorganizing an entire epoch of blocks from the honest chain.\nLet’s break down the entire attack process with the accompanying diagram.\n1. Key Attack Strategy: Prevent the honest chain from justifying cp0; enable the attacker’s hidden chain to justify cp0.\nFinally, reveal the hidden chain → reorganize the honest chain.\n2. Why Is This Attack So Significant? A single attack can cause:\nReorganization of an entire epoch (32 blocks) Complete abandonment of all honest validators’ work Dramatic weakening of liveness Conditions for advanced attacks like MEV reorgs and double-spending 3. Timeline Breakdown (Step-by-Step Explanation with Diagram) Epoch e: Attack Begins (1) Honest proposer produces the last public block b0 b0 is the last block produced by an honest proposer in epoch e (white b0 on the left side of the diagram).\n(2) All subsequent proposers in the epoch are Byzantine ⇒ “Block withholding” begins Attacker proposers continue producing blocks, but these blocks:\nAre not broadcast publicly Are hidden from honest validators This forms a “hidden chain” (red dashed line b1 in the upper part of the diagram).\n(3) Result: Honest chain fails to get 2/3 attestations ⇒ Cannot justify cp0 Because blocks are hidden on the honest chain, it doesn’t see enough attestations,\ntherefore cp0 cannot be justified on the honest chain.\nEpoch e+1: Honest Chain Continues, But Falls Into the Trap (4) Honest proposer produces new checkpoint cp1 on top of b0 Since the honest chain hasn’t had blocks withheld from it, the honest chain’s view is:\ncp0 → b0 → ... → cp1\nBut here’s the critical issue:\ncp1 itself cannot be justified (lacking 2/3 attestations from the previous epoch) The honest chain still cannot justify cp0 The honest chain becomes “stuck”.\nEnd of Epoch e+1: Attacker Reveals Hidden Chain, Launches Devastating Reorg (5) Byzantine nodes publish the withheld hidden chain all at once At this point, the attacker releases:\nThe hidden b1 Checkpoint cp2 built on b1 Moreover, this hidden chain contains 2/3 attestations supporting cp0 (because these attestations were withheld and not published).\n(6) Result: Attacker’s chain successfully justifies cp0, while honest chain cannot In Gasper, justification capability is the decisive factor for checkpoint priority.\nWhen cp2 is published:\nAttacker's chain: cp0 → b1 → cp2 (can justify cp0) Honest chain: cp0 → b0 → cp1 (cannot justify cp0) The protocol prefers to select the chain that can justify.\nFinal Outcome: An Entire 32 Blocks Reorganized Since each epoch has 32 slots, and the attack spans epochs e and e+1,\nalmost all blocks from epoch e+1 on the honest chain will be orphaned.\nBlocks b2, b3, and cp1 marked with shading in the diagram are all discarded.\n4. Why Can This Attack Still Occur in Ethereum 2025’s Gasper? There are 3 key reasons:\n(1) Gasper’s justification completely depends on seeing 2/3 attestations If attackers prevent the honest chain from receiving them, this is its weakness.\n(2) Proposer weight is too significant: later proposers heavily favor the attack As long as the last few proposers near the end of an epoch are Byzantine:\nThey can control block propagation They can deliberately withhold blocks They can privately collect attestations They can create a chain that appears “healthier” than the honest chain (3) Gasper’s “finality gadget” assumes chains will always receive attestations in time But in reality: Byzantine proposers may not broadcast blocks.\n",
+  "wordCount" : "647",
+  "inLanguage": "zh",
+  "datePublished": "2025-11-18T00:00:00Z",
+  "dateModified": "2025-11-18T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Sidereus Hu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sidereushu.github.io/posts/justification-withholding-reorg-attack/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sidereus Hu",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sidereushu.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://sidereushu.github.io/" accesskey="h" title="Sidereus Hu (Alt + H)">Sidereus Hu</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://sidereushu.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://sidereushu.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Justification Withholding Reorg Attack
+    </h1>
+    <div class="post-meta"><span title='2025-11-18 00:00:00 +0000 UTC'>2025-11-18</span>&nbsp;·&nbsp;Sidereus Hu
+
+</div>
+  </header> 
+  <div class="post-content"><br>
+<p>In Ethereum&rsquo;s PoS Gasper consensus, &ldquo;Checkpoint justification&rdquo; is one of the core components of chain security:<br>
+Only when at least <em>2/3</em> of active validators in an epoch submit attestations pointing to a certain checkpoint will that checkpoint be &ldquo;justified&rdquo;.</p>
+<p>The <strong>Justification withholding reorg attack</strong> exploits a vulnerability in this mechanism:</p>
+<blockquote>
+<p><strong>Attackers deliberately prevent the honest chain from collecting enough attestations, keeping the honest chain from justifying checkpoints. Meanwhile, the attackers secretly build a hidden chain and accumulate sufficient attestations. Once the timing is right, they release the hidden chain all at once, directly reorganizing an entire epoch of blocks from the honest chain.</strong></p></blockquote>
+<p>Let&rsquo;s break down the entire attack process with the accompanying diagram.</p>
+<p><img loading="lazy" src="/images/JustificationWithholdingReorg.png"></p>
+<h1 id="1-key-attack-strategy">1. Key Attack Strategy:<a hidden class="anchor" aria-hidden="true" href="#1-key-attack-strategy">#</a></h1>
+<p><strong>Prevent the honest chain from justifying cp0; enable the attacker&rsquo;s hidden chain to justify cp0.<br>
+Finally, reveal the hidden chain → reorganize the honest chain.</strong></p>
+<h1 id="2-why-is-this-attack-so-significant">2. Why Is This Attack So Significant?<a hidden class="anchor" aria-hidden="true" href="#2-why-is-this-attack-so-significant">#</a></h1>
+<p>A single attack can cause:</p>
+<ul>
+<li>Reorganization of an entire epoch (32 blocks)</li>
+<li>Complete abandonment of all honest validators&rsquo; work</li>
+<li>Dramatic weakening of liveness</li>
+<li>Conditions for advanced attacks like MEV reorgs and double-spending</li>
+</ul>
+<hr>
+<h1 id="3-timeline-breakdown-step-by-step-explanation-with-diagram">3. Timeline Breakdown (Step-by-Step Explanation with Diagram)<a hidden class="anchor" aria-hidden="true" href="#3-timeline-breakdown-step-by-step-explanation-with-diagram">#</a></h1>
+<h2 id="epoch-e-attack-begins">Epoch e: Attack Begins<a hidden class="anchor" aria-hidden="true" href="#epoch-e-attack-begins">#</a></h2>
+<h3 id="1-honest-proposer-produces-the-last-public-block-b0"><strong>(1) Honest proposer produces the last public block b0</strong><a hidden class="anchor" aria-hidden="true" href="#1-honest-proposer-produces-the-last-public-block-b0">#</a></h3>
+<p>b0 is the last block produced by an honest proposer in epoch e (white b0 on the left side of the diagram).</p>
+<h3 id="2-all-subsequent-proposers-in-the-epoch-are-byzantine-"><strong>(2) All subsequent proposers in the epoch are Byzantine ⇒ &ldquo;Block withholding&rdquo; begins</strong><a hidden class="anchor" aria-hidden="true" href="#2-all-subsequent-proposers-in-the-epoch-are-byzantine-">#</a></h3>
+<p>Attacker proposers continue producing blocks, but these blocks:</p>
+<ul>
+<li><strong>Are not broadcast publicly</strong></li>
+<li><strong>Are hidden from honest validators</strong></li>
+</ul>
+<p>This forms a &ldquo;hidden chain&rdquo; (red dashed line b1 in the upper part of the diagram).</p>
+<h3 id="3-result-honest-chain-fails-to-get-23-attestations--cannot-justify-cp0"><strong>(3) Result: Honest chain fails to get 2/3 attestations ⇒ Cannot justify cp0</strong><a hidden class="anchor" aria-hidden="true" href="#3-result-honest-chain-fails-to-get-23-attestations--cannot-justify-cp0">#</a></h3>
+<p>Because blocks are hidden on the honest chain, it <strong>doesn&rsquo;t see enough attestations</strong>,<br>
+therefore cp0 cannot be justified on the honest chain.</p>
+<hr>
+<h2 id="epoch-e1-honest-chain-continues-but-falls-into-the-trap">Epoch e+1: Honest Chain Continues, But Falls Into the Trap<a hidden class="anchor" aria-hidden="true" href="#epoch-e1-honest-chain-continues-but-falls-into-the-trap">#</a></h2>
+<h3 id="4-honest-proposer-produces-new-checkpoint-cp1-on-top-of-b0"><strong>(4) Honest proposer produces new checkpoint cp1 on top of b0</strong><a hidden class="anchor" aria-hidden="true" href="#4-honest-proposer-produces-new-checkpoint-cp1-on-top-of-b0">#</a></h3>
+<p>Since the honest chain hasn&rsquo;t had blocks withheld from it, the honest chain&rsquo;s view is:</p>
+<p><code>cp0 → b0 → ... → cp1</code></p>
+<p>But here&rsquo;s the critical issue:</p>
+<ul>
+<li>cp1 itself cannot be justified (lacking 2/3 attestations from the previous epoch)</li>
+<li>The honest chain still cannot justify cp0</li>
+</ul>
+<p>The honest chain becomes &ldquo;stuck&rdquo;.</p>
+<hr>
+<h2 id="end-of-epoch-e1-attacker-reveals-hidden-chain-launches-devastating-reorg">End of Epoch e+1: Attacker Reveals Hidden Chain, Launches Devastating Reorg<a hidden class="anchor" aria-hidden="true" href="#end-of-epoch-e1-attacker-reveals-hidden-chain-launches-devastating-reorg">#</a></h2>
+<h3 id="5-byzantine-nodes-publish-the-withheld-hidden-chain-all-at-once"><strong>(5) Byzantine nodes publish the withheld hidden chain all at once</strong><a hidden class="anchor" aria-hidden="true" href="#5-byzantine-nodes-publish-the-withheld-hidden-chain-all-at-once">#</a></h3>
+<p>At this point, the attacker releases:</p>
+<ul>
+<li>The hidden b1</li>
+<li>Checkpoint cp2 built on b1</li>
+</ul>
+<p>Moreover, this hidden chain <strong>contains 2/3 attestations supporting cp0</strong> (because these attestations were withheld and not published).</p>
+<h3 id="6-result-attacker"><strong>(6) Result: Attacker&rsquo;s chain successfully justifies cp0, while honest chain cannot</strong><a hidden class="anchor" aria-hidden="true" href="#6-result-attacker">#</a></h3>
+<p>In Gasper, justification capability is the decisive factor for checkpoint priority.<br>
+When cp2 is published:</p>
+<pre tabindex="0"><code>Attacker&#39;s chain: cp0 → b1 → cp2   (can justify cp0)
+Honest chain:     cp0 → b0 → cp1   (cannot justify cp0)
+</code></pre><p>The protocol prefers to select <strong>the chain that can justify</strong>.</p>
+<hr>
+<h2 id="final-outcome-an-entire-32-blocks-reorganized">Final Outcome: An Entire 32 Blocks Reorganized<a hidden class="anchor" aria-hidden="true" href="#final-outcome-an-entire-32-blocks-reorganized">#</a></h2>
+<p>Since each epoch has 32 slots, and the attack spans epochs e and e+1,<br>
+almost all blocks from epoch e+1 on the honest chain will be orphaned.</p>
+<p>Blocks b2, b3, and cp1 marked with shading in the diagram are all discarded.</p>
+<hr>
+<h1 id="4-why-can-this-attack-still-occur-in-ethereum-2025s-gasper">4. Why Can This Attack Still Occur in Ethereum 2025&rsquo;s Gasper?<a hidden class="anchor" aria-hidden="true" href="#4-why-can-this-attack-still-occur-in-ethereum-2025s-gasper">#</a></h1>
+<p>There are 3 key reasons:</p>
+<h3 id="1-gasper"><strong>(1) Gasper&rsquo;s justification completely depends on seeing 2/3 attestations</strong><a hidden class="anchor" aria-hidden="true" href="#1-gasper">#</a></h3>
+<p>If attackers prevent the honest chain from receiving them, this is its weakness.</p>
+<h3 id="2-proposer-weight-is-too-significant-later-proposers-heavily-favor-the-attack"><strong>(2) Proposer weight is too significant: later proposers heavily favor the attack</strong><a hidden class="anchor" aria-hidden="true" href="#2-proposer-weight-is-too-significant-later-proposers-heavily-favor-the-attack">#</a></h3>
+<p>As long as the last few proposers near the end of an epoch are Byzantine:</p>
+<ul>
+<li>They can control block propagation</li>
+<li>They can deliberately withhold blocks</li>
+<li>They can privately collect attestations</li>
+<li>They can create a chain that appears &ldquo;healthier&rdquo; than the honest chain</li>
+</ul>
+<h3 id="3-gasper"><strong>(3) Gasper&rsquo;s &ldquo;finality gadget&rdquo; assumes chains will always receive attestations in time</strong><a hidden class="anchor" aria-hidden="true" href="#3-gasper">#</a></h3>
+<p>But in reality: Byzantine proposers may not broadcast blocks.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://sidereushu.github.io/">Sidereus Hu</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

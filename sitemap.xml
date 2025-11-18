@@ -2,11 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://sidereushu.github.io/posts/justification-withholding-reorg-attack/</loc>
+    <lastmod>2025-11-18T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://sidereushu.github.io/posts/</loc>
-    <lastmod>2025-11-11T00:00:00+00:00</lastmod>
+    <lastmod>2025-11-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sidereushu.github.io/</loc>
-    <lastmod>2025-11-11T00:00:00+00:00</lastmod>
+    <lastmod>2025-11-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sidereushu.github.io/posts/unrealized-justification-reorg-attack/</loc>
     <lastmod>2025-11-11T00:00:00+00:00</lastmod>
