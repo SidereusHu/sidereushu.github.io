@@ -6,8 +6,27 @@
     <description>Recent content on Sidereus Hu</description>
     <generator>Hugo -- 0.148.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 18 Nov 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 01 Dec 2025 16:57:25 +0800</lastBuildDate>
     <atom:link href="https://sidereushu.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Blockchain Reorg Attack - Bouncing Attack</title>
+      <link>https://sidereushu.github.io/posts/blockchain-reorg-attack---bouncing-attack/</link>
+      <pubDate>Mon, 01 Dec 2025 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/blockchain-reorg-attack---bouncing-attack/</guid>
+      <description>&lt;br&gt;
+&lt;h1 id=&#34;1-background-and-core-concept&#34;&gt;1. Background and Core Concept&lt;/h1&gt;
+&lt;p&gt;Gasper is the sub-protocol responsible for deterministic finality in Ethereum&amp;rsquo;s PoS consensus. Its core objectives are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;To continuously advance &lt;strong&gt;Justification&lt;/strong&gt; and &lt;strong&gt;Finalization&lt;/strong&gt; of the chain when the majority of honest participants are online;&lt;/li&gt;
+&lt;li&gt;To form a probabilistically secure chain selection through honest majority voting when forks exist.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;However, if an attacker controls:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Close to &lt;strong&gt;1/3 of the voting power&lt;/strong&gt;;&lt;/li&gt;
+&lt;li&gt;The ability to &lt;strong&gt;delay attestation broadcasts&lt;/strong&gt; (i.e., temporary network inconsistency);&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;They can create the following situation:&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Justification Withholding Reorg Attack</title>
       <link>https://sidereushu.github.io/posts/justification-withholding-reorg-attack/</link>
