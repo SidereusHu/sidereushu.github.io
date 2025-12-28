@@ -164,6 +164,24 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">Security Analysis of KoalaBear Extension Fields and Proposed Improvements
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>1. Motivation In a finite cyclic group
+$$G = \langle g \rangle, \quad |G| = n$$The discrete logarithm problem (DLP/ECDLP) is formalized as:
+**Given $g$ and $y = g^x$, find $x \bmod n$. The secret key $x$ has domain $\mathbb{Z}_n$
+Because $g^n = 1$, we have:
+$$g^x = g^{x \bmod n}$$This means: The secret key space is at most the size of the group $n$.
+The basic attack is to enumerate $x \in {0, \ldots, n-1}$
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-12-28 00:00:00 +0000 UTC'>2025-12-28</span>&nbsp;·&nbsp;Sidereus Hu</footer>
+  <a class="entry-link" aria-label="post link to Security Analysis of KoalaBear Extension Fields and Proposed Improvements" href="https://sidereushu.github.io/posts/security-analysis-of-koalabear-extension-fields-and-proposed-improvements/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">Blockchain Reorg Attack: Bouncing Attack
     </h2>
   </header>
@@ -297,20 +315,6 @@ In [GLR&#43;20], another approach was mentioned—round-level modeling: introduc
   </div>
   <footer class="entry-footer"><span title='2025-09-02 16:57:25 +0800 CST'>2025-09-02</span>&nbsp;·&nbsp;Sidereus Hu</footer>
   <a class="entry-link" aria-label="post link to Overview and Evaluation of Round-by-Round Modeling Analysis for Poseidon Hash" href="https://sidereushu.github.io/posts/overview-and-evaluation-of-round-by-round-modeling-analysis-for-poseidon-hash/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Poseidon Hash Algebraic Attack Analysis (Designer&#39;s Perspective)
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>
-In recent years, “ZK-friendly” hash functions designed for zero-knowledge proof (ZK) scenarios have gained widespread attention. They are typically based on carefully constructed algebraic structures to exhibit lower constraint counts in arithmetic circuits, thereby achieving higher efficiency in proof systems. However, it is precisely this algebraic friendliness that exposes them to potential attack surfaces under certain analytical models. Particularly in recent years, algebraic analysis methods—such as Gröbner basis attacks and polynomial degree reduction techniques utilizing subspace trajectories—have seen significant research interest in the cryptanalysis field and have gradually become one of the core tools for evaluating the security of such hash functions.
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2025-08-26 16:57:25 +0800 CST'>2025-08-26</span>&nbsp;·&nbsp;Sidereus Hu</footer>
-  <a class="entry-link" aria-label="post link to Poseidon Hash Algebraic Attack Analysis (Designer&#39;s Perspective)" href="https://sidereushu.github.io/posts/poseidon-hash-algebraic-attack-analysis-designers-perspective/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">

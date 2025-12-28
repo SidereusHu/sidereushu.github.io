@@ -6,8 +6,21 @@
     <description>Recent content in Posts on Sidereus Hu</description>
     <generator>Hugo -- 0.148.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 01 Dec 2025 16:57:25 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 28 Dec 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://sidereushu.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Security Analysis of KoalaBear Extension Fields and Proposed Improvements</title>
+      <link>https://sidereushu.github.io/posts/security-analysis-of-koalabear-extension-fields-and-proposed-improvements/</link>
+      <pubDate>Sun, 28 Dec 2025 00:00:00 +0000</pubDate>
+      <guid>https://sidereushu.github.io/posts/security-analysis-of-koalabear-extension-fields-and-proposed-improvements/</guid>
+      <description>&lt;h2 id=&#34;1--motivation&#34;&gt;1.  Motivation&lt;/h2&gt;
+&lt;p&gt;In a finite cyclic group&lt;/p&gt;
+$$G = \langle g \rangle, \quad |G| = n$$&lt;p&gt;The discrete logarithm problem (DLP/ECDLP) is formalized as:&lt;/p&gt;
+&lt;p&gt;**Given $g$ and $y = g^x$, find $x \bmod n$. The secret key $x$ has domain $\mathbb{Z}_n$&lt;/p&gt;
+&lt;p&gt;Because $g^n = 1$, we have:&lt;/p&gt;
+$$g^x = g^{x \bmod n}$$&lt;p&gt;This means: The secret key space is at most the size of the group $n$.&lt;/p&gt;
+&lt;p&gt;The basic attack is to enumerate $x \in {0, \ldots, n-1}$&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Blockchain Reorg Attack: Bouncing Attack</title>
       <link>https://sidereushu.github.io/posts/blockchain-reorg-attack---bouncing-attack/</link>
