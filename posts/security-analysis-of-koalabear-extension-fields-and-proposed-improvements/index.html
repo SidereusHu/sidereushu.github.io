@@ -276,14 +276,14 @@ $$(k-1)!(2^{(k-1)(k-2)}e^k k^{-1/2})^\omega p^2 \approx 2^{180+}$$</li>
 <li>If higher security is needed, increase the extension degree..</li>
 </ul>
 <h3 id="4-variant-weil-attack-over-quartic-extension-fields">4). Variant Weil Attack over Quartic Extension Fields<a hidden class="anchor" aria-hidden="true" href="#4-variant-weil-attack-over-quartic-extension-fields">#</a></h3>
-<p>Gaudry proposed an index calculus algorithm for the discrete logarithm problem on general abelian varieties of small dimension, and applied this algorithm to the Weil restriction of elliptic curves and hyperelliptic curves over small degree extension fields.</p>
-<p>In particular, this attack can solve an elliptic curve discrete logarithm problem defined over $\mathbb{F}_{q^4}$ in heuristic asymptotic running time $\tilde{O}(q^{4/3})$; and an elliptic problem over $\mathbb{F}_{q^4}$ or a genus 2 problem over $\mathbb{F}_{q^2}$ in heuristic asymptotic running time $\tilde{O}(q^{3/2})$.</p>
+<p>Gaudry proposed an index calculus algorithm for the discrete logarithm problem on general abelian varieties of small dimension, and applied this algorithm to the <strong>Weil restriction</strong> of elliptic curves and hyperelliptic curves over small degree extension fields.</p>
+<p>In particular, this attack can solve an elliptic curve discrete logarithm problem defined over $\mathbb{F}_{q^4}$ in heuristic asymptotic running time $\tilde{O}(q^{4/3})$; and an elliptic problem over $\mathbb{F}_{q^4}$ or a <strong>genus 2 problem</strong> over $\mathbb{F}_{q^2}$ in heuristic asymptotic running time $\tilde{O}(q^{3/2})$.</p>
 <ul>
 <li>
 <p>Currently, there is less effective public literature on attacks for $n=9$.  reasons:</p>
 <ul>
 <li>
-<p><strong>Algebraic system complexity</strong>: If directly using the Semaev summation polynomial method, the number of variables in the multivariate system is $2^{(n-1)} = 256$, with 9 variables to solve, and the Gröbner basis complexity is extremely high and almost infeasible.</p>
+<p><strong>Algebraic system complexity</strong>: If directly using the Semaev summation polynomial method, the number of variables in the multivariate system is $2^{(n-1)} = 256$, with 9 variables to solve, and the <strong>Gröbner basis complexity is extremely high</strong> and almost infeasible.</p>
 <ul>
 <li>$n=9$ versus $n=8$ (which factors as $2 \times 4$) has an advantage—namely, the smallest non-trivial subfield is $\mathbb{F}_{q^3}$ (rather than $\mathbb{F}_{q^2}$), and $q^3$ is already quite large (93 bits), which increases the difficulty for attackers to construct efficient descent curves.</li>
 </ul>
