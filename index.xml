@@ -9,17 +9,14 @@
     <lastBuildDate>Fri, 02 Jan 2026 16:57:25 +0800</lastBuildDate>
     <atom:link href="https://sidereushu.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Red team I</title>
-      <link>https://sidereushu.github.io/posts/red-team/</link>
+      <title>From CTF to AI Red Team: A Hands-On Guide to Prompt Injection Attacks</title>
+      <link>https://sidereushu.github.io/posts/from-ctf-to-ai-red-team-a-hands-on-guide-to-prompt-injection-attacks/</link>
       <pubDate>Fri, 02 Jan 2026 16:57:25 +0800</pubDate>
-      <guid>https://sidereushu.github.io/posts/red-team/</guid>
+      <guid>https://sidereushu.github.io/posts/from-ctf-to-ai-red-team-a-hands-on-guide-to-prompt-injection-attacks/</guid>
       <description>&lt;br&gt;
-The essence of SQL injection is simple: **user input is executed as code instead of being treated as pure data.**
-&lt;p&gt;By crafting malicious input, the attacker changes the semantics of the original query — from “verifying a password” to “unconditionally returning the admin user.”&lt;/p&gt;
-&lt;h3 id=&#34;prompt-injection-same-recipe-new-medium&#34;&gt;Prompt Injection: Same Recipe, New Medium&lt;/h3&gt;
-&lt;p&gt;Now consider how an LLM Agent operates:&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;System Prompt: You are a customer service assistant. You may only answer product-related questions.Do not discuss politics, violence, or other sensitive topics.User Input: What is the warranty period for your product?LLM Output: Our product comes with a one-year warranty...
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The system prompt defines the agent’s behavioral boundaries. User input is &lt;em&gt;supposed&lt;/em&gt; to be just data. However, here lies the core problem: &lt;strong&gt;LLMs cannot fundamentally distinguish between “instructions” and “data.”&lt;/strong&gt;&lt;/p&gt;</description>
+&gt; As a security researcher who has played CTFs for many years, the first time I encountered prompt injection, a strong sense of familiarity hit me immediately — *isn’t this the “spiritual successor” of SQL injection?*
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In 2023, LLM Agents began to be deployed at scale. From customer service bots to coding assistants, from data analysis to office automation, AI agents are rapidly taking over an increasing number of tasks. At the same time, security risks are emerging alongside this adoption.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Security Analysis of KoalaBear Extension Fields and Proposed Improvements</title>
