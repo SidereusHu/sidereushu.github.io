@@ -18,7 +18,7 @@
 &lt;h2 id=&#34;the-query-privacy-problem&#34;&gt;The Query Privacy Problem&lt;/h2&gt;
 &lt;p&gt;Consider a scenario where you&amp;rsquo;re using a RAG system hosted by a third party:&lt;/p&gt;
 &lt;pre&gt;
-
+``` text
 ┌─────────────────────────────────────────────────────────────────┐
 
 │ Standard RAG Retrieval │
@@ -54,7 +54,7 @@
 │ Problem: Server learns sensitive information about user! │
 
 └─────────────────────────────────────────────────────────────────┘
-
+```
 &lt;/pre&gt;
 &lt;p&gt;This reveals potentially sensitive information:&lt;/p&gt;</description>
     </item>
