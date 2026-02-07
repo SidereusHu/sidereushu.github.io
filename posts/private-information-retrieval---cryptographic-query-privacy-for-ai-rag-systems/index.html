@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Private Information Retrieval - Cryptographic Query Privacy for AI RAG Systems | Sidereus Hu</title>
+<meta name="keywords" content="">
+<meta name="description" content="
+In our previous blog, we explored differential privacy (DP) for protecting retrieval patterns. While DP adds controlled noise to provide plausible deniability, it doesn&rsquo;t provide cryptographic guarantees. Today, we introduce Private Information Retrieval (PIR) - a cryptographic primitive that ensures the server learns absolutely nothing about which documents you&rsquo;re retrieving.
+The Query Privacy Problem
+Consider a scenario where you&rsquo;re using a RAG system hosted by a third party:
+
+┌─────────────────────────────────────────────────────────────────┐
+
+│ Standard RAG Retrieval │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ User Server │
+
+│ │ │ │
+
+│ │ &#34;Query: cancer treatment&#34; │ │
+
+│ │─────────────────────────────&gt;│ │
+
+│ │ │ Server sees: │
+
+│ │ │ - Your query │
+
+│ │ │ - Which docs match │
+
+│ │ │ - Your access patterns │
+
+│ │ │ │
+
+│ │ Returns: Documents 3, 7, 12 │ │
+
+│ │&lt;─────────────────────────────│ │
+
+│ │
+
+│ Problem: Server learns sensitive information about user! │
+
+└─────────────────────────────────────────────────────────────────┘
+This reveals potentially sensitive information:">
+<meta name="author" content="Sidereus Hu">
+<link rel="canonical" href="https://sidereushu.github.io/posts/private-information-retrieval---cryptographic-query-privacy-for-ai-rag-systems/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.93f625d739f1d6a5c6f20c146bc6a8d26b233492b34b2220c54b12fd46a04ded.css" integrity="sha256-k/Yl1znx1qXG8gwUa8ao0msjNJKzSyIgxUsS/UagTe0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://sidereushu.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://sidereushu.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://sidereushu.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://sidereushu.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://sidereushu.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://sidereushu.github.io/posts/private-information-retrieval---cryptographic-query-privacy-for-ai-rag-systems/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+ 
+
+
+<meta property="og:url" content="https://sidereushu.github.io/posts/private-information-retrieval---cryptographic-query-privacy-for-ai-rag-systems/">
+  <meta property="og:site_name" content="Sidereus Hu">
+  <meta property="og:title" content="Private Information Retrieval - Cryptographic Query Privacy for AI RAG Systems">
+  <meta property="og:description" content="
+In our previous blog, we explored differential privacy (DP) for protecting retrieval patterns. While DP adds controlled noise to provide plausible deniability, it doesn’t provide cryptographic guarantees. Today, we introduce Private Information Retrieval (PIR) - a cryptographic primitive that ensures the server learns absolutely nothing about which documents you’re retrieving.
+The Query Privacy Problem Consider a scenario where you’re using a RAG system hosted by a third party:
+┌─────────────────────────────────────────────────────────────────┐ │ Standard RAG Retrieval │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ User Server │ │ │ │ │ │ │ &#34;Query: cancer treatment&#34; │ │ │ │─────────────────────────────&gt;│ │ │ │ │ Server sees: │ │ │ │ - Your query │ │ │ │ - Which docs match │ │ │ │ - Your access patterns │ │ │ │ │ │ │ Returns: Documents 3, 7, 12 │ │ │ │&lt;─────────────────────────────│ │ │ │ │ Problem: Server learns sensitive information about user! │ └─────────────────────────────────────────────────────────────────┘ This reveals potentially sensitive information:">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-02-05T16:57:25+08:00">
+    <meta property="article:modified_time" content="2026-02-05T16:57:25+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Private Information Retrieval - Cryptographic Query Privacy for AI RAG Systems">
+<meta name="twitter:description" content="
+In our previous blog, we explored differential privacy (DP) for protecting retrieval patterns. While DP adds controlled noise to provide plausible deniability, it doesn&rsquo;t provide cryptographic guarantees. Today, we introduce Private Information Retrieval (PIR) - a cryptographic primitive that ensures the server learns absolutely nothing about which documents you&rsquo;re retrieving.
+The Query Privacy Problem
+Consider a scenario where you&rsquo;re using a RAG system hosted by a third party:
+
+┌─────────────────────────────────────────────────────────────────┐
+
+│ Standard RAG Retrieval │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ User Server │
+
+│ │ │ │
+
+│ │ &#34;Query: cancer treatment&#34; │ │
+
+│ │─────────────────────────────&gt;│ │
+
+│ │ │ Server sees: │
+
+│ │ │ - Your query │
+
+│ │ │ - Which docs match │
+
+│ │ │ - Your access patterns │
+
+│ │ │ │
+
+│ │ Returns: Documents 3, 7, 12 │ │
+
+│ │&lt;─────────────────────────────│ │
+
+│ │
+
+│ Problem: Server learns sensitive information about user! │
+
+└─────────────────────────────────────────────────────────────────┘
+This reveals potentially sensitive information:">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://sidereushu.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Private Information Retrieval - Cryptographic Query Privacy for AI RAG Systems",
+      "item": "https://sidereushu.github.io/posts/private-information-retrieval---cryptographic-query-privacy-for-ai-rag-systems/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Private Information Retrieval - Cryptographic Query Privacy for AI RAG Systems",
+  "name": "Private Information Retrieval - Cryptographic Query Privacy for AI RAG Systems",
+  "description": "\nIn our previous blog, we explored differential privacy (DP) for protecting retrieval patterns. While DP adds controlled noise to provide plausible deniability, it doesn\u0026rsquo;t provide cryptographic guarantees. Today, we introduce Private Information Retrieval (PIR) - a cryptographic primitive that ensures the server learns absolutely nothing about which documents you\u0026rsquo;re retrieving.\nThe Query Privacy Problem Consider a scenario where you\u0026rsquo;re using a RAG system hosted by a third party:\n┌─────────────────────────────────────────────────────────────────┐ │ Standard RAG Retrieval │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ User Server │ │ │ │ │ │ │ \u0026#34;Query: cancer treatment\u0026#34; │ │ │ │─────────────────────────────\u0026gt;│ │ │ │ │ Server sees: │ │ │ │ - Your query │ │ │ │ - Which docs match │ │ │ │ - Your access patterns │ │ │ │ │ │ │ Returns: Documents 3, 7, 12 │ │ │ │\u0026lt;─────────────────────────────│ │ │ │ │ Problem: Server learns sensitive information about user! │ └─────────────────────────────────────────────────────────────────┘ This reveals potentially sensitive information:\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "\nIn our previous blog, we explored differential privacy (DP) for protecting retrieval patterns. While DP adds controlled noise to provide plausible deniability, it doesn’t provide cryptographic guarantees. Today, we introduce Private Information Retrieval (PIR) - a cryptographic primitive that ensures the server learns absolutely nothing about which documents you’re retrieving.\nThe Query Privacy Problem Consider a scenario where you’re using a RAG system hosted by a third party:\n┌─────────────────────────────────────────────────────────────────┐ │ Standard RAG Retrieval │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ User Server │ │ │ │ │ │ │ \"Query: cancer treatment\" │ │ │ │─────────────────────────────\u003e│ │ │ │ │ Server sees: │ │ │ │ - Your query │ │ │ │ - Which docs match │ │ │ │ - Your access patterns │ │ │ │ │ │ │ Returns: Documents 3, 7, 12 │ │ │ │\u003c─────────────────────────────│ │ │ │ │ Problem: Server learns sensitive information about user! │ └─────────────────────────────────────────────────────────────────┘ This reveals potentially sensitive information:\nWhat topics interest you\nWhat documents you’re accessing\nYour research patterns over time\nWhat is Private Information Retrieval? PIR allows a client to retrieve an item from a database without the server learning which item was retrieved.\n┌─────────────────────────────────────────────────────────────────┐ │ PIR-Protected Retrieval │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ User Server │ │ │ │ │ │ │ Encrypted/Shared Query │ │ │ │─────────────────────────────\u003e│ │ │ │ │ Server sees: │ │ │ │ - Encrypted query │ │ │ │ - NOTHING about intent! │ │ │ │ │ │ │ Encrypted/Shared Response │ │ │ │\u003c─────────────────────────────│ │ │ │ │ │ │ │ User decrypts locally │ │ │ │ Gets: Document 7 │ │ │ │ │ Result: User gets document, server learns nothing! │ └─────────────────────────────────────────────────────────────────┘ PIR Protocol Taxonomy There are two main families of PIR protocols, each with different security guarantees:\n┌─────────────────────────────────────────────────────────────────┐ │ PIR Protocol Types │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ ┌─────────────────────────┐ ┌─────────────────────────────┐ │ │ │ Single-Server PIR │ │ Multi-Server PIR │ │ │ ├─────────────────────────┤ ├─────────────────────────────┤ │ │ │ │ │ │ │ │ │ Security: │ │ Security: │ │ │ │ Computational │ │ Information-Theoretic │ │ │ │ (based on crypto │ │ (unconditional, even │ │ │ │ assumptions) │ │ against infinite power) │ │ │ │ │ │ │ │ │ │ Servers: 1 │ │ Servers: 2+ │ │ │ │ │ │ (non-colluding) │ │ │ │ Technique: │ │ │ │ │ │ Homomorphic │ │ Technique: │ │ │ │ Encryption │ │ Secret Sharing │ │ │ │ │ │ │ │ │ │ Pro: No trust │ │ Pro: Very fast, │ │ │ │ assumptions │ │ perfect secrecy │ │ │ │ │ │ │ │ │ │ Con: Slow (crypto │ │ Con: Requires multiple │ │ │ │ operations) │ │ independent servers │ │ │ │ │ │ │ │ │ └─────────────────────────┘ └─────────────────────────────┘ │ │ │ └─────────────────────────────────────────────────────────────────┘ Single-Server PIR: Homomorphic Encryption Approach Single-server PIR uses additively homomorphic encryption (like Paillier) to hide the query:\n┌─────────────────────────────────────────────────────────────────┐ │ Single-Server PIR Protocol │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ Database: [D₀, D₁, D₂, D₃, D₄] Target: D₂ │ │ │ │ Step 1: Client creates selection vector │ │ ┌───┬───┬───┬───┬───┐ │ │ │ 0 │ 0 │ 1 │ 0 │ 0 │ ← \"1\" at position 2 │ │ └───┴───┴───┴───┴───┘ │ │ │ │ Step 2: Client encrypts each bit │ │ ┌──────┬──────┬──────┬──────┬──────┐ │ │ │Enc(0)│Enc(0)│Enc(1)│Enc(0)│Enc(0)│ │ │ └──────┴──────┴──────┴──────┴──────┘ │ │ ↓ ↓ ↓ ↓ ↓ │ │ Step 3: Server computes (using homomorphic properties) │ │ │ │ ∑ Enc(sᵢ) × Dᵢ = Enc(∑ sᵢ × Dᵢ) = Enc(D₂) │ │ │ │ Step 4: Client decrypts to get D₂ │ │ │ │ Key insight: Server only sees encrypted query, │ │ cannot distinguish which index was selected! │ │ │ └─────────────────────────────────────────────────────────────────┘ Homomorphic Encryption Properties ┌─────────────────────────────────────────────────────────────────┐ │ Additive Homomorphic Encryption │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ Core Property: │ │ ┌─────────────────────────────────────────────────────────┐ │ │ │ Enc(a) ⊕ Enc(b) = Enc(a + b) │ │ │ │ │ │ │ │ Operations on ciphertexts → Operations on plaintexts │ │ │ └─────────────────────────────────────────────────────────┘ │ │ │ │ Example (Paillier-like): │ │ │ │ Enc(5) × Enc(3) mod n² = Enc(5 + 3) = Enc(8) │ │ │ │ Enc(7)³ mod n² = Enc(7 × 3) = Enc(21) │ │ │ │ This enables server-side computation without decryption! │ │ │ └─────────────────────────────────────────────────────────────────┘ Multi-Server PIR: Secret Sharing Approach Multi-server PIR achieves information-theoretic security through secret sharing:\n┌─────────────────────────────────────────────────────────────────┐ │ Multi-Server PIR with XOR Sharing │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ Database: [D₀, D₁, D₂, D₃] Target: D₁ │ │ │ │ Selection vector: [0, 1, 0, 0] │ │ │ │ Step 1: Split into random shares │ │ ┌───────────────────────────────────────────────────────────┐ │ │ │ Original: [0, 1, 0, 0] │ │ │ │ ↓ │ │ │ │ Share 1: [1, 0, 1, 1] (random) │ │ │ │ Share 2: [1, 1, 1, 1] = Original XOR Share 1 │ │ │ └───────────────────────────────────────────────────────────┘ │ │ │ │ Step 2: Send shares to different servers │ │ │ │ Server 1 Server 2 │ │ ┌─────────────┐ ┌─────────────┐ │ │ │ Receives: │ │ Receives: │ │ │ │ [1,0,1,1] │ │ [1,1,1,1] │ │ │ │ │ │ │ │ │ │ Computes: │ │ Computes: │ │ │ │ D₀⊕D₂⊕D₃ │ │ D₀⊕D₁⊕D₂⊕D₃│ │ │ │ = R₁ │ │ = R₂ │ │ │ └─────────────┘ └─────────────┘ │ │ │ │ │ │ └──────────┬───────────────┘ │ │ ↓ │ │ Step 3: Client combines: R₁ ⊕ R₂ = D₁ │ │ │ │ Security: Each server sees random-looking query, │ │ learns nothing unless they collude! │ │ │ └─────────────────────────────────────────────────────────────────┘ Why XOR Works ┌─────────────────────────────────────────────────────────────────┐ │ XOR Cancellation Magic │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ Given: Selection vector s = [0, 1, 0, 0] │ │ Shares: s₁ ⊕ s₂ = s │ │ │ │ Server 1 computes: R₁ = ⊕(Dᵢ where s₁[i]=1) │ │ Server 2 computes: R₂ = ⊕(Dᵢ where s₂[i]=1) │ │ │ │ Client combines: │ │ ┌─────────────────────────────────────────────────────────┐ │ │ │ R₁ ⊕ R₂ = ⊕(all Dᵢ where s₁[i] ≠ s₂[i]) │ │ │ │ = ⊕(all Dᵢ where s[i] = 1) │ │ │ │ = D₁ │ │ │ └─────────────────────────────────────────────────────────┘ │ │ │ │ Items at positions where s₁[i] = s₂[i] cancel out! │ │ Only D₁ (where original s[1]=1) remains. │ │ │ └─────────────────────────────────────────────────────────────────┘ Threshold PIR: Fault Tolerance For robustness, we can use Shamir Secret Sharing to tolerate server failures:\n┌─────────────────────────────────────────────────────────────────┐ │ (t,n)-Threshold Secret Sharing │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ Secret: S │ │ │ │ Step 1: Construct random polynomial of degree t-1 │ │ ┌─────────────────────────────────────────────────────────┐ │ │ │ f(x) = S + a₁x + a₂x² + ... + aₜ₋₁xᵗ⁻¹ │ │ │ │ │ │ │ │ Note: f(0) = S (the secret) │ │ │ └─────────────────────────────────────────────────────────┘ │ │ │ │ Step 2: Generate n shares as points on the polynomial │ │ │ │ f(x) │ │ │ ╱ │ │ │ ╱ │ │ (3,f(3))●╱ │ │ ╱│ │ │ (2,f(2))● │ │ │ ╱ │ │ │ (1,f(1))● │ │ │ ╱ │ │ │ S ●───────┼─────→ x │ │ 0 1 2 3 │ │ │ │ Property: Any t points can reconstruct f(x), thus S │ │ Fewer than t points reveal nothing about S │ │ │ └─────────────────────────────────────────────────────────────────┘ Lagrange Interpolation ┌─────────────────────────────────────────────────────────────────┐ │ Reconstructing the Secret │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ Given t points: (x₁, y₁), (x₂, y₂), ..., (xₜ, yₜ) │ │ │ │ Lagrange basis polynomials: │ │ ┌─────────────────────────────────────────────────────────┐ │ │ │ ∏ (x - xⱼ) │ │ │ │ Lᵢ(x) = ─────────────── for j ≠ i │ │ │ │ ∏ (xᵢ - xⱼ) │ │ │ └─────────────────────────────────────────────────────────┘ │ │ │ │ Reconstruct polynomial: │ │ f(x) = ∑ yᵢ × Lᵢ(x) │ │ │ │ Get secret: │ │ S = f(0) = ∑ yᵢ × Lᵢ(0) │ │ │ │ This works for any t shares from the original n! │ │ │ └─────────────────────────────────────────────────────────────────┘ PIR in RAG Systems Integrating PIR with RAG requires careful design:\n┌─────────────────────────────────────────────────────────────────┐ │ PIR-Enabled RAG Architecture │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ User Query: \"treatment options\" │ │ │ │ │ ▼ │ │ ┌──────────────────────────────────────────────────────────┐ │ │ │ LOCAL: Top-K Selection │ │ │ │ ┌────────────────────────────────────────────────────┐ │ │ │ │ │ User has cached embeddings locally │ │ │ │ │ │ Computes similarity scores │ │ │ │ │ │ Selects top-k indices: [7, 23, 45] │ │ │ │ │ └────────────────────────────────────────────────────┘ │ │ │ └──────────────────────────────────────────────────────────┘ │ │ │ │ │ ▼ │ │ ┌──────────────────────────────────────────────────────────┐ │ │ │ PIR: Private Document Fetch │ │ │ │ ┌────────────────────────────────────────────────────┐ │ │ │ │ │ For each index i in [7, 23, 45]: │ │ │ │ │ │ PIR.retrieve(i) → Document │ │ │ │ │ │ │ │ │ │ │ │ Server processes query but learns nothing │ │ │ │ │ │ about which documents were retrieved! │ │ │ │ │ └────────────────────────────────────────────────────┘ │ │ │ └──────────────────────────────────────────────────────────┘ │ │ │ │ │ ▼ │ │ ┌──────────────────────────────────────────────────────────┐ │ │ │ LOCAL: LLM Generation │ │ │ │ ┌────────────────────────────────────────────────────┐ │ │ │ │ │ Retrieved documents used as context │ │ │ │ │ │ LLM generates response │ │ │ │ │ └────────────────────────────────────────────────────┘ │ │ │ └──────────────────────────────────────────────────────────┘ │ │ │ └─────────────────────────────────────────────────────────────────┘ Hybrid DP + PIR: Defense in Depth For maximum privacy, combine differential privacy with PIR:\n┌─────────────────────────────────────────────────────────────────┐ │ Hybrid DP + PIR Protection │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ Layer 1: Differential Privacy │ │ ┌─────────────────────────────────────────────────────────┐ │ │ │ • Add noise to similarity scores │ │ │ │ • Protects: Which documents are \"most relevant\" │ │ │ │ • Provides: Plausible deniability in rankings │ │ │ └─────────────────────────────────────────────────────────┘ │ │ │ │ │ ▼ │ │ Layer 2: Private Information Retrieval │ │ ┌─────────────────────────────────────────────────────────┐ │ │ │ • Fetch documents privately │ │ │ │ • Protects: Which documents are actually retrieved │ │ │ │ • Provides: Cryptographic query privacy │ │ │ └─────────────────────────────────────────────────────────┘ │ │ │ │ Combined Protection: │ │ ┌─────────────────────────────────────────────────────────┐ │ │ │ ✓ Query pattern hidden (PIR) │ │ │ │ ✓ Relevance scores obfuscated (DP) │ │ │ │ ✓ Access patterns unlinkable │ │ │ │ ✓ Even timing analysis is difficult │ │ │ └─────────────────────────────────────────────────────────┘ │ │ │ └─────────────────────────────────────────────────────────────────┘ Performance Considerations ┌─────────────────────────────────────────────────────────────────┐ │ PIR Performance Trade-offs │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ Communication Computation Trust │ │ ┌─────────────┬────────────────┬──────────────┬─────────────┐ │ │ │ Single- │ O(n) encrypted │ Heavy │ None │ │ │ │ Server PIR │ elements │ (HE ops) │ required │ │ │ ├─────────────┼────────────────┼──────────────┼─────────────┤ │ │ │ Multi- │ O(n) per │ Light │ Non- │ │ │ │ Server PIR │ server │ (XOR ops) │ collusion │ │ │ ├─────────────┼────────────────┼──────────────┼─────────────┤ │ │ │ Threshold │ O(n) per │ Light + │ t-of-n │ │ │ │ PIR │ server │ interpolation│ honest │ │ │ └─────────────┴────────────────┴──────────────┴─────────────┘ │ │ │ │ Optimization strategies: │ │ • Matrix PIR: Reduce to O(√n) communication │ │ • Batch PIR: Amortize costs across multiple queries │ │ • Caching: Pre-compute common structures │ │ │ └─────────────────────────────────────────────────────────────────┘ Security Comparison ┌─────────────────────────────────────────────────────────────────┐ │ Privacy Mechanism Comparison │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ Mechanism What Server Learns Guarantee │ │ ───────────────────────────────────────────────────────────── │ │ │ │ No Protection Everything None │ │ └─ Query, results, patterns │ │ │ │ Differential Noisy statistics Statistical │ │ Privacy └─ Approximate patterns │ │ │ │ Single-Server Nothing Computational │ │ PIR └─ Under crypto assumptions │ │ │ │ Multi-Server Nothing Information- │ │ PIR └─ Even with infinite Theoretic │ │ compute power │ │ │ │ DP + PIR Nothing + Noise Both guarantees │ │ (Hybrid) └─ Defense in depth │ │ │ └─────────────────────────────────────────────────────────────────┘ RAG-Shield’s PIR Implementation RAG-Shield provides a unified interface for PIR-based retrieval:\n┌─────────────────────────────────────────────────────────────────┐ │ RAG-Shield PIR Module │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ ragshield.pir │ │ ├── base.py # Core abstractions │ │ │ ├── PIRClient # Client-side operations │ │ │ ├── PIRServer # Server-side operations │ │ │ └── PIRProtocol # Protocol interface │ │ │ │ │ ├── single_server.py # Homomorphic encryption PIR │ │ │ ├── SimplifiedPaillier │ │ │ └── SingleServerPIR │ │ │ │ │ ├── multi_server.py # Secret sharing PIR │ │ │ ├── XORSecretSharing │ │ │ ├── ShamirSecretSharing │ │ │ ├── MultiServerPIR │ │ │ └── ThresholdPIR │ │ │ │ │ └── pir_retriever.py # RAG integration │ │ ├── PIRRetriever # Main interface │ │ ├── HybridPIRRetriever # DP + PIR │ │ └── BatchPIRRetriever # Batch operations │ │ │ └─────────────────────────────────────────────────────────────────┘ When to Use PIR ┌─────────────────────────────────────────────────────────────────┐ │ PIR Usage Guidelines │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ USE PIR when: │ │ ┌─────────────────────────────────────────────────────────┐ │ │ │ ✓ Query patterns are sensitive (medical, legal, etc.) │ │ │ │ ✓ Server is untrusted but provides necessary service │ │ │ │ ✓ Regulatory compliance requires query privacy │ │ │ │ ✓ You can afford the computational overhead │ │ │ │ ✓ (Multi-server) You have access to non-colluding │ │ │ │ infrastructure │ │ │ └─────────────────────────────────────────────────────────┘ │ │ │ │ SKIP PIR when: │ │ ┌─────────────────────────────────────────────────────────┐ │ │ │ ✗ Server is fully trusted │ │ │ │ ✗ Query patterns aren't sensitive │ │ │ │ ✗ Latency requirements are very strict │ │ │ │ ✗ Database is extremely large (billions of docs) │ │ │ └─────────────────────────────────────────────────────────┘ │ │ │ │ Consider DP instead when: │ │ ┌─────────────────────────────────────────────────────────┐ │ │ │ ~ Statistical privacy is sufficient │ │ │ │ ~ Performance is critical │ │ │ │ ~ Approximate privacy guarantees are acceptable │ │ │ └─────────────────────────────────────────────────────────┘ │ │ │ └─────────────────────────────────────────────────────────────────┘ Summary Private Information Retrieval provides the strongest form of query privacy for RAG systems:\n| Aspect | DP | Single-Server PIR | Multi-Server PIR |\n|——–|—–|——————-|——————|\n| Privacy | Statistical | Computational | Information-theoretic |\n| Performance | Fast | Slow | Medium |\n| Trust | None | None | Non-collusion |\n| Implementation | Simple | Complex | Medium |\nBy combining DP (for relevance score obfuscation) with PIR (for access pattern hiding), RAG-Shield provides comprehensive privacy protection that addresses both what documents are relevant and which documents are actually retrieved.\nNext Steps In the upcoming phases, we’ll explore:\nAttack Forensics: Tracing the source of poisoning attacks\nDefense Mechanisms: Active protection against adversarial documents\nBenchmarks: Evaluating security-performance trade-offs\nBased on practical experience from the RAG-Shield project.\n(https://github.com/SidereusHu/RAG-Shield)\nRAG-Shield: Making RAG systems secure, private, and trustworthy.*\n",
+  "wordCount" : "2425",
+  "inLanguage": "zh",
+  "datePublished": "2026-02-05T16:57:25+08:00",
+  "dateModified": "2026-02-05T16:57:25+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "Sidereus Hu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sidereushu.github.io/posts/private-information-retrieval---cryptographic-query-privacy-for-ai-rag-systems/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sidereus Hu",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sidereushu.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://sidereushu.github.io/" accesskey="h" title="Sidereus Hu (Alt + H)">Sidereus Hu</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://sidereushu.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://sidereushu.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Private Information Retrieval - Cryptographic Query Privacy for AI RAG Systems
+    </h1>
+    <div class="post-meta"><span title='2026-02-05 16:57:25 +0800 CST'>2026-02-05</span>&nbsp;·&nbsp;Sidereus Hu
+
+</div>
+  </header> 
+  <div class="post-content"><br>
+<p>In our previous blog, we explored differential privacy (DP) for protecting retrieval patterns. While DP adds controlled noise to provide plausible deniability, it doesn&rsquo;t provide <strong>cryptographic guarantees</strong>. Today, we introduce <strong>Private Information Retrieval (PIR)</strong> - a cryptographic primitive that ensures the server learns absolutely nothing about which documents you&rsquo;re retrieving.</p>
+<h2 id="the-query-privacy-problem">The Query Privacy Problem<a hidden class="anchor" aria-hidden="true" href="#the-query-privacy-problem">#</a></h2>
+<p>Consider a scenario where you&rsquo;re using a RAG system hosted by a third party:</p>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ Standard RAG Retrieval │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ User Server │
+
+│ │ │ │
+
+│ │ &#34;Query: cancer treatment&#34; │ │
+
+│ │─────────────────────────────&gt;│ │
+
+│ │ │ Server sees: │
+
+│ │ │ - Your query │
+
+│ │ │ - Which docs match │
+
+│ │ │ - Your access patterns │
+
+│ │ │ │
+
+│ │ Returns: Documents 3, 7, 12 │ │
+
+│ │&lt;─────────────────────────────│ │
+
+│ │
+
+│ Problem: Server learns sensitive information about user! │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><p>This reveals potentially sensitive information:</p>
+<ul>
+<li>
+<p>What topics interest you</p>
+</li>
+<li>
+<p>What documents you&rsquo;re accessing</p>
+</li>
+<li>
+<p>Your research patterns over time</p>
+</li>
+</ul>
+<h2 id="what-is-private-information-retrieval">What is Private Information Retrieval?<a hidden class="anchor" aria-hidden="true" href="#what-is-private-information-retrieval">#</a></h2>
+<p>PIR allows a client to retrieve an item from a database without the server learning which item was retrieved.</p>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ PIR-Protected Retrieval │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ User Server │
+
+│ │ │ │
+
+│ │ Encrypted/Shared Query │ │
+
+│ │─────────────────────────────&gt;│ │
+
+│ │ │ Server sees: │
+
+│ │ │ - Encrypted query │
+
+│ │ │ - NOTHING about intent! │
+
+│ │ │ │
+
+│ │ Encrypted/Shared Response │ │
+
+│ │&lt;─────────────────────────────│ │
+
+│ │ │ │
+
+│ │ User decrypts locally │ │
+
+│ │ Gets: Document 7 │ │
+
+│ │
+
+│ Result: User gets document, server learns nothing! │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h2 id="pir-protocol-taxonomy">PIR Protocol Taxonomy<a hidden class="anchor" aria-hidden="true" href="#pir-protocol-taxonomy">#</a></h2>
+<p>There are two main families of PIR protocols, each with different security guarantees:</p>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ PIR Protocol Types │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ ┌─────────────────────────┐ ┌─────────────────────────────┐ │
+
+│ │ Single-Server PIR │ │ Multi-Server PIR │ │
+
+│ ├─────────────────────────┤ ├─────────────────────────────┤ │
+
+│ │ │ │ │ │
+
+│ │ Security: │ │ Security: │ │
+
+│ │ Computational │ │ Information-Theoretic │ │
+
+│ │ (based on crypto │ │ (unconditional, even │ │
+
+│ │ assumptions) │ │ against infinite power) │ │
+
+│ │ │ │ │ │
+
+│ │ Servers: 1 │ │ Servers: 2+ │ │
+
+│ │ │ │ (non-colluding) │ │
+
+│ │ Technique: │ │ │ │
+
+│ │ Homomorphic │ │ Technique: │ │
+
+│ │ Encryption │ │ Secret Sharing │ │
+
+│ │ │ │ │ │
+
+│ │ Pro: No trust │ │ Pro: Very fast, │ │
+
+│ │ assumptions │ │ perfect secrecy │ │
+
+│ │ │ │ │ │
+
+│ │ Con: Slow (crypto │ │ Con: Requires multiple │ │
+
+│ │ operations) │ │ independent servers │ │
+
+│ │ │ │ │ │
+
+│ └─────────────────────────┘ └─────────────────────────────┘ │
+
+│ │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h2 id="single-server-pir-homomorphic-encryption-approach">Single-Server PIR: Homomorphic Encryption Approach<a hidden class="anchor" aria-hidden="true" href="#single-server-pir-homomorphic-encryption-approach">#</a></h2>
+<p>Single-server PIR uses <strong>additively homomorphic encryption</strong> (like Paillier) to hide the query:</p>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ Single-Server PIR Protocol │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ Database: [D₀, D₁, D₂, D₃, D₄] Target: D₂ │
+
+│ │
+
+│ Step 1: Client creates selection vector │
+
+│ ┌───┬───┬───┬───┬───┐ │
+
+│ │ 0 │ 0 │ 1 │ 0 │ 0 │ ← &#34;1&#34; at position 2 │
+
+│ └───┴───┴───┴───┴───┘ │
+
+│ │
+
+│ Step 2: Client encrypts each bit │
+
+│ ┌──────┬──────┬──────┬──────┬──────┐ │
+
+│ │Enc(0)│Enc(0)│Enc(1)│Enc(0)│Enc(0)│ │
+
+│ └──────┴──────┴──────┴──────┴──────┘ │
+
+│ ↓ ↓ ↓ ↓ ↓ │
+
+│ Step 3: Server computes (using homomorphic properties) │
+
+│ │
+
+│ ∑ Enc(sᵢ) × Dᵢ = Enc(∑ sᵢ × Dᵢ) = Enc(D₂) │
+
+│ │
+
+│ Step 4: Client decrypts to get D₂ │
+
+│ │
+
+│ Key insight: Server only sees encrypted query, │
+
+│ cannot distinguish which index was selected! │
+
+│ │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h3 id="homomorphic-encryption-properties">Homomorphic Encryption Properties<a hidden class="anchor" aria-hidden="true" href="#homomorphic-encryption-properties">#</a></h3>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ Additive Homomorphic Encryption │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ Core Property: │
+
+│ ┌─────────────────────────────────────────────────────────┐ │
+
+│ │ Enc(a) ⊕ Enc(b) = Enc(a + b) │ │
+
+│ │ │ │
+
+│ │ Operations on ciphertexts → Operations on plaintexts │ │
+
+│ └─────────────────────────────────────────────────────────┘ │
+
+│ │
+
+│ Example (Paillier-like): │
+
+│ │
+
+│ Enc(5) × Enc(3) mod n² = Enc(5 + 3) = Enc(8) │
+
+│ │
+
+│ Enc(7)³ mod n² = Enc(7 × 3) = Enc(21) │
+
+│ │
+
+│ This enables server-side computation without decryption! │
+
+│ │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h2 id="multi-server-pir-secret-sharing-approach">Multi-Server PIR: Secret Sharing Approach<a hidden class="anchor" aria-hidden="true" href="#multi-server-pir-secret-sharing-approach">#</a></h2>
+<p>Multi-server PIR achieves <strong>information-theoretic security</strong> through secret sharing:</p>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ Multi-Server PIR with XOR Sharing │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ Database: [D₀, D₁, D₂, D₃] Target: D₁ │
+
+│ │
+
+│ Selection vector: [0, 1, 0, 0] │
+
+│ │
+
+│ Step 1: Split into random shares │
+
+│ ┌───────────────────────────────────────────────────────────┐ │
+
+│ │ Original: [0, 1, 0, 0] │ │
+
+│ │ ↓ │ │
+
+│ │ Share 1: [1, 0, 1, 1] (random) │ │
+
+│ │ Share 2: [1, 1, 1, 1] = Original XOR Share 1 │ │
+
+│ └───────────────────────────────────────────────────────────┘ │
+
+│ │
+
+│ Step 2: Send shares to different servers │
+
+│ │
+
+│ Server 1 Server 2 │
+
+│ ┌─────────────┐ ┌─────────────┐ │
+
+│ │ Receives: │ │ Receives: │ │
+
+│ │ [1,0,1,1] │ │ [1,1,1,1] │ │
+
+│ │ │ │ │ │
+
+│ │ Computes: │ │ Computes: │ │
+
+│ │ D₀⊕D₂⊕D₃ │ │ D₀⊕D₁⊕D₂⊕D₃│ │
+
+│ │ = R₁ │ │ = R₂ │ │
+
+│ └─────────────┘ └─────────────┘ │
+
+│ │ │ │
+
+│ └──────────┬───────────────┘ │
+
+│ ↓ │
+
+│ Step 3: Client combines: R₁ ⊕ R₂ = D₁ │
+
+│ │
+
+│ Security: Each server sees random-looking query, │
+
+│ learns nothing unless they collude! │
+
+│ │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h3 id="why-xor-works">Why XOR Works<a hidden class="anchor" aria-hidden="true" href="#why-xor-works">#</a></h3>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ XOR Cancellation Magic │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ Given: Selection vector s = [0, 1, 0, 0] │
+
+│ Shares: s₁ ⊕ s₂ = s │
+
+│ │
+
+│ Server 1 computes: R₁ = ⊕(Dᵢ where s₁[i]=1) │
+
+│ Server 2 computes: R₂ = ⊕(Dᵢ where s₂[i]=1) │
+
+│ │
+
+│ Client combines: │
+
+│ ┌─────────────────────────────────────────────────────────┐ │
+
+│ │ R₁ ⊕ R₂ = ⊕(all Dᵢ where s₁[i] ≠ s₂[i]) │ │
+
+│ │ = ⊕(all Dᵢ where s[i] = 1) │ │
+
+│ │ = D₁ │ │
+
+│ └─────────────────────────────────────────────────────────┘ │
+
+│ │
+
+│ Items at positions where s₁[i] = s₂[i] cancel out! │
+
+│ Only D₁ (where original s[1]=1) remains. │
+
+│ │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h2 id="threshold-pir-fault-tolerance">Threshold PIR: Fault Tolerance<a hidden class="anchor" aria-hidden="true" href="#threshold-pir-fault-tolerance">#</a></h2>
+<p>For robustness, we can use <strong>Shamir Secret Sharing</strong> to tolerate server failures:</p>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ (t,n)-Threshold Secret Sharing │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ Secret: S │
+
+│ │
+
+│ Step 1: Construct random polynomial of degree t-1 │
+
+│ ┌─────────────────────────────────────────────────────────┐ │
+
+│ │ f(x) = S + a₁x + a₂x² + ... + aₜ₋₁xᵗ⁻¹ │ │
+
+│ │ │ │
+
+│ │ Note: f(0) = S (the secret) │ │
+
+│ └─────────────────────────────────────────────────────────┘ │
+
+│ │
+
+│ Step 2: Generate n shares as points on the polynomial │
+
+│ │
+
+│ f(x) │
+
+│ │ ╱ │
+
+│ │ ╱ │
+
+│ (3,f(3))●╱ │
+
+│ ╱│ │
+
+│ (2,f(2))● │ │
+
+│ ╱ │ │
+
+│ (1,f(1))● │ │
+
+│ ╱ │ │
+
+│ S ●───────┼─────→ x │
+
+│ 0 1 2 3 │
+
+│ │
+
+│ Property: Any t points can reconstruct f(x), thus S │
+
+│ Fewer than t points reveal nothing about S │
+
+│ │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h3 id="lagrange-interpolation">Lagrange Interpolation<a hidden class="anchor" aria-hidden="true" href="#lagrange-interpolation">#</a></h3>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ Reconstructing the Secret │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ Given t points: (x₁, y₁), (x₂, y₂), ..., (xₜ, yₜ) │
+
+│ │
+
+│ Lagrange basis polynomials: │
+
+│ ┌─────────────────────────────────────────────────────────┐ │
+
+│ │ ∏ (x - xⱼ) │ │
+
+│ │ Lᵢ(x) = ─────────────── for j ≠ i │ │
+
+│ │ ∏ (xᵢ - xⱼ) │ │
+
+│ └─────────────────────────────────────────────────────────┘ │
+
+│ │
+
+│ Reconstruct polynomial: │
+
+│ f(x) = ∑ yᵢ × Lᵢ(x) │
+
+│ │
+
+│ Get secret: │
+
+│ S = f(0) = ∑ yᵢ × Lᵢ(0) │
+
+│ │
+
+│ This works for any t shares from the original n! │
+
+│ │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h2 id="pir-in-rag-systems">PIR in RAG Systems<a hidden class="anchor" aria-hidden="true" href="#pir-in-rag-systems">#</a></h2>
+<p>Integrating PIR with RAG requires careful design:</p>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ PIR-Enabled RAG Architecture │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ User Query: &#34;treatment options&#34; │
+
+│ │ │
+
+│ ▼ │
+
+│ ┌──────────────────────────────────────────────────────────┐ │
+
+│ │ LOCAL: Top-K Selection │ │
+
+│ │ ┌────────────────────────────────────────────────────┐ │ │
+
+│ │ │ User has cached embeddings locally │ │ │
+
+│ │ │ Computes similarity scores │ │ │
+
+│ │ │ Selects top-k indices: [7, 23, 45] │ │ │
+
+│ │ └────────────────────────────────────────────────────┘ │ │
+
+│ └──────────────────────────────────────────────────────────┘ │
+
+│ │ │
+
+│ ▼ │
+
+│ ┌──────────────────────────────────────────────────────────┐ │
+
+│ │ PIR: Private Document Fetch │ │
+
+│ │ ┌────────────────────────────────────────────────────┐ │ │
+
+│ │ │ For each index i in [7, 23, 45]: │ │ │
+
+│ │ │ PIR.retrieve(i) → Document │ │ │
+
+│ │ │ │ │ │
+
+│ │ │ Server processes query but learns nothing │ │ │
+
+│ │ │ about which documents were retrieved! │ │ │
+
+│ │ └────────────────────────────────────────────────────┘ │ │
+
+│ └──────────────────────────────────────────────────────────┘ │
+
+│ │ │
+
+│ ▼ │
+
+│ ┌──────────────────────────────────────────────────────────┐ │
+
+│ │ LOCAL: LLM Generation │ │
+
+│ │ ┌────────────────────────────────────────────────────┐ │ │
+
+│ │ │ Retrieved documents used as context │ │ │
+
+│ │ │ LLM generates response │ │ │
+
+│ │ └────────────────────────────────────────────────────┘ │ │
+
+│ └──────────────────────────────────────────────────────────┘ │
+
+│ │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h2 id="hybrid-dp--pir-defense-in-depth">Hybrid DP + PIR: Defense in Depth<a hidden class="anchor" aria-hidden="true" href="#hybrid-dp--pir-defense-in-depth">#</a></h2>
+<p>For maximum privacy, combine differential privacy with PIR:</p>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ Hybrid DP + PIR Protection │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ Layer 1: Differential Privacy │
+
+│ ┌─────────────────────────────────────────────────────────┐ │
+
+│ │ • Add noise to similarity scores │ │
+
+│ │ • Protects: Which documents are &#34;most relevant&#34; │ │
+
+│ │ • Provides: Plausible deniability in rankings │ │
+
+│ └─────────────────────────────────────────────────────────┘ │
+
+│ │ │
+
+│ ▼ │
+
+│ Layer 2: Private Information Retrieval │
+
+│ ┌─────────────────────────────────────────────────────────┐ │
+
+│ │ • Fetch documents privately │ │
+
+│ │ • Protects: Which documents are actually retrieved │ │
+
+│ │ • Provides: Cryptographic query privacy │ │
+
+│ └─────────────────────────────────────────────────────────┘ │
+
+│ │
+
+│ Combined Protection: │
+
+│ ┌─────────────────────────────────────────────────────────┐ │
+
+│ │ ✓ Query pattern hidden (PIR) │ │
+
+│ │ ✓ Relevance scores obfuscated (DP) │ │
+
+│ │ ✓ Access patterns unlinkable │ │
+
+│ │ ✓ Even timing analysis is difficult │ │
+
+│ └─────────────────────────────────────────────────────────┘ │
+
+│ │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h2 id="performance-considerations">Performance Considerations<a hidden class="anchor" aria-hidden="true" href="#performance-considerations">#</a></h2>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ PIR Performance Trade-offs │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ Communication Computation Trust │
+
+│ ┌─────────────┬────────────────┬──────────────┬─────────────┐ │
+
+│ │ Single- │ O(n) encrypted │ Heavy │ None │ │
+
+│ │ Server PIR │ elements │ (HE ops) │ required │ │
+
+│ ├─────────────┼────────────────┼──────────────┼─────────────┤ │
+
+│ │ Multi- │ O(n) per │ Light │ Non- │ │
+
+│ │ Server PIR │ server │ (XOR ops) │ collusion │ │
+
+│ ├─────────────┼────────────────┼──────────────┼─────────────┤ │
+
+│ │ Threshold │ O(n) per │ Light + │ t-of-n │ │
+
+│ │ PIR │ server │ interpolation│ honest │ │
+
+│ └─────────────┴────────────────┴──────────────┴─────────────┘ │
+
+│ │
+
+│ Optimization strategies: │
+
+│ • Matrix PIR: Reduce to O(√n) communication │
+
+│ • Batch PIR: Amortize costs across multiple queries │
+
+│ • Caching: Pre-compute common structures │
+
+│ │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h2 id="security-comparison">Security Comparison<a hidden class="anchor" aria-hidden="true" href="#security-comparison">#</a></h2>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ Privacy Mechanism Comparison │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ Mechanism What Server Learns Guarantee │
+
+│ ───────────────────────────────────────────────────────────── │
+
+│ │
+
+│ No Protection Everything None │
+
+│ └─ Query, results, patterns │
+
+│ │
+
+│ Differential Noisy statistics Statistical │
+
+│ Privacy └─ Approximate patterns │
+
+│ │
+
+│ Single-Server Nothing Computational │
+
+│ PIR └─ Under crypto assumptions │
+
+│ │
+
+│ Multi-Server Nothing Information- │
+
+│ PIR └─ Even with infinite Theoretic │
+
+│ compute power │
+
+│ │
+
+│ DP + PIR Nothing + Noise Both guarantees │
+
+│ (Hybrid) └─ Defense in depth │
+
+│ │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h2 id="rag-shields-pir-implementation">RAG-Shield&rsquo;s PIR Implementation<a hidden class="anchor" aria-hidden="true" href="#rag-shields-pir-implementation">#</a></h2>
+<p>RAG-Shield provides a unified interface for PIR-based retrieval:</p>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ RAG-Shield PIR Module │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ ragshield.pir │
+
+│ ├── base.py # Core abstractions │
+
+│ │ ├── PIRClient # Client-side operations │
+
+│ │ ├── PIRServer # Server-side operations │
+
+│ │ └── PIRProtocol # Protocol interface │
+
+│ │ │
+
+│ ├── single_server.py # Homomorphic encryption PIR │
+
+│ │ ├── SimplifiedPaillier │
+
+│ │ └── SingleServerPIR │
+
+│ │ │
+
+│ ├── multi_server.py # Secret sharing PIR │
+
+│ │ ├── XORSecretSharing │
+
+│ │ ├── ShamirSecretSharing │
+
+│ │ ├── MultiServerPIR │
+
+│ │ └── ThresholdPIR │
+
+│ │ │
+
+│ └── pir_retriever.py # RAG integration │
+
+│ ├── PIRRetriever # Main interface │
+
+│ ├── HybridPIRRetriever # DP + PIR │
+
+│ └── BatchPIRRetriever # Batch operations │
+
+│ │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h2 id="when-to-use-pir">When to Use PIR<a hidden class="anchor" aria-hidden="true" href="#when-to-use-pir">#</a></h2>
+<pre tabindex="0"><code>
+┌─────────────────────────────────────────────────────────────────┐
+
+│ PIR Usage Guidelines │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ USE PIR when: │
+
+│ ┌─────────────────────────────────────────────────────────┐ │
+
+│ │ ✓ Query patterns are sensitive (medical, legal, etc.) │ │
+
+│ │ ✓ Server is untrusted but provides necessary service │ │
+
+│ │ ✓ Regulatory compliance requires query privacy │ │
+
+│ │ ✓ You can afford the computational overhead │ │
+
+│ │ ✓ (Multi-server) You have access to non-colluding │ │
+
+│ │ infrastructure │ │
+
+│ └─────────────────────────────────────────────────────────┘ │
+
+│ │
+
+│ SKIP PIR when: │
+
+│ ┌─────────────────────────────────────────────────────────┐ │
+
+│ │ ✗ Server is fully trusted │ │
+
+│ │ ✗ Query patterns aren&#39;t sensitive │ │
+
+│ │ ✗ Latency requirements are very strict │ │
+
+│ │ ✗ Database is extremely large (billions of docs) │ │
+
+│ └─────────────────────────────────────────────────────────┘ │
+
+│ │
+
+│ Consider DP instead when: │
+
+│ ┌─────────────────────────────────────────────────────────┐ │
+
+│ │ ~ Statistical privacy is sufficient │ │
+
+│ │ ~ Performance is critical │ │
+
+│ │ ~ Approximate privacy guarantees are acceptable │ │
+
+│ └─────────────────────────────────────────────────────────┘ │
+
+│ │
+
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h2 id="summary">Summary<a hidden class="anchor" aria-hidden="true" href="#summary">#</a></h2>
+<p>Private Information Retrieval provides the strongest form of query privacy for RAG systems:</p>
+<p>| Aspect | DP | Single-Server PIR | Multi-Server PIR |</p>
+<p>|&mdash;&mdash;&ndash;|&mdash;&ndash;|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;|</p>
+<p>| Privacy | Statistical | Computational | Information-theoretic |</p>
+<p>| Performance | Fast | Slow | Medium |</p>
+<p>| Trust | None | None | Non-collusion |</p>
+<p>| Implementation | Simple | Complex | Medium |</p>
+<p>By combining DP (for relevance score obfuscation) with PIR (for access pattern hiding), RAG-Shield provides comprehensive privacy protection that addresses both what documents are relevant and which documents are actually retrieved.</p>
+<h2 id="next-steps">Next Steps<a hidden class="anchor" aria-hidden="true" href="#next-steps">#</a></h2>
+<p>In the upcoming phases, we&rsquo;ll explore:</p>
+<ul>
+<li>
+<p><strong>Attack Forensics</strong>: Tracing the source of poisoning attacks</p>
+</li>
+<li>
+<p><strong>Defense Mechanisms</strong>: Active protection against adversarial documents</p>
+</li>
+<li>
+<p><strong>Benchmarks</strong>: Evaluating security-performance trade-offs</p>
+</li>
+</ul>
+<hr>
+<p><em>Based on practical experience from the <strong>RAG-Shield</strong> project.</em></p>
+<p>(<a href="https://github.com/SidereusHu/RAG-Shield">https://github.com/SidereusHu/RAG-Shield</a>)</p>
+<p><strong>RAG-Shield</strong>: Making RAG systems secure, private, and trustworthy.*</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="https://sidereushu.github.io/">Sidereus Hu</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

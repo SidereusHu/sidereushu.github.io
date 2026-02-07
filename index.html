@@ -159,6 +159,22 @@
 
 <article class="first-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">Private Information Retrieval - Cryptographic Query Privacy for AI RAG Systems
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>
+In our previous blog, we explored differential privacy (DP) for protecting retrieval patterns. While DP adds controlled noise to provide plausible deniability, it doesn’t provide cryptographic guarantees. Today, we introduce Private Information Retrieval (PIR) - a cryptographic primitive that ensures the server learns absolutely nothing about which documents you’re retrieving.
+The Query Privacy Problem Consider a scenario where you’re using a RAG system hosted by a third party:
+┌─────────────────────────────────────────────────────────────────┐ │ Standard RAG Retrieval │ ├─────────────────────────────────────────────────────────────────┤ │ │ │ User Server │ │ │ │ │ │ │ &#34;Query: cancer treatment&#34; │ │ │ │─────────────────────────────&gt;│ │ │ │ │ Server sees: │ │ │ │ - Your query │ │ │ │ - Which docs match │ │ │ │ - Your access patterns │ │ │ │ │ │ │ Returns: Documents 3, 7, 12 │ │ │ │&lt;─────────────────────────────│ │ │ │ │ Problem: Server learns sensitive information about user! │ └─────────────────────────────────────────────────────────────────┘ This reveals potentially sensitive information:
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-05 16:57:25 +0800 CST'>2026-02-05</span>&nbsp;·&nbsp;Sidereus Hu</footer>
+  <a class="entry-link" aria-label="post link to Private Information Retrieval - Cryptographic Query Privacy for AI RAG Systems" href="https://sidereushu.github.io/posts/private-information-retrieval---cryptographic-query-privacy-for-ai-rag-systems/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">From CTF to AI Red Team: A Hands-On Guide to Prompt Injection Attacks
     </h2>
   </header>
@@ -295,20 +311,6 @@ In recent years, “ZK-friendly” hash functions designed for zero-knowledge pr
   </div>
   <footer class="entry-footer"><span title='2025-09-29 16:57:25 +0800 CST'>2025-09-29</span>&nbsp;·&nbsp;Sidereus Hu</footer>
   <a class="entry-link" aria-label="post link to Poseidon Hash Algebraic Attacks (Calculation Tools)" href="https://sidereushu.github.io/posts/poseidon-hash-algebraic-attacks-calculation-tools/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Consensus Layer Signature Scheme Considerations: Evolution from BLS to the Post-Quantum Era
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>
-With the rapid development of quantum computing technology, blockchain systems face unprecedented security challenges. Particularly for the consensus layers of mainstream blockchains like Ethereum, the BLS signature schemes they rely on will become vulnerable in the face of quantum computers. This article delves into the considerations for choosing consensus layer signature schemes, focusing on analyzing the trade-offs between hash-based XMSS schemes and lattice-based Falcon schemes in different scenarios, and exploring new signature paradigms for ZK-native chains.
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2025-09-16 16:57:25 +0800 CST'>2025-09-16</span>&nbsp;·&nbsp;Sidereus Hu</footer>
-  <a class="entry-link" aria-label="post link to Consensus Layer Signature Scheme Considerations: Evolution from BLS to the Post-Quantum Era" href="https://sidereushu.github.io/posts/consensus-layer-signature-scheme-considerations-evolution-from-bls-to-the-post-quantum-era/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">

@@ -2,13 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://sidereushu.github.io/posts/from-ctf-to-ai-red-team-a-hands-on-guide-to-prompt-injection-attacks/</loc>
-    <lastmod>2026-01-02T16:57:25+08:00</lastmod>
-  </url><url>
     <loc>https://sidereushu.github.io/posts/</loc>
-    <lastmod>2026-01-02T16:57:25+08:00</lastmod>
+    <lastmod>2026-02-05T16:57:25+08:00</lastmod>
+  </url><url>
+    <loc>https://sidereushu.github.io/posts/private-information-retrieval---cryptographic-query-privacy-for-ai-rag-systems/</loc>
+    <lastmod>2026-02-05T16:57:25+08:00</lastmod>
   </url><url>
     <loc>https://sidereushu.github.io/</loc>
+    <lastmod>2026-02-05T16:57:25+08:00</lastmod>
+  </url><url>
+    <loc>https://sidereushu.github.io/posts/from-ctf-to-ai-red-team-a-hands-on-guide-to-prompt-injection-attacks/</loc>
     <lastmod>2026-01-02T16:57:25+08:00</lastmod>
   </url><url>
     <loc>https://sidereushu.github.io/posts/security-analysis-of-koalabear-extension-fields-and-proposed-improvements/</loc>

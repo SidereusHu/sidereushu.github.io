@@ -6,8 +6,55 @@
     <description>Recent content on Sidereus Hu</description>
     <generator>Hugo -- 0.148.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 02 Jan 2026 16:57:25 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 05 Feb 2026 16:57:25 +0800</lastBuildDate>
     <atom:link href="https://sidereushu.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Private Information Retrieval - Cryptographic Query Privacy for AI RAG Systems</title>
+      <link>https://sidereushu.github.io/posts/private-information-retrieval---cryptographic-query-privacy-for-ai-rag-systems/</link>
+      <pubDate>Thu, 05 Feb 2026 16:57:25 +0800</pubDate>
+      <guid>https://sidereushu.github.io/posts/private-information-retrieval---cryptographic-query-privacy-for-ai-rag-systems/</guid>
+      <description>&lt;br&gt;
+&lt;p&gt;In our previous blog, we explored differential privacy (DP) for protecting retrieval patterns. While DP adds controlled noise to provide plausible deniability, it doesn&amp;rsquo;t provide &lt;strong&gt;cryptographic guarantees&lt;/strong&gt;. Today, we introduce &lt;strong&gt;Private Information Retrieval (PIR)&lt;/strong&gt; - a cryptographic primitive that ensures the server learns absolutely nothing about which documents you&amp;rsquo;re retrieving.&lt;/p&gt;
+&lt;h2 id=&#34;the-query-privacy-problem&#34;&gt;The Query Privacy Problem&lt;/h2&gt;
+&lt;p&gt;Consider a scenario where you&amp;rsquo;re using a RAG system hosted by a third party:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+┌─────────────────────────────────────────────────────────────────┐
+
+│ Standard RAG Retrieval │
+
+├─────────────────────────────────────────────────────────────────┤
+
+│ │
+
+│ User Server │
+
+│ │ │ │
+
+│ │ &amp;#34;Query: cancer treatment&amp;#34; │ │
+
+│ │─────────────────────────────&amp;gt;│ │
+
+│ │ │ Server sees: │
+
+│ │ │ - Your query │
+
+│ │ │ - Which docs match │
+
+│ │ │ - Your access patterns │
+
+│ │ │ │
+
+│ │ Returns: Documents 3, 7, 12 │ │
+
+│ │&amp;lt;─────────────────────────────│ │
+
+│ │
+
+│ Problem: Server learns sensitive information about user! │
+
+└─────────────────────────────────────────────────────────────────┘
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;This reveals potentially sensitive information:&lt;/p&gt;</description>
+    </item>
     <item>
       <title>From CTF to AI Red Team: A Hands-On Guide to Prompt Injection Attacks</title>
       <link>https://sidereushu.github.io/posts/from-ctf-to-ai-red-team-a-hands-on-guide-to-prompt-injection-attacks/</link>
