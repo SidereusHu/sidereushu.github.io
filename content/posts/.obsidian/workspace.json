@@ -4,24 +4,81 @@
     "type": "split",
     "children": [
       {
-        "id": "09e93c33a7990c0b",
+        "id": "a9ce40d54449d5cd",
         "type": "tabs",
         "children": [
           {
-            "id": "27610623a0ce44a6",
+            "id": "cc72927c561afc2e",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Notes - What is Quantum Computing? Implications for RSA & ECC.md",
+                "file": "Overview and Evaluation of Round-by-Round Modeling Analysis for Poseidon Hash.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Notes - What is Quantum Computing? Implications for RSA & ECC"
+              "title": "Overview and Evaluation of Round-by-Round Modeling Analysis for Poseidon Hash"
+            }
+          },
+          {
+            "id": "eb0c8a5a7e39181c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Research on VK Uniqueness and Salt in Plonk Setup Phase.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Research on VK Uniqueness and Salt in Plonk Setup Phase"
+            }
+          },
+          {
+            "id": "7913dc78e4c88d63",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Unrealized Justification Reorg Attack.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Unrealized Justification Reorg Attack"
+            }
+          },
+          {
+            "id": "b9757eefce168696",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Security Analysis of KoalaBear Extension Fields and Proposed Improvements.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Security Analysis of KoalaBear Extension Fields and Proposed Improvements"
+            }
+          },
+          {
+            "id": "edc286fdfc19ab64",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Addresses Are Not People_ The Challenge of Blockchain Identity and Profiling.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Addresses Are Not People_ The Challenge of Blockchain Identity and Profiling"
             }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -78,7 +135,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 426.5
   },
   "right": {
     "id": "412c32ea320cefcb",
@@ -94,7 +151,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Notes - What is Quantum Computing? Implications for RSA & ECC.md",
+                "file": "Why Hybrid ZK Brings Us Closer to the TCP-IP of Value.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +161,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Notes - What is Quantum Computing? Implications for RSA & ECC 的反向链接列表"
+              "title": "Why Hybrid ZK Brings Us Closer to the TCP-IP of Value 的反向链接列表"
             }
           },
           {
@@ -113,12 +170,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Notes - What is Quantum Computing? Implications for RSA & ECC.md",
+                "file": "Why Hybrid ZK Brings Us Closer to the TCP-IP of Value.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Notes - What is Quantum Computing? Implications for RSA & ECC 的出链列表"
+              "title": "Why Hybrid ZK Brings Us Closer to the TCP-IP of Value 的出链列表"
             }
           },
           {
@@ -142,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Notes - What is Quantum Computing? Implications for RSA & ECC.md",
+                "file": "Why Hybrid ZK Brings Us Closer to the TCP-IP of Value.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Notes - What is Quantum Computing? Implications for RSA & ECC 的大纲"
+              "title": "Why Hybrid ZK Brings Us Closer to the TCP-IP of Value 的大纲"
             }
           }
         ]
@@ -160,6 +217,7 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "bases:新建数据库": false,
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
       "canvas:新建白板": false,
@@ -168,16 +226,44 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "27610623a0ce44a6",
+  "active": "edc286fdfc19ab64",
   "lastOpenFiles": [
-    "Pasted image 20250713103616.png",
-    "Pasted image 20250713103554.png",
+    "Private Information Retrieval - Cryptographic Query Privacy for AI RAG Systems.md",
+    "Addresses Are Not People_ The Challenge of Blockchain Identity and Profiling.md",
+    "Reorg Attacks in Ethereum PoS.md",
+    "From CTF to AI Red Team-A Hands-On Guide to Prompt Injection Attacks.md",
     "From Macro to Micro - A Computational Revolution Reshaping Cryptography.md",
+    "Reorg Attacks I.md",
+    "Post-Quantum Readiness in Blockchain - Threats, Roadmaps, and Migration Strategy II.md",
+    "Post-Quantum Readiness in Blockchain - Threats, Roadmaps, and Migration Strategy I.md",
+    "Poseidon2 Hash Security Analysis- Gröbner Basis Attack Evaluation.md",
+    "Long-Term PQC Migration.png",
+    "GKR25_Figure5.png",
+    "Security Analysis of KoalaBear Extension Fields and Proposed Improvements.md",
+    "Justification Withholding Reorg Attack.md",
+    "Blockchain Reorg Attack - Bouncing Attack.md",
+    "Unrealized Justification Reorg Attack.md",
+    "GKR25_GBattack.png",
+    "Cryptographic Sponge Functions- The Foundation of ZK-Friendly Hash Constructions.md",
+    "GKR25_Table5.png",
     "Notes - What is Quantum Computing? Implications for RSA & ECC.md",
-    "1.md",
-    "2.md",
-    "3.md",
-    "From Macro to Micro - A Computational Revolution Reshaping Cryptography_副本.md",
-    "hello-world.md"
+    "Consensus Layer Signature Scheme Considerations-Evolution from BLS to the Post-Quantum Era.md",
+    "Research on VK Uniqueness and Salt in Plonk Setup Phase.md",
+    "Post-Quantum Readiness in Blockchain - Threats, Roadmaps, and Migration Strategy III.md",
+    "Poseidon Hash Algebraic Attacks (Calculation Tools).md",
+    "ZK Proofs Are Not the Essence of Layer 0, Trust Abstraction Is.md",
+    "Overview and Evaluation of Round-by-Round Modeling Analysis for Poseidon Hash.md",
+    "Poseidon Hash Algebraic Attack Analysis (Designer's Perspective).md",
+    "Poseidon Hash Algebraic Attack Analysis (Analyst's Perspective).md",
+    "Practical Recommendations (for Poseidon2 + BLS12-381 + Compress Mode).md",
+    "Web3’s Missing Foundation- Why It Needs a New TCP-IP.md",
+    "Short-Term PQC Migration.png",
+    "Why Hybrid ZK Brings Us Closer to the TCP-IP of Value.md",
+    "screenshot-Feynman.png",
+    "images",
+    "Pasted image 20250713103554.png",
+    "Pasted image 20250713103616.png",
+    "screenshot-Feynman 2.png",
+    "screenshot-Feynman 1.png"
   ]
 }

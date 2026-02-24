@@ -1,10 +1,11 @@
 +++
 title = "Notes | What is Quantum Computing? Implications for RSA & ECC"
-date = 2025-06-02T16:57:25+08:00
+date = 2025-05-13T16:57:25+08:00
 draft = false
 math = true
 +++
 
+<br>
 
 ### ❓What is Quantum Computing?
 
@@ -14,9 +15,12 @@ As early as **1982**, **Professor Richard Feynman** famously stated:
 
 > _"Nature isn’t classical, damn it, and if you want to make a simulation of nature, you’d better make it quantum mechanical."_
 
+
+![Feynman](/images/screenshot-Feynman.png)
+
 This insight laid the conceptual foundation for building computational tools using quantum systems themselves, rather than relying on classical approximations of quantum behavior.
 
-![[Pasted image 20250713103616.png]]
+<br>
 
 ### Why Classical Computers Are Not Enough
 
@@ -28,6 +32,7 @@ Quantum computing, on the other hand, leverages the superposition of quantum sta
 
 This is why Feynman proposed a groundbreaking idea: <span style="color:red;">instead of simulating quantum systems with classical computers, we should use quantum systems themselves to compute.</span> His insight was remarkably accurate — as we now know, there are computations that can only be carried out through quantum experiments and are beyond the reach of traditional computers. 
 
+<br>
 
 ### What Does Quantum Computing Mean for Mainstream Cryptosystems Like RSA and ECC?
 
@@ -39,6 +44,7 @@ On the surface, this exponential parallelism might seem to allow brute-force sol
 
 Currently, only Shor’s Algorithm can use quantum Fourier transforms to efficiently extract the period of a function, thereby solving the integer factorization and discrete logarithm problems upon which modern public-key cryptosystems RSA and ECC are based. **For other hard problems that cannot be reduced to period finding, no polynomial-time quantum algorithms are known yet.**
 
+<br>
 
 ### **How Close Are We to Practical Quantum Computers?**
 
@@ -50,12 +56,13 @@ Yes and no. To break a 1024-bit RSA key, a universal quantum computer with milli
 
 Developing public-key cryptographic algorithms that can resist quantum attacks (post-quantum cryptography) has become an urgent task. **To address this, the U.S. National Institute of Standards and Technology (NIST) launched the Post-Quantum Cryptography (PQC) standardization project back in 2016.** After years of evaluation, the leading quantum-resistant public-key algorithms—such as CRYSTALS-Kyber, Dilithium, and Falcon—are now essentially standardized and are set to become the new benchmarks for federal and enterprise security infrastructure.
 
+<br>
 
 ### D-Wave’s Progress
 
 The Canadian quantum computing company **D-Wave** has long provided **quantum annealers**, which are well-suited for solving **optimization problems**, rather than problems like **period-finding** as required by **Shor’s algorithm**.
 
-In **2025**, D-Wave released its **Advantage2** system, featuring **over 4,400 qubits** and a **20-node connectivity topology**. It is currently offering cloud-based services to clients such as **Mastercard**, **NTT**, and the **Jülich Supercomputing Centre**.
+In **2025**, D-Wave released its **Advantage2** system, featuring **over 4,400+ qubits** and a **20-node connectivity topology**. It is currently offering cloud-based services to clients such as **Mastercard**, **NTT**, and the **Jülich Supercomputing Centre**.
 
 Meanwhile, D-Wave’s team published a paper in _Science_ claiming **“quantum advantage”** for the first time: in simulating complex magnetic systems, their machine outperformed the world’s top classical supercomputers by what they claim would be **millions of years**.
 
@@ -68,10 +75,12 @@ Strictly speaking, D-Wave builds **quantum annealers**, which are machines that
 Currently, there is research underway that attempts to transform **integer factorization** into an **annealing-compatible problem** and solve it using D-Wave machines — but so far, it has only managed to factor **integers up to 90 bits**.
 
 
+<br>
+
 ### Emerging Track: Topological Quantum Computing and Fault-Tolerance
 
 - **February 2025**: **Microsoft** launched its first **Majorana-based topological quantum processor**, _Majorana 1_, featuring highly stable topological qubits and aiming for **million-qubit scalability**.
     
-- **May 2025**: **Quantinuum** announced that its **H2 system** had achieved a record-breaking **quantum volume**, a key metric for assessing a system’s practical computational power.
+- **May 2025**: **Quantinuum** announced that its **H2 system** had achieved a record-breaking **quantum volume** $2^{23}=8388608$, a key metric for assessing a system’s practical computational power.
     
-- **June 2025**: **Oxford**, **Google’s Willow**, and other teams continued advancing toward fault-tolerant quantum computing by optimizing **single-qubit gate fidelities** and improving **two-qubit error correction schemes**.
+- **May 2025**: **Oxford**, **Google’s Willow**, and other teams continued advancing toward fault-tolerant quantum computing by optimizing **single-qubit gate fidelities** and improving **two-qubit error correction schemes**.
