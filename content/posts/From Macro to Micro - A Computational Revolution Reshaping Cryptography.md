@@ -1,0 +1,14 @@
++++
+title = "From Macro to Micro - A Computational Revolution Reshaping Cryptography"
+date = 2024-11-15T16:57:25+08:00
+draft = false
+math = true
++++
+
+Throughout the evolution of human civilization, the pursuit of computational power has never ceased. From $\underline{mechanical ~computation}$ to $\underline{electronic ~computation}$, we now stand at the dawn of a new era — $\mathbf{on ~the ~verge ~of ~quantum ~computing. }$
+
+The core breakthrough of quantum computing does not lie in macro-level advancements such as “faster” transistors or “stronger” chips, but rather in **a paradigm shift from macro to micro**: it no longer relies on the classical binary of 0 and 1 but leverages the peculiar properties of quantum superposition and entanglement at the particle level to build $\underline{an ~entirely ~new ~computational ~logic}$. This logic cannot be simulated by traditional electronic computers, much like nuclear weapons cannot be replicated with chemical explosives—their energies are simply not on the same scale.
+
+In this age of exponentially increasing computational power, modern cryptography stands as the first field to be fundamentally challenged. Encryption algorithms that are rock-solid on classical computers—such as RSA and ECC—become vulnerable in the face of quantum algorithms like Shor’s algorithm.
+
+**Just as electronic computers once marked the end of the mechanical cipher era, quantum computing is now poised to reshape the foundations of modern cryptography**. It brings not only challenges, but also an opportunity to redefine what “security” truly means.
