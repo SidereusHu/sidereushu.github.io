@@ -4,8 +4,6 @@ date = 2026-02-24T16:57:25+08:00
 draft = false
 math = true
 +++
-
-
 <br>
   
 > In traditional financial risk control, we analyze "people"—individuals or legal entities with names, ID numbers, and credit histories. But in the on-chain world, we face "addresses"—strings of 42 hexadecimal characters. The chasm between address and identity, between transactions and behavior, is the core battleground for Web3 risk control.
